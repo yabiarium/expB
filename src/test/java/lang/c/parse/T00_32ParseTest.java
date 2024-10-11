@@ -112,7 +112,7 @@ public class T00_32ParseTest {
         public void reject() throws FatalErrorException {
             TestDataAndErrMessage[] arr = {
                 // new TestDataAndErrMessage("1", "これは正当例なのでこのデータのテストは失敗します"),
-                //new TestDataAndErrMessage("1+2-3", "TK_EOF"),
+                // new TestDataAndErrMessage("1+2-3", "TK_EOF"),
                 new TestDataAndErrMessage("1+", "+の後ろはtermです"),
         };
         expressionAddHelper.parseRejectTestList(arr);
@@ -136,8 +136,7 @@ public class T00_32ParseTest {
         // Expression 不当例
         // parse() の Reject は，BNF 定義における「2つ目以降，必ず必要な項目」がない場合をチェックすること
         // CV00 では， program ::= expression EOF の EOFのチェックと，expressionAdd ::= PLUS terms
-        // の term のチェックし
-        // しかできない．
+        // の term のチェックしかできない．
         // expression ::= term { expressionAdd } だから，expressionAdd
         // がないことのテストをしたくなるかもしれないが
         // { } は繰り返し回数0を許すため，exppressionAdd が0個でも acceptされるため意味がない

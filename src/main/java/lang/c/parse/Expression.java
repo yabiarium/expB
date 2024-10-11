@@ -11,7 +11,7 @@ public class Expression extends CParseRule {
 
 	public Expression(CParseContext pcx) {
 		super("Expression");
-		setBNF("Expression ::= Term { ExpressionAdd }");
+		setBNF("Expression ::= Term { ExpressionAdd | ExpressionSub }");
 	}
 
 	public static boolean isFirst(CToken tk) {
@@ -25,8 +25,12 @@ public class Expression extends CParseRule {
 		term.parse(pcx);
 		CTokenizer ct = pcx.getTokenizer();
 		CToken tk = ct.getCurrentToken(pcx);
-		while (ExpressionAdd.isFirst(tk)) {
-			list = new ExpressionAdd(pcx, term);
+		while (ExpressionAdd.isFirst(tk) | ExpressionSub.isFirst(tk)) {
+			if(ExpressionAdd.isFirst(tk)){
+				list = new ExpressionAdd(pcx, term);
+			}else if(ExpressionSub.isFirst(tk)){
+				list = new ExpressionSub(pcx, term);
+			}
 			list.parse(pcx);
 			term = list;
 			tk = ct.getCurrentToken(pcx);

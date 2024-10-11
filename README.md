@@ -2,6 +2,9 @@
 miniCV00 for expB on Faculty of Informatics, Shizuoka University.
 
 # memo
+term ::= factor { (PLUS | MINUS) factor }
+小文字の名前は「非終端記号」Non Terminal を，大文字の名前は「終端記号」Terminal を表す
+
 プログラムの入り口: src/main/java/lang/c/MiniCompiler.java
 これからMiniCompilerlmpl.javaがnewされて実行。
 そこからCodeGen()とかその他諸々の処理に広がっていく。
@@ -10,6 +13,19 @@ miniCV00 for expB on Faculty of Informatics, Shizuoka University.
 　3: parse構文解析
 　4: semanticCheck意味解析
 　5: CodeGenコード生成（parse/Program.javaにある）
+
+テキスト p9
+• 字句解析部は、「単なる文字の列」である入力ファイルを読み、意味のあるまとまりごとに区切って「字句
+（トークン）の列」へと作り変える。
+• 構文解析部は、字句列を読み、それらが与えられた構文定義（文法規則）にしたがって並んでいるかどうか
+を確認し、構文木を作る。
+• 意味解析部は、構文木を深さ優先探索しながら、意味上の誤り（変数名の宣言がないとか、変数の使い方が
+違うとか. . . ）がないかどうかをチェックする2。このとき、プログラム中に出てくる名前（識別子と呼ぶこ
+ともよくある）がどのような意味を持つのかを「記号表」で管理していく（ただし、変数の宣言と記号表に
+よるその管理についてのプログラミングは第 II 部に回す）。
+• コード生成部は、構文木を深さ優先探索しながら、行きがけ、通りがけ、帰りがけに、構文の意味するとこ
+ろを実施できるようなコードを作り出していく。
+
 
 
 テキストP13

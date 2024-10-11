@@ -18,6 +18,9 @@ public class CTokenizer extends Tokenizer<CToken, CParseContext> {
 	private final int ST_ILL = 2;
 	private final int ST_NUM = 3;
 	private final int ST_PLUS = 4;
+	private final int ST_MINUS = 5;
+	private final int ST_COMMENT = 6;
+	private final int ST_BLOCKCOMMENT = 7;
 
 	private final char __EOF__ = (char)-1;
 
@@ -100,6 +103,22 @@ public class CTokenizer extends Tokenizer<CToken, CParseContext> {
 						startCol = colNo - 1;
 						text.append(ch);
 						state = ST_PLUS;
+					} else if (ch == '-') {
+						startCol = colNo - 1;
+						text.append(ch);
+						state = ST_MINUS;
+					} else if (ch == '/') {
+						ch = readChar(); //もう1文字読む
+						if(ch == '/'){ // //を読んだ
+							state = ST_COMMENT;
+						} else if (ch == '*') {// /*を読んだ
+							state = ST_BLOCKCOMMENT;
+						} else { // /の後が/か*以外ならST_ILLに遷移
+							text.append('/');
+							backChar(ch);
+							startCol = colNo - 1;
+							state = ST_ILL;
+						}
 					} else { // この時点で受理できない文字を読んだので，ST_ILL に遷移
 						startCol = colNo - 1;
 						text.append(ch);
@@ -129,6 +148,39 @@ public class CTokenizer extends Tokenizer<CToken, CParseContext> {
 					tk = new CToken(CToken.TK_PLUS, lineNo, startCol, "+");
 					accept = true;
 					break;
+				case ST_MINUS: // -を読んだ
+					tk = new CToken(CToken.TK_MINUS, lineNo, startCol, "-");
+					accept = true;
+					break;
+				case ST_COMMENT: // //を読んだ
+					ch = readChar();
+					if(ch == '\n'){
+						state = ST_NORMAL;
+					}else if(ch == __EOF__){
+						startCol = colNo - 1;
+						state = ST_EOF;
+					}
+					break;
+				case ST_BLOCKCOMMENT: // /*を読んだ
+					ch = readChar();
+					if(ch == '*'){
+						while(ch == '*'){
+							ch = readChar();
+							if(ch == '/'){
+								state = ST_NORMAL;
+							}else if(ch == __EOF__){
+								System.err.println("block comment 中に EOF を検出しました");
+								startCol = colNo - 1;
+								state = ST_EOF;
+							}
+						}
+					}else if(ch == __EOF__){
+						System.err.println("block comment 中に EOF を検出しました");
+						startCol = colNo - 1;
+						state = ST_EOF;
+					}
+					break;
+					
 			}
 		}
 		return tk;
