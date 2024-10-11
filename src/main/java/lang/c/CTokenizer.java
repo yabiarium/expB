@@ -19,8 +19,10 @@ public class CTokenizer extends Tokenizer<CToken, CParseContext> {
 	private final int ST_NUM = 3;
 	private final int ST_PLUS = 4;
 	private final int ST_MINUS = 5;
-	private final int ST_COMMENT = 6;
-	private final int ST_BLOCKCOMMENT = 7;
+	private final int ST_SLASH = 6;
+	private final int ST_COM = 7; //COM=COMMENT
+	private final int ST_BLOCKCOM = 8;
+	private final int ST_BLOCKCOMASTA = 9; //ASTA=*
 
 	private final char __EOF__ = (char)-1;
 
@@ -108,17 +110,7 @@ public class CTokenizer extends Tokenizer<CToken, CParseContext> {
 						text.append(ch);
 						state = ST_MINUS;
 					} else if (ch == '/') {
-						ch = readChar(); //もう1文字読む
-						if(ch == '/'){ // //を読んだ
-							state = ST_COMMENT;
-						} else if (ch == '*') {// /*を読んだ
-							state = ST_BLOCKCOMMENT;
-						} else { // /の後が/か*以外ならST_ILLに遷移
-							text.append('/');
-							backChar(ch);
-							startCol = colNo - 1;
-							state = ST_ILL;
-						}
+						state = ST_SLASH;
 					} else { // この時点で受理できない文字を読んだので，ST_ILL に遷移
 						startCol = colNo - 1;
 						text.append(ch);
@@ -152,7 +144,20 @@ public class CTokenizer extends Tokenizer<CToken, CParseContext> {
 					tk = new CToken(CToken.TK_MINUS, lineNo, startCol, "-");
 					accept = true;
 					break;
-				case ST_COMMENT: // //を読んだ
+				case ST_SLASH:
+					ch = readChar(); //もう1文字読む
+					if(ch == '/'){ // //を読んだ
+						state = ST_COM;
+					} else if (ch == '*') {// /*を読んだ
+						state = ST_BLOCKCOM;
+					} else { // /の後が/か*以外ならST_ILLに遷移
+						backChar(ch);
+						text.append('/');
+						startCol = colNo - 1;
+						state = ST_ILL;
+					}
+					break;
+				case ST_COM: // //を読んだ
 					ch = readChar();
 					if(ch == '\n'){
 						state = ST_NORMAL;
@@ -161,23 +166,27 @@ public class CTokenizer extends Tokenizer<CToken, CParseContext> {
 						state = ST_EOF;
 					}
 					break;
-				case ST_BLOCKCOMMENT: // /*を読んだ
+				case ST_BLOCKCOM: // /*を読んだ
 					ch = readChar();
 					if(ch == '*'){
-						while(ch == '*'){
-							ch = readChar();
-							if(ch == '/'){
-								state = ST_NORMAL;
-							}else if(ch == __EOF__){
-								System.err.println("block comment 中に EOF を検出しました");
-								startCol = colNo - 1;
-								state = ST_EOF;
-							}
-						}
+						state = ST_BLOCKCOMASTA;
 					}else if(ch == __EOF__){
 						System.err.println("block comment 中に EOF を検出しました");
 						startCol = colNo - 1;
 						state = ST_EOF;
+					}
+					break;
+				case ST_BLOCKCOMASTA:
+					ch = readChar();
+					if(ch == '/'){
+						state = ST_NORMAL;
+					}else if(ch == '*'){
+					}else if(ch == __EOF__){
+						System.err.println("block comment 中に EOF を検出しました");
+						startCol = colNo - 1;
+						state = ST_EOF;
+					}else{
+						state = ST_BLOCKCOM;
 					}
 					break;
 					

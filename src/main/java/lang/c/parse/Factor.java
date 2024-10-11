@@ -11,7 +11,9 @@ public class Factor extends CParseRule {
 
 	public Factor(CParseContext pcx) {
 		super("Factor");
-		setBNF("Factor ::= Number");
+		//setBNF("Factor ::= Number"); //~CV01
+		setBNF("factor ::= factorAmp | number"); //CV02~
+		setBNF("factorAmp ::= AMP number"); //AMP=& CV02~
 	}
 
 	public static boolean isFirst(CToken tk) {
