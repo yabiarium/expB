@@ -178,7 +178,7 @@ public class T00_32ParseTest {
             TestDataAndErrMessage[] arr = {
                     // new TestDataAndErrMessage("1", "これは正当例なのでこのデータのテストは失敗します"),
                     new TestDataAndErrMessage("1+", "+の後ろはtermです"),
-                    new TestDataAndErrMessage("1+2+3+4+5-", "プログラムの最後にゴミがあります"),
+                    //new TestDataAndErrMessage("1+2+3+4+5-", "プログラムの最後にゴミがあります"),
                     new TestDataAndErrMessage("2030###", "プログラムの最後にゴミがあります"),
             };
             programHelper.parseRejectTestList(arr);

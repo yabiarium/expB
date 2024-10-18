@@ -1,36 +1,40 @@
 # miniCV00
 miniCV00 for expB on Faculty of Informatics, Shizuoka University.
 
+# Todo
+エラーの出し方を改善する  
+https://teams.microsoft.com/l/message/19:39105e3c328748379ad7a25cd1d937f8@thread.tacv2/1728635251794?tenantId=e0d7dc00-4621-4fe0-90b1-df7b1b40b351&groupId=ea956807-b182-40e1-8d2f-9726a08a66a4&parentMessageId=1728635251794&teamName=2024-%E6%83%85%E5%A0%B1%E7%A7%91%E5%AD%A6%E5%AE%9F%E9%A8%93B&channelName=00_%E6%95%99%E5%93%A1%E9%80%A3%E7%B5%A1&createdTime=1728635251794
+
 # memo
-term ::= factor { (PLUS | MINUS) factor }
+term ::= factor { (PLUS | MINUS) factor }  
 小文字の名前は「非終端記号」Non Terminal を，大文字の名前は「終端記号」Terminal を表す
 
-プログラムの入り口: src/main/java/lang/c/MiniCompiler.java
-これからMiniCompilerlmpl.javaがnewされて実行。
-そこからCodeGen()とかその他諸々の処理に広がっていく。
-　1: Token字句解析
-　2: Context文字解析?
-　3: parse構文解析
-　4: semanticCheck意味解析
-　5: CodeGenコード生成（parse/Program.javaにある）
+プログラムの入り口: src/main/java/lang/c/MiniCompiler.java  
+これからMiniCompilerlmpl.javaがnewされて実行。  
+そこからCodeGen()とかその他諸々の処理に広がっていく。  
+　1: Token字句解析  
+　2: Context文字解析?  
+　3: parse構文解析  
+　4: semanticCheck意味解析  
+　5: CodeGenコード生成（parse/Program.javaにある）  
 
-テキスト p9
-• 字句解析部は、「単なる文字の列」である入力ファイルを読み、意味のあるまとまりごとに区切って「字句
-（トークン）の列」へと作り変える。
-• 構文解析部は、字句列を読み、それらが与えられた構文定義（文法規則）にしたがって並んでいるかどうか
-を確認し、構文木を作る。
-• 意味解析部は、構文木を深さ優先探索しながら、意味上の誤り（変数名の宣言がないとか、変数の使い方が
-違うとか. . . ）がないかどうかをチェックする2。このとき、プログラム中に出てくる名前（識別子と呼ぶこ
-ともよくある）がどのような意味を持つのかを「記号表」で管理していく（ただし、変数の宣言と記号表に
-よるその管理についてのプログラミングは第 II 部に回す）。
-• コード生成部は、構文木を深さ優先探索しながら、行きがけ、通りがけ、帰りがけに、構文の意味するとこ
-ろを実施できるようなコードを作り出していく。
+テキスト p9  
+• 字句解析部は、「単なる文字の列」である入力ファイルを読み、意味のあるまとまりごとに区切って「字句  
+（トークン）の列」へと作り変える。  
+• 構文解析部は、字句列を読み、それらが与えられた構文定義（文法規則）にしたがって並んでいるかどうか  
+を確認し、構文木を作る。  
+• 意味解析部は、構文木を深さ優先探索しながら、意味上の誤り（変数名の宣言がないとか、変数の使い方が  
+違うとか. . . ）がないかどうかをチェックする2。このとき、プログラム中に出てくる名前（識別子と呼ぶこ  
+ともよくある）がどのような意味を持つのかを「記号表」で管理していく（ただし、変数の宣言と記号表に  
+よるその管理についてのプログラミングは第 II 部に回す）。  
+• コード生成部は、構文木を深さ優先探索しながら、行きがけ、通りがけ、帰りがけに、構文の意味するとこ  
+ろを実施できるようなコードを作り出していく。  
 
 
 
-テキストP13
-今後新規定義するクラスの codeGen() メソッドにおいて，コード生成の際にスタックを扱う場合は，
-CodeGenCommonクラスの，printPushCodeGen(), printPopCodeGen()メソッドを利用すること
+テキストP13  
+今後新規定義するクラスの codeGen() メソッドにおいて，コード生成の際にスタックを扱う場合は，  
+CodeGenCommonクラスの，printPushCodeGen(), printPopCodeGen()メソッドを利用すること  
 
 大きく分けて，「CTokenizer.java による字句解析のテスト」と「字句解析以降の処理のテスト」に分けられる．
 

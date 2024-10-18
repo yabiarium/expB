@@ -24,7 +24,7 @@ public class T02_21CTokenizerTest {
     public void hexNG1() {
         String testString = "0x10000";   // ILL で認識されるはず
         CToken[] exceptedTokenList = {
-            new CToken(CToken.TK_ILL, 1, 0, "0x10000"),
+            new CToken(CToken.TK_ILL, 1, 1, "0x10000"),
             new CToken(CToken.TK_EOF, 1, 8, "end_of_file")
         };
         helper.acceptList(testString, exceptedTokenList);

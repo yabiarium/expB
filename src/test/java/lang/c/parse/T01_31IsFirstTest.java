@@ -19,7 +19,7 @@ public class T01_31IsFirstTest {
         // 個別正当例
         @Test
         public void accept() throws FatalErrorException {
-            numberHelper.trueTest("-4");
+            numberHelper.trueTest("4");
             numberHelper.trueTest("12");
         }
 

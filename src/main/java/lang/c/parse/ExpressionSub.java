@@ -42,9 +42,10 @@ public class ExpressionSub extends CParseRule {
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
 		// 引き算の型計算規則
 		final int s[][] = {
-				// T_err T_int
-				{ CType.T_err, CType.T_err }, // T_err
-				{ CType.T_err, CType.T_int }, // T_int
+				// T_err T_int T_pint
+				{ CType.T_err, CType.T_err, CType.T_err }, // T_err
+				{ CType.T_err, CType.T_int, CType.T_err }, // T_int
+				{ CType.T_err, CType.T_pint, CType.T_int}, // T_pint
 		};
 		if (left != null && right != null) {
 			left.semanticCheck(pcx);
@@ -71,8 +72,6 @@ public class ExpressionSub extends CParseRule {
 			String lt = left.getCType().toString();
 			String rt = right.getCType().toString();
 			String t = getCType().toString();
-//			cgc.printInstCodeGen("", "MOV -(R6), R0", "ExpressionAdd: 右を取り出す:["+rt+"]");
-//			cgc.printInstCodeGen("", "MOV -(R6), R1", "ExpressionAdd: 左を取り出す:["+lt+"]");
 			cgc.printPopCodeGen("", "R1", "ExpressionSub: 右を取り出す:["+rt+"]");
 			cgc.printPopCodeGen("", "R0", "ExpressionSub: 左を取り出す:["+lt+"]");
 			cgc.printInstCodeGen("", "SUB R1, R0", "ExpressionSub: R0["+lt+"]からR1["+rt+"] を引く:");
