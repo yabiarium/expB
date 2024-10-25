@@ -107,7 +107,7 @@ public class T01_21CTokenizerTest {
     public void slashAndNumber() {
         String testString = "/100";
         CToken[] exceptedTokenList = {
-            new CToken(CToken.TK_ILL, 1, 1, "/"),
+            new CToken(CToken.TK_DIV, 1, 1, "/"),
             new CToken(CToken.TK_NUM, 1, 2, "100"),
             new CToken(CToken.TK_EOF, 1, 5, "end_of_file")
         };

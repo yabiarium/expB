@@ -11,14 +11,13 @@ import lang.c.CodeGenCommon;
 public class ExpressionSub extends CParseRule {
 	// 新しく非終端記号に対応するクラスを作成する際は，必ず拡張BNF をコメントでつけること
 	// また，更新する際は，拡張BNFの「履歴」を残すこと（例えば，実験３まで：．．．． と 実験４から：．．． のように）
-	// expressionAdd ::= '+' term
 	CToken op;
 	CParseRule left, right;
 
 	public ExpressionSub(CParseContext pcx, CParseRule left) {
 		super("ExpressionSub");
 		this.left = left;
-		setBNF("ExpressionSub ::= TK_MINUS Term"); // 新規:実験1から
+		setBNF("ExpressionSub ::= TK_MINUS Term"); // 新規:CV01~
 	}
 
 	public static boolean isFirst(CToken tk) {
@@ -35,7 +34,7 @@ public class ExpressionSub extends CParseRule {
 			right = new Term(pcx);
 			right.parse(pcx);
 		} else {
-			pcx.fatalError(tk + "-の後ろはtermです");
+			pcx.fatalError(tk + "ExpressionSub: parse(): -の後ろはtermです");
 		}
 	}
 
@@ -56,7 +55,7 @@ public class ExpressionSub extends CParseRule {
 			String lts = left.getCType().toString();
 			String rts = right.getCType().toString();
 			if (nt == CType.T_err) {
-				pcx.fatalError(op + ": 左辺の型[" + lts + "]と右辺の型[" + rts + "]は引けません");
+				pcx.fatalError(op + ": ExpressionSub: semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]は引けません");
 			}
 			this.setCType(CType.getCType(nt));
 			this.setConstant(left.isConstant() && right.isConstant()); // -の左右両方が定数のときだけ定数
@@ -74,7 +73,7 @@ public class ExpressionSub extends CParseRule {
 			String t = getCType().toString();
 			cgc.printPopCodeGen("", "R1", "ExpressionSub: 右を取り出す:["+rt+"]");
 			cgc.printPopCodeGen("", "R0", "ExpressionSub: 左を取り出す:["+lt+"]");
-			cgc.printInstCodeGen("", "SUB R1, R0", "ExpressionSub: R0["+lt+"]からR1["+rt+"] を引く:");
+			cgc.printInstCodeGen("", "SUB R1, R0", "ExpressionSub: R0["+lt+"]からR1["+rt+"] を引く");
 			cgc.printPushCodeGen("", "R0", "ExpressionAdd: 演算結果R0["+t+"]をスタックに積む");
 			cgc.printCompleteComment(getBNF(getId()));
 		}

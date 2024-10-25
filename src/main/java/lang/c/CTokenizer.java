@@ -29,6 +29,10 @@ public class CTokenizer extends Tokenizer<CToken, CParseContext> {
 	private final int ST_ZERO = 11; //0と1~9を分ける
 	private final int ST_OCTNUM = 12;
 	private final int ST_HEXNUM = 13;
+	//CV03
+	private final int ST_ASTA = 14; //* 乗算
+	private final int ST_LPAR = 15; // (
+	private final int ST_RPAR = 16; // )
 
 
 	private final char __EOF__ = (char)-1;
@@ -116,6 +120,10 @@ public class CTokenizer extends Tokenizer<CToken, CParseContext> {
 						startCol = colNo - 1;
 						text.append(ch);
 						state = ST_MINUS;
+					} else if (ch == '*') {
+						startCol = colNo - 1;
+						text.append(ch);
+						state = ST_ASTA;
 					} else if (ch == '/') {
 						state = ST_SLASH;
 					} else if (ch == '&'){
@@ -126,6 +134,14 @@ public class CTokenizer extends Tokenizer<CToken, CParseContext> {
 						startCol = colNo - 1;
 						text.append(ch);
 						state = ST_ZERO;
+					} else if (ch == '(') {
+						startCol = colNo - 1;
+						text.append(ch);
+						state = ST_LPAR;
+					} else if (ch == ')') {
+						startCol = colNo - 1;
+						text.append(ch);
+						state = ST_RPAR;
 					} else { // この時点で受理できない文字を読んだので，ST_ILL に遷移
 						startCol = colNo - 1;
 						text.append(ch);
@@ -163,13 +179,39 @@ public class CTokenizer extends Tokenizer<CToken, CParseContext> {
 					tk = new CToken(CToken.TK_MINUS, lineNo, startCol, "-");
 					accept = true;
 					break;
+				case ST_ASTA:
+					tk = new CToken(CToken.TK_MULT, lineNo, startCol, "*");
+					accept = true;
+					break;
 				case ST_SLASH:
 					ch = readChar(); //もう1文字読む
 					if(ch == '/'){ // //を読んだ
 						state = ST_COM;
 					} else if (ch == '*') {// /*を読んだ
 						state = ST_BLOCKCOM;
-					} else { // /の後が/か*以外ならST_ILLに遷移
+					} else if (ch == ' '){ // "2 / 3"など、/の後にスペースがあって数式が続く場合
+						ch = readChar(); //更にもう1文字読む
+						if(ch == '+' || ch == '-' || ch == '(' || Character.isDigit(ch)){
+							backChar(ch);// トークン発効前に2文字分戻る
+							backChar(ch);
+							startCol = colNo - 2;
+							text.append('/');
+							tk = new CToken(CToken.TK_DIV, lineNo, startCol, "/");
+							accept = true;
+						}else{ // '/'の後スペースが空いて数式以外が続く場合はILL
+							backChar(ch);
+							backChar(ch);
+							text.append('/');
+							startCol = colNo - 2;
+							state = ST_ILL;
+						}
+					}else if(ch == '+' || ch == '-' || ch == '(' || Character.isDigit(ch)){
+						backChar(ch);
+						startCol = colNo - 1;
+						text.append('/');
+						tk = new CToken(CToken.TK_DIV, lineNo, startCol, "/");
+						accept = true;
+					} else { // /の後が「/」「*」、「数字」以外ならST_ILLに遷移
 						backChar(ch);
 						text.append('/');
 						startCol = colNo - 1;
@@ -210,6 +252,14 @@ public class CTokenizer extends Tokenizer<CToken, CParseContext> {
 					break;
 				case ST_AMP: // &を読んだ
 					tk = new CToken(CToken.TK_AMP, lineNo, startCol, "&");
+					accept = true;
+					break;
+				case ST_LPAR: // (を読んだ
+					tk = new CToken(CToken.TK_LPAR, lineNo, startCol, "(");
+					accept = true;
+					break;
+				case ST_RPAR: // )を読んだ
+					tk = new CToken(CToken.TK_RPAR, lineNo, startCol, ")");
 					accept = true;
 					break;
 				case ST_ZERO:

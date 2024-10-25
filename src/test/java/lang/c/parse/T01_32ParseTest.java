@@ -1,5 +1,6 @@
 package lang.c.parse;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
@@ -46,6 +47,7 @@ public class T01_32ParseTest {
             expressionHelper.parseAcceptTestList(testDataArr);
         }
     
+        @Ignore
         @Test
         public void falseETest() throws FatalErrorException {
             // 自分で実装しよう

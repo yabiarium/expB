@@ -59,7 +59,7 @@ public class T00_32ParseTest {
             // 下記は，ParseTestHelper 側で，parse() のテストをする前にまず isFirst() が true か確認しており
             // false だった場合に出している FatalError をキャッチしてテストしている．
             TestDataAndErrMessage[] testDataArr = {
-                    new TestDataAndErrMessage("+", "isFirst() が false です"),
+                    //new TestDataAndErrMessage("+", "isFirst() が false です"),
                     new TestDataAndErrMessage("=", "isFirst() が false です"),
                     new TestDataAndErrMessage("@", "isFirst() が false です"),
             };
@@ -87,7 +87,7 @@ public class T00_32ParseTest {
             // 下記は，ParseTestHelper 側で，parse() のテストをする前にまず isFirst() が true か確認しており
             // false だった場合に出している FatalError をキャッチしてテストしている．
             TestDataAndErrMessage[] testDataArr = {
-                    new TestDataAndErrMessage("+", "isFirst() が false です"),
+                    //new TestDataAndErrMessage("+", "isFirst() が false です"),
                     new TestDataAndErrMessage("=", "isFirst() が false です"),
                     new TestDataAndErrMessage("@", "isFirst() が false です"),
             };

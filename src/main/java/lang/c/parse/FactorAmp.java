@@ -11,12 +11,12 @@ import lang.c.CodeGenCommon;
 public class FactorAmp extends CParseRule {
 	// 新しく非終端記号に対応するクラスを作成する際は，必ず拡張BNF をコメントでつけること
 	// また，更新する際は，拡張BNFの「履歴」を残すこと（例えば，実験３まで：．．．． と 実験４から：．．． のように）
-	CToken op;
 	CParseRule number;
 
 	public FactorAmp(CParseContext pcx) {
 		super("FactorAmp");
-		setBNF("factorAmp ::= AMP number"); //AMP=& CV02~
+		setBNF("factorAmp ::= AMP number"); //AMP=& CV02~03
+		//setBNF("factorAmp ::= AMP ( number | primary )"); //AMP=& CV04~
 	}
 
 	public static boolean isFirst(CToken tk) {
@@ -26,14 +26,13 @@ public class FactorAmp extends CParseRule {
 	public void parse(CParseContext pcx) throws FatalErrorException {
 		// ここにやってくるときは、必ずisFirst()が満たされている
 		CTokenizer ct = pcx.getTokenizer();
-		op = ct.getCurrentToken(pcx);
 		// &の次の字句を読む
 		CToken tk = ct.getNextToken(pcx);
 		if (Number.isFirst(tk)) {
 			number = new Number(pcx);
 			number.parse(pcx);
 		} else {
-			pcx.fatalError(tk + "&の後ろはnumberです");
+			pcx.fatalError(tk + "FactorAmp: parse(): &の後ろはnumberです");
 		}
 	}
 
