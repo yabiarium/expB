@@ -35,8 +35,9 @@ public class T02_21CTokenizerTest {
         String testString = "0xffgf";  // NUM(255) ILL ILL で認識されるはず
         CToken[] exceptedTokenList = {
             new CToken(CToken.TK_NUM, 1, 1, "0xff"),
-            new CToken(CToken.TK_ILL, 1, 5, "g"),
-            new CToken(CToken.TK_ILL, 1, 6, "f"),
+            new CToken(CToken.TK_IDENT, 1, 5, "gf"), //CV04で変更
+            // new CToken(CToken.TK_ILL, 1, 5, "g"),
+            // new CToken(CToken.TK_ILL, 1, 6, "f"),
             new CToken(CToken.TK_EOF, 1, 7, "end_of_file")
         };
         helper.acceptList(testString, exceptedTokenList);

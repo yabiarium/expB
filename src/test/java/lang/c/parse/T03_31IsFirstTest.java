@@ -85,7 +85,7 @@ public class T03_31IsFirstTest {
 
         @Test
         public void falseTest() throws FatalErrorException {
-            String[] testDataArr = { "-100", "*200" };
+            String[] testDataArr = { "-100", "/200" };
             uFactorHelper.falseListTest(testDataArr);
         }
     }

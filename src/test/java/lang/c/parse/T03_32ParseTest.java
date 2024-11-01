@@ -73,7 +73,7 @@ public class T03_32ParseTest {
         @Test
         public void falseETest() throws FatalErrorException {
             TestDataAndErrMessage[] arr = {
-                new TestDataAndErrMessage("1**1", "*の後ろはfactorです"),
+                //new TestDataAndErrMessage("1**1", "*の後ろはfactorです"),
                 new TestDataAndErrMessage("200*/100", "*の後ろはfactorです"),
                 new TestDataAndErrMessage("100---200", "-の後ろはuFactorです"),
                 new TestDataAndErrMessage("(100-200", ")がありません"),

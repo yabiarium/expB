@@ -33,7 +33,10 @@ public class CTokenizer extends Tokenizer<CToken, CParseContext> {
 	private final int ST_ASTA = 14; //* 乗算
 	private final int ST_LPAR = 15; // (
 	private final int ST_RPAR = 16; // )
-
+	//CV04
+	private final int ST_IDENT = 17; //変数
+	private final int ST_LBRA = 18; // [
+	private final int ST_RBRA = 19; // ]
 
 	private final char __EOF__ = (char)-1;
 
@@ -142,6 +145,19 @@ public class CTokenizer extends Tokenizer<CToken, CParseContext> {
 						startCol = colNo - 1;
 						text.append(ch);
 						state = ST_RPAR;
+					} else if (ch == '[') {
+						startCol = colNo - 1;
+						text.append(ch);
+						state = ST_LBRA;
+					} else if (ch == ']') {
+						startCol = colNo - 1;
+						text.append(ch);
+						state = ST_RBRA;
+					} else if (ch == '_' || Character.isAlphabetic(ch)) {
+						//変数ident １文字目は，’_’と英字(a-z A-Z)
+						startCol = colNo -1;
+						text.append(ch);
+						state = ST_IDENT;
 					} else { // この時点で受理できない文字を読んだので，ST_ILL に遷移
 						startCol = colNo - 1;
 						text.append(ch);
@@ -261,6 +277,25 @@ public class CTokenizer extends Tokenizer<CToken, CParseContext> {
 				case ST_RPAR: // )を読んだ
 					tk = new CToken(CToken.TK_RPAR, lineNo, startCol, ")");
 					accept = true;
+					break;
+				case ST_LBRA: // [を読んだ
+					tk = new CToken(CToken.TK_LBRA, lineNo, startCol, "[");
+					accept = true;
+					break;
+				case ST_RBRA: // ]を読んだ
+					tk = new CToken(CToken.TK_RBRA, lineNo, startCol, "]");
+					accept = true;
+					break;
+				case ST_IDENT: // 変数の開始
+					ch = readChar();
+					//２文字目以降は，’_’と英字(a-z A-Z) と数字(0-9)
+					if (ch == '_' || Character.isAlphabetic(ch) || Character.isDigit(ch)) {
+						text.append(ch);
+					} else { // 変数の終わり
+						backChar(ch);
+						tk = new CToken(CToken.TK_IDENT, lineNo, startCol, text.toString());
+						accept = true;
+					}
 					break;
 				case ST_ZERO:
 					ch = readChar();

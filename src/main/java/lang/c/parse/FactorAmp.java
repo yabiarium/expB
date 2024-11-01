@@ -11,12 +11,12 @@ import lang.c.CodeGenCommon;
 public class FactorAmp extends CParseRule {
 	// 新しく非終端記号に対応するクラスを作成する際は，必ず拡張BNF をコメントでつけること
 	// また，更新する際は，拡張BNFの「履歴」を残すこと（例えば，実験３まで：．．．． と 実験４から：．．． のように）
-	CParseRule number;
+	CParseRule number, primary;
 
 	public FactorAmp(CParseContext pcx) {
 		super("FactorAmp");
-		setBNF("factorAmp ::= AMP number"); //AMP=& CV02~03
-		//setBNF("factorAmp ::= AMP ( number | primary )"); //AMP=& CV04~
+		//setBNF("factorAmp ::= AMP number"); //AMP=& CV02~03
+		setBNF("factorAmp ::= AMP ( number | primary )"); //AMP=& CV04~
 	}
 
 	public static boolean isFirst(CToken tk) {
@@ -31,14 +31,24 @@ public class FactorAmp extends CParseRule {
 		if (Number.isFirst(tk)) {
 			number = new Number(pcx);
 			number.parse(pcx);
+		} else if(Primary.isFirst(tk)) {
+			if(PrimaryMult.isFirst(tk)){
+				pcx.fatalError(tk + "FactorAmp: parse(): &の後ろに*は置けません");
+			}
+			primary = new Primary(pcx);
+			primary.parse(pcx);
 		} else {
-			pcx.fatalError(tk + "FactorAmp: parse(): &の後ろはnumberです");
+			pcx.fatalError(tk + "FactorAmp: parse(): &の後ろはnumberまたはprimaryです");
 		}
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
 		if (number != null) {
 			number.semanticCheck(pcx);
+			this.setCType(CType.getCType(CType.T_pint));
+			this.setConstant(isConstant());
+		} else if (primary != null){
+			primary.semanticCheck(pcx);
 			this.setCType(CType.getCType(CType.T_pint));
 			this.setConstant(isConstant());
 		}
@@ -49,6 +59,10 @@ public class FactorAmp extends CParseRule {
 		if (number != null) {
 			cgc.printStartComment(getBNF(getId()));
 			number.codeGen(pcx); // &以降(右部分木?)のコード生成を頼む
+			cgc.printCompleteComment(getBNF(getId()));
+		} else if (primary != null) {
+			cgc.printStartComment(getBNF(getId()));
+			primary.codeGen(pcx); // &以降(右部分木?)のコード生成を頼む
 			cgc.printCompleteComment(getBNF(getId()));
 		}
 	}
