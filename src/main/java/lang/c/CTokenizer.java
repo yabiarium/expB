@@ -37,6 +37,11 @@ public class CTokenizer extends Tokenizer<CToken, CParseContext> {
 	private final int ST_IDENT = 17; //変数
 	private final int ST_LBRA = 18; // [
 	private final int ST_RBRA = 19; // ]
+	//CV05
+	private final int ST_ASSIGN = 20; // =
+	private final int ST_SEMI = 21; // ;
+	private final int ST_INPUT = 22; // input
+	private final int ST_OUTPUT = 23; // output
 
 	private final char __EOF__ = (char)-1;
 
@@ -158,6 +163,14 @@ public class CTokenizer extends Tokenizer<CToken, CParseContext> {
 						startCol = colNo -1;
 						text.append(ch);
 						state = ST_IDENT;
+					} else if (ch == '='){
+						startCol = colNo - 1;
+						text.append(ch);
+						state = ST_ASSIGN;
+					} else if (ch == ';'){
+						startCol = colNo - 1;
+						text.append(ch);
+						state = ST_SEMI;
 					} else { // この時点で受理できない文字を読んだので，ST_ILL に遷移
 						startCol = colNo - 1;
 						text.append(ch);
@@ -346,6 +359,14 @@ public class CTokenizer extends Tokenizer<CToken, CParseContext> {
 						}
 						accept = true;
 					}
+					break;
+				case ST_ASSIGN: // =を読んだ
+					tk = new CToken(CToken.TK_ASSIGN, lineNo, startCol, "=");
+					accept = true;
+					break;
+				case ST_SEMI: // ;を読んだ
+					tk = new CToken(CToken.TK_SEMI, lineNo, startCol, ";");
+					accept = true;
 					break;
 					
 			}
