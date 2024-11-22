@@ -7,7 +7,7 @@ public class Program extends CParseRule {
 	// 新しく非終端記号に対応するクラスを作成する際は，必ず拡張BNF をコメントでつけること
 	// また，更新する際は，拡張BNFの「履歴」を残すこと（例えば，実験３まで：．．．． と 実験４から：．．． のように）
 	// program ::= expression EOF
-	CParseRule program;
+	CParseRule statement;
 
 	public Program(CParseContext pcx) {
 		super("Program");
@@ -21,24 +21,29 @@ public class Program extends CParseRule {
 
 	public void parse(CParseContext pcx) throws FatalErrorException {
 		// ここにやってくるときは、必ずisFirst()が満たされている
-		program = new Expression(pcx);
-		program.parse(pcx);
 		CTokenizer ct = pcx.getTokenizer();
 		CToken tk = ct.getCurrentToken(pcx);
+
+		while(Statement.isFirst(tk)){
+			statement = new Statement(pcx);
+			statement.parse(pcx);
+			tk = ct.getCurrentToken(pcx);
+		}
+		
 		if (tk.getType() != CToken.TK_EOF) {
 			pcx.fatalError(tk.toExplainString() + "プログラムの最後にゴミがあります");
 		}
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
-		if (program != null) {
-			program.semanticCheck(pcx);
+		if (statement != null) {
+			statement.semanticCheck(pcx);
 		}
 	}
 
 	public void codeGen(CParseContext pcx) throws FatalErrorException {
 		CodeGenCommon cgc = pcx.getCodeGenCommon();
-		if (program != null) {
+		if (statement != null) {
 			cgc.printStartComment(getBNF(getId()));
 			cgc.printInstCodeGen("", ".= 0x0100", "Program: 開始番地");
 			cgc.printInstCodeGen("", "JMP __START", "Program: __STARTに飛ぶ");
@@ -58,7 +63,7 @@ public class Program extends CParseRule {
 			cgc.printInstCodeGen("", "MOV #0x1000, R6", "Program: SP初期化");
 
 			// program コード本体
-			program.codeGen(pcx);
+			statement.codeGen(pcx);
 
 			// program 最後コード
 			cgc.printPopCodeGen("", "R0", "Program: 計算結果をR0に取り出す(計算結果確認用)");

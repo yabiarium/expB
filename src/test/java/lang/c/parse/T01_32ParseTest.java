@@ -63,6 +63,7 @@ public class T01_32ParseTest {
         ParseTestHelper<Program> programHelper = new ParseTestHelper<Program>(Program.class);
 
         // Program 正当例
+        @Ignore //CV05
         @Test
         public void accept() throws FatalErrorException {
             String[] testDataArr = {
@@ -79,6 +80,7 @@ public class T01_32ParseTest {
         // expression ::= term { expressionAdd | expressionSub } だから，expressionAdd や expressionSub
         // がないことのテストをしたくなるかもしれないが
         // { } は繰り返し回数0を許すため，exppressionAdd が0個でも acceptされるため意味がない
+        @Ignore //CV05
         @Test
         public void reject() throws FatalErrorException {
             TestDataAndErrMessage[] arr = {

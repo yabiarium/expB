@@ -1,5 +1,6 @@
 package lang.c.parse;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
@@ -113,6 +114,7 @@ public class T02_41SemanticCheckTest {
         SemanticCheckTestHelper<Program> programHelper = new SemanticCheckTestHelper<Program>(Program.class);
 
         // 個別acceptテスト
+        @Ignore //CV05
         @Test
         public void accept() throws FatalErrorException{
             programHelper.acceptTest("1+3");
@@ -120,6 +122,7 @@ public class T02_41SemanticCheckTest {
         }
     
         // リストacceptテスト
+        @Ignore //CV05
         @Test
         public void acceptList() throws FatalErrorException{
             String[] testDataArr = {
@@ -134,6 +137,7 @@ public class T02_41SemanticCheckTest {
         cv00 にはその例が存在しない
         以下は parse() で発生させた fatalError を キャッチしている（semanticCheck() には意味のないテスト)
          */
+        @Ignore //CV05
         @Test
         public void reject() throws FatalErrorException{
             // このテストは結局 parse() のエラーをチェックしているに過ぎない．
@@ -149,6 +153,7 @@ public class T02_41SemanticCheckTest {
         cv00 にはその例が存在しない
         以下は parse() で発生させた fatalError を キャッチしている（semanticCheck() には意味のないテスト)
          */
+        @Ignore //CV05
         @Test
         public void rejectList() throws FatalErrorException{
             // このテストは結局 parse() のエラーをチェックしているに過ぎない．

@@ -6,7 +6,7 @@ import lang.c.*;
 public class Statement extends CParseRule {
 	// 新しく非終端記号に対応するクラスを作成する際は，必ず拡張BNF をコメントでつけること
 	// また，更新する際は，拡張BNFの「履歴」を残すこと（例えば，実験３まで：．．．． と 実験４から：．．． のように）
-	CParseRule number, factorAmp, expression, addressToValue;
+	CParseRule statementAssign, statementInput, statementOutput;
 
 	public Statement(CParseContext pcx) {
 		super("Statement");
@@ -28,30 +28,15 @@ public class Statement extends CParseRule {
 		CTokenizer ct = pcx.getTokenizer();
 		CToken tk = ct.getCurrentToken(pcx);
 
-		if(FactorAmp.isFirst(tk)){
-			factorAmp = new FactorAmp(pcx);
-			factorAmp.parse(pcx);
-		}else if(tk.getType() == CToken.TK_LPAR){
-			// ( の次の字句を読む
-			tk = ct.getNextToken(pcx);
-			if(Expression.isFirst(tk)){
-				expression = new Expression(pcx);
-				expression.parse(pcx);
-				// expressionの解析後,現在の字句を読む
-				tk = ct.getCurrentToken(pcx);
-				if(tk.getType() != CToken.TK_RPAR){
-					pcx.fatalError(tk + ")がありません");
-				}
-				tk = ct.getNextToken(pcx);
-			}else{
-				pcx.fatalError(tk + "(の後ろはexpressionです");
-			}
-		}else if(Number.isFirst(tk)){
-			number = new Number(pcx);
-			number.parse(pcx);
+		if(StatementInput.isFirst(tk)){
+			statementInput = new StatementInput(pcx);
+			statementInput.parse(pcx);
+		}else if(StatementOutput.isFirst(tk)){
+			statementOutput = new StatementOutput(pcx);
+			statementOutput.parse(pcx);
 		}else{
-			addressToValue = new AddressToValue(pcx);
-			addressToValue.parse(pcx);
+			statementAssign = new StatementAssign(pcx);
+			statementAssign.parse(pcx);
 		}
 	}
 

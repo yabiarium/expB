@@ -26,19 +26,19 @@ public class StatementOutput extends CParseRule{
 		CTokenizer ct = pcx.getTokenizer();
 		CToken tk = ct.getCurrentToken(pcx);
 
-		// [ の次の字句を読む
+		// output の次の字句を読む
 		tk = ct.getNextToken(pcx);
 		if(Expression.isFirst(tk)){
 			expression = new Expression(pcx);
 			expression.parse(pcx);
-			// expressionの解析後,現在の字句を読む
+			// expression の解析後,現在の字句を読む
 			tk = ct.getCurrentToken(pcx);
-			if(tk.getType() != CToken.TK_RBRA){
-				pcx.fatalError(tk + "Array: ]がありません");
+			if(tk.getType() != CToken.TK_SEMI){
+				pcx.fatalError(tk + "StatementOutput: ;がありません");
 			}
 			tk = ct.getNextToken(pcx);
 		}else{
-			pcx.fatalError(tk + "Array: [の後ろはexpressionです");
+			pcx.fatalError(tk + "StatementOutput: outputの後ろはexpressionです");
 		}
 	}
 
