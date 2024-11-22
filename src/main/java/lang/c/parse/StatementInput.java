@@ -18,7 +18,7 @@ public class StatementInput extends CParseRule{
 	}
 
     public static boolean isFirst(CToken tk) {
-		return tk.getType() == CToken.TK_LBRA;
+		return tk.getType() == CToken.TK_INPUT;
 	}
 
 	public void parse(CParseContext pcx) throws FatalErrorException {

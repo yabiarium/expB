@@ -14,14 +14,12 @@ public class Statement extends CParseRule {
 	}
 
 	public static boolean isFirst(CToken tk) {
-		if(tk.getType() == CToken.TK_AMP){ // &
-			return FactorAmp.isFirst(tk);
-		}else if(tk.getType() == CToken.TK_LPAR){ // (
-			return true;
-		}else if(tk.getType() == CToken.TK_NUM){ // 数字
-			return Number.isFirst(tk);
+		if(tk.getType() == CToken.TK_INPUT){ // input
+			return StatementInput.isFirst(tk);
+		}else if(tk.getType() == CToken.TK_OUTPUT){ // output
+			return StatementOutput.isFirst(tk);
 		}else{ //上記以外
-			return AddressToValue.isFirst(tk);
+			return StatementAssign.isFirst(tk);
 		}
 	}
 

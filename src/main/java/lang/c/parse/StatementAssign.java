@@ -18,7 +18,7 @@ public class StatementAssign extends CParseRule{
 	}
 
     public static boolean isFirst(CToken tk) {
-		return tk.getType() == CToken.TK_LBRA;
+		return Primary.isFirst(tk);
 	}
 
 	public void parse(CParseContext pcx) throws FatalErrorException {
