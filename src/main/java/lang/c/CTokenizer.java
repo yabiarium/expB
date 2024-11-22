@@ -39,9 +39,7 @@ public class CTokenizer extends Tokenizer<CToken, CParseContext> {
 	private final int ST_RBRA = 19; // ]
 	//CV05
 	private final int ST_ASSIGN = 20; // =
-	private final int ST_SEMI = 21; // ;
-	private final int ST_INPUT = 22; // input
-	private final int ST_OUTPUT = 23; // output
+	private final int ST_SEMI = 21; // ; (inputとoutputなどの予約語はST_IDENT内で判断するため、新規状態は必要ない)
 
 	private final char __EOF__ = (char)-1;
 
@@ -306,8 +304,13 @@ public class CTokenizer extends Tokenizer<CToken, CParseContext> {
 						text.append(ch);
 					} else { // 変数の終わり
 						backChar(ch);
-						tk = new CToken(CToken.TK_IDENT, lineNo, startCol, text.toString());
-						accept = true;
+
+						//識別子を切り出す仕事が終わったら
+						String s = text.toString();
+						Integer i = (Integer)rule.get(s);
+						//切り出した字句が登録済みキーワードかどうかはiがnullかどうかで判定する
+						tk = new CToken(((i==null)?CToken.TK_IDENT:i.intValue()), lineNo, startCol, s);
+						accept=true;
 					}
 					break;
 				case ST_ZERO:
