@@ -38,8 +38,25 @@ public class PrimaryMult extends CParseRule{
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
+		if (variable != null) {
+			variable.semanticCheck(pcx);
+			
+			if(variable.getCType().getType() != CType.T_pint){
+				pcx.fatalError("PrimaryMult: semanticCheck(): *の後ろは[int*]です");
+			}
+			this.setCType(CType.getCType(CType.T_int));
+			this.setConstant(variable.isConstant());
+		}
 	}
 
 	public void codeGen(CParseContext pcx) throws FatalErrorException {
+		CodeGenCommon cgc = pcx.getCodeGenCommon();
+		cgc.printStartComment(getBNF(getId()));
+		if(variable != null){
+			variable.codeGen(pcx);
+			cgc.printPopCodeGen("", "R0", "PrimaryMult: variableのアドレス(番地)をpop");
+			cgc.printPushCodeGen("", "(R0)", "PrimaryMult: R0番地に格納されている値(間接参照)をpush");
+		}
+		cgc.printCompleteComment(getBNF(getId()));
 	}
 }

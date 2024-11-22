@@ -38,8 +38,44 @@ public class Variable extends CParseRule{
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
+		if(ident != null){
+			ident.semanticCheck(pcx);
+			int rt = ident.getCType().getType(); // identの型
+			
+			// 後ろに[]が存在しているのにidentがint,pintなのはおかしい
+			if(array != null){
+				if(rt == CType.T_int || rt == CType.T_pint){
+					pcx.fatalError("配列変数は T_int_array か T_pint_array です");
+				}
+				array.semanticCheck(pcx); //arrayの型によってvariableの型が変わることはない
+			}
+
+			// 配列型なのに後ろに[]が無いのはおかしい
+			if(rt == CType.T_int_array || rt == CType.T_pint_array){
+				if(array == null){
+					pcx.fatalError("配列型の後ろに[]がありません");
+				}
+				// variableより上の階層では配列型は存在しない
+				if (rt == CType.T_int_array) {
+					rt = CType.T_int;
+				}else if(rt == CType.T_pint_array){
+					rt = CType.T_pint;
+				}
+			}
+			this.setCType(CType.getCType(rt));
+			this.setConstant(ident.isConstant());
+		}
 	}
 
 	public void codeGen(CParseContext pcx) throws FatalErrorException {
+		CodeGenCommon cgc = pcx.getCodeGenCommon();
+		cgc.printStartComment(getBNF(getId()));
+		if(ident != null){
+			ident.codeGen(pcx);
+		}
+		if(array != null){
+			array.codeGen(pcx);
+		}
+		cgc.printCompleteComment(getBNF(getId()));
 	}
 }

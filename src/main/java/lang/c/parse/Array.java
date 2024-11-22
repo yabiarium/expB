@@ -44,8 +44,20 @@ public class Array extends CParseRule{
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
+		//左辺の型は、T_int_array か T_pint_arrayのみ
+		//↑この判定はvariableで行っているのでここでは何もする必要がない
 	}
 
 	public void codeGen(CParseContext pcx) throws FatalErrorException {
+		CodeGenCommon cgc = pcx.getCodeGenCommon();
+		cgc.printStartComment(getBNF(getId()));
+		if(expression != null){
+			expression.codeGen(pcx);
+			cgc.printPopCodeGen("", "R0", "expressionの結果をR0に取り出す");
+			cgc.printPopCodeGen("", "R1", "配列の先頭アドレスをR1に取り出す");
+			cgc.printInstCodeGen("", "ADD R1, R0", "相対アドレスを求める");
+			cgc.printPushCodeGen("", "R0", "");
+		}
+		cgc.printCompleteComment(getBNF(getId()));
 	}
 }

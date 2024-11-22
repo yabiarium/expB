@@ -29,8 +29,21 @@ public class AddressToValue extends CParseRule{
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
+		if (primary != null) {
+			primary.semanticCheck(pcx);
+			this.setCType(primary.getCType());
+			this.setConstant(primary.isConstant());
+		}
 	}
 
 	public void codeGen(CParseContext pcx) throws FatalErrorException {
+		CodeGenCommon cgc = pcx.getCodeGenCommon();
+		cgc.printStartComment(getBNF(getId()));
+		if (primary != null) {
+			primary.codeGen(pcx);
+			cgc.printPopCodeGen("","R0","");
+			cgc.printPushCodeGen("","(R0)","");
+		}
+		cgc.printCompleteComment(getBNF(getId()));
 	}
 }

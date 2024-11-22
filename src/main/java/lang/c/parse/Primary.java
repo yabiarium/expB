@@ -14,6 +14,7 @@ public class Primary extends CParseRule{
 	public Primary(CParseContext pcx) {
 		super("Primary");
 		//このノードは実は何もしない：下の2つのいずれかである．コード生成はそれぞれのノードにお任せ
+		//primaryは「番地」を表すもの，入れ物を特定する「名札」の機能をちゃんと持っている
 		setBNF("primary ::= primaryMult | variable"); //CV04~
 	}
 
@@ -40,8 +41,25 @@ public class Primary extends CParseRule{
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
+		if (primaryMult != null) {
+			primaryMult.semanticCheck(pcx);
+			this.setCType(primaryMult.getCType()); // primaryMult の型をそのままコピー
+			this.setConstant(primaryMult.isConstant());
+		}else if (variable != null) {
+			variable.semanticCheck(pcx);
+			this.setCType(variable.getCType());
+			this.setConstant(variable.isConstant());
+		}
 	}
 
 	public void codeGen(CParseContext pcx) throws FatalErrorException {
+		CodeGenCommon cgc = pcx.getCodeGenCommon();
+		cgc.printStartComment(getBNF(getId()));
+		if(primaryMult != null){
+			primaryMult.codeGen(pcx);
+		}else if(variable != null){
+			variable.codeGen(pcx);
+		}
+		cgc.printCompleteComment(getBNF(getId()));
 	}
 }

@@ -101,8 +101,8 @@ public class T02_41SemanticCheckTest {
         @Test
         public void subError() throws FatalErrorException{
             TestDataAndErrMessage[] teList = {
-                new TestDataAndErrMessage("2-&1", "左辺の型[int]と右辺の型[int*]は引けません"),
-                new TestDataAndErrMessage("&3-&1-&1", "左辺の型[int]と右辺の型[int*]は引けません"),
+                new TestDataAndErrMessage("2-&1", "左辺の型[int]から右辺の型[int*]は引けません"),
+                new TestDataAndErrMessage("&3-&1-&1", "左辺の型[int]から右辺の型[int*]は引けません"),
             }; 
             expressionHelper.rejectListTest(teList);
         }
