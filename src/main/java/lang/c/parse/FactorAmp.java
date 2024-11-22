@@ -49,6 +49,9 @@ public class FactorAmp extends CParseRule {
 			this.setConstant(isConstant());
 		} else if (primary != null){
 			primary.semanticCheck(pcx);
+			if(primary.getCType().getType() != CType.T_int){
+				pcx.fatalError("&の後ろはT_intです["+primary.getCType().toString()+"]");
+			}
 			this.setCType(CType.getCType(CType.T_pint));
 			this.setConstant(isConstant());
 		}

@@ -41,10 +41,12 @@ public class ExpressionSub extends CParseRule {
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
 		// 引き算の型計算規則
 		final int s[][] = {
-				// T_err T_int T_pint
-				{ CType.T_err, CType.T_err, CType.T_err }, // T_err
-				{ CType.T_err, CType.T_int, CType.T_err }, // T_int
-				{ CType.T_err, CType.T_pint, CType.T_int}, // T_pint
+				// T_err T_int T_pint T_int[] T_pint[]
+				{ CType.T_err, CType.T_err, CType.T_err, CType.T_err, CType.T_err}, // T_err
+				{ CType.T_err, CType.T_int, CType.T_err, CType.T_err, CType.T_err}, // T_int
+				{ CType.T_err, CType.T_pint, CType.T_int, CType.T_err, CType.T_err}, // T_pint
+				{ CType.T_err, CType.T_err, CType.T_err, CType.T_err, CType.T_err}, // T_int[]
+				{ CType.T_err, CType.T_err, CType.T_err, CType.T_err, CType.T_err}, // T_pint[]
 		};
 		if (left != null && right != null) {
 			left.semanticCheck(pcx);
@@ -55,7 +57,7 @@ public class ExpressionSub extends CParseRule {
 			String lts = left.getCType().toString();
 			String rts = right.getCType().toString();
 			if (nt == CType.T_err) {
-				pcx.fatalError(op + ": ExpressionSub: semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]は引けません");
+				pcx.fatalError(op + ": ExpressionSub: semanticCheck(): 左辺の型[" + lts + "]から右辺の型[" + rts + "]は引けません");
 			}
 			this.setCType(CType.getCType(nt));
 			this.setConstant(left.isConstant() && right.isConstant()); // -の左右両方が定数のときだけ定数

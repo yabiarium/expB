@@ -71,6 +71,10 @@ public class UnsignedFactor extends CParseRule {
 			expression.semanticCheck(pcx);
 			this.setCType(expression.getCType());
 			this.setConstant(expression.isConstant());
+		}else{
+			addressToValue.semanticCheck(pcx);
+			this.setCType(addressToValue.getCType());
+			this.setConstant(addressToValue.isConstant());
 		}
 	}
 
@@ -83,6 +87,8 @@ public class UnsignedFactor extends CParseRule {
 			number.codeGen(pcx);
 		}else if (expression != null){
 			expression.codeGen(pcx);
+		}else if (addressToValue != null){
+			addressToValue.codeGen(pcx);
 		}
 		cgc.printCompleteComment(getBNF(getId()));
 	}

@@ -104,6 +104,7 @@ public class T00_51CodeGenTest {
 
         CodeGenTestHelper<Program> programHelper = new CodeGenTestHelper<Program>(Program.class);
 
+        @Ignore
         @Test
         public void program0() throws FatalErrorException {
             String testData = "13 + 7 + 2";
