@@ -5,6 +5,7 @@ import lang.c.CParseContext;
 import lang.c.CParseRule;
 import lang.c.CToken;
 import lang.c.CTokenizer;
+import lang.c.CType;
 //import lang.c.CType;
 import lang.c.CodeGenCommon;
 
@@ -51,8 +52,23 @@ public class StatementAssign extends CParseRule{
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
-		//左辺の型は、T_int_array か T_pint_arrayのみ
-		//↑この判定はvariableで行っているのでここでは何もする必要がない
+		if (primary != null) {
+			primary.semanticCheck(pcx);
+			expression.semanticCheck(pcx); //parse()が通ってるならprimaryとセットで存在するはず
+
+			int lt = primary.getCType().getType(); //左辺の型
+			int rt = expression.getCType().getType(); //右辺の型
+			
+			if(lt == CType.T_int && rt == CType.T_pint){
+				pcx.fatalError("StatementAssign: [int]に[*int]は代入できません");
+			}else if(lt == CType.T_pint && rt == CType.T_int){
+				pcx.fatalError("StatementAssign: [*int]に[int]は代入できません");
+			}else if(primary.isConstant()){
+				pcx.fatalError("定数には代入できません");
+			}
+			this.setCType(CType.getCType(lt));
+			this.setConstant(primary.isConstant());
+		}
 	}
 
 	public void codeGen(CParseContext pcx) throws FatalErrorException {

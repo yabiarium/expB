@@ -5,6 +5,7 @@ import lang.c.CParseContext;
 import lang.c.CParseRule;
 import lang.c.CToken;
 import lang.c.CTokenizer;
+import lang.c.CType;
 //import lang.c.CType;
 import lang.c.CodeGenCommon;
 
@@ -43,8 +44,10 @@ public class StatementOutput extends CParseRule{
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
-		//左辺の型は、T_int_array か T_pint_arrayのみ
-		//↑この判定はvariableで行っているのでここでは何もする必要がない
+		// if (expression != null) {
+		// 	this.setCType(CType.getCType(expression.getCType().getType()));
+		// 	this.setConstant(expression.isConstant());
+		// }
 	}
 
 	public void codeGen(CParseContext pcx) throws FatalErrorException {

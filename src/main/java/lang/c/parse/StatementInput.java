@@ -5,6 +5,7 @@ import lang.c.CParseContext;
 import lang.c.CParseRule;
 import lang.c.CToken;
 import lang.c.CTokenizer;
+import lang.c.CType;
 //import lang.c.CType;
 import lang.c.CodeGenCommon;
 
@@ -43,8 +44,15 @@ public class StatementInput extends CParseRule{
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
-		//左辺の型は、T_int_array か T_pint_arrayのみ
-		//↑この判定はvariableで行っているのでここでは何もする必要がない
+		if (primary != null) {
+			primary.semanticCheck(pcx);
+			
+			if(primary.isConstant()){
+				pcx.fatalError("定数には代入できません");
+			}
+			this.setCType(CType.getCType(primary.getCType().getType()));
+			this.setConstant(primary.isConstant());
+		}
 	}
 
 	public void codeGen(CParseContext pcx) throws FatalErrorException {
