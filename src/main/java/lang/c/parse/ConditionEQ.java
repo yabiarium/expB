@@ -13,7 +13,7 @@ public class ConditionEQ  extends CParseRule {
 	}
 
 	public static boolean isFirst(CToken tk) {
-		return Statement.isFirst(tk) || tk.getType() == CToken.TK_EOF;
+		return tk.getType() == CToken.TK_EQ;
 	}
 
 	public void parse(CParseContext pcx) throws FatalErrorException {

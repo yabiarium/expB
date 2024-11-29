@@ -5,7 +5,7 @@ import lang.c.*;
 
 public class Program2 extends CParseRule {
 	// program ::= expression EOF
-	CParseRule statement;
+	CParseRule condition;
 
 	public Program2(CParseContext pcx) {
 		super("Program2");
@@ -13,7 +13,7 @@ public class Program2 extends CParseRule {
 	}
 
 	public static boolean isFirst(CToken tk) {
-		return Statement.isFirst(tk) || tk.getType() == CToken.TK_EOF;
+		return Condition.isFirst(tk);
 	}
 
 	public void parse(CParseContext pcx) throws FatalErrorException {
