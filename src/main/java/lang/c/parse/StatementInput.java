@@ -58,12 +58,12 @@ public class StatementInput extends CParseRule{
 	public void codeGen(CParseContext pcx) throws FatalErrorException {
 		CodeGenCommon cgc = pcx.getCodeGenCommon();
 		cgc.printStartComment(getBNF(getId()));
-		if(expression != null){
-			expression.codeGen(pcx);
-			cgc.printPopCodeGen("", "R0", "expressionの結果をR0に取り出す");
-			cgc.printPopCodeGen("", "R1", "配列の先頭アドレスをR1に取り出す");
-			cgc.printInstCodeGen("", "ADD R1, R0", "相対アドレスを求める");
-			cgc.printPushCodeGen("", "R0", "");
+		if(primary != null){
+			primary.codeGen(pcx);
+
+			cgc.printInstCodeGen("", "MOV #0xFFE0, R1", "MappedIOをR1に");
+			cgc.printPopCodeGen("", "R0", "primaryの結果をR0に取り出す");
+			cgc.printInstCodeGen("", "MOV (R1), (R0)", "LEDから入力");
 		}
 		cgc.printCompleteComment(getBNF(getId()));
 	}

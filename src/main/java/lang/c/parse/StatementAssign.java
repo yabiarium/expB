@@ -74,12 +74,13 @@ public class StatementAssign extends CParseRule{
 	public void codeGen(CParseContext pcx) throws FatalErrorException {
 		CodeGenCommon cgc = pcx.getCodeGenCommon();
 		cgc.printStartComment(getBNF(getId()));
-		if(expression != null){
-			expression.codeGen(pcx);
-			cgc.printPopCodeGen("", "R0", "expressionの結果をR0に取り出す");
-			cgc.printPopCodeGen("", "R1", "配列の先頭アドレスをR1に取り出す");
-			cgc.printInstCodeGen("", "ADD R1, R0", "相対アドレスを求める");
-			cgc.printPushCodeGen("", "R0", "");
+		if(primary != null){
+			primary.codeGen(pcx); //左辺：番地をスタックに積む
+			expression.codeGen(pcx); //右辺：代入するものをスタックに積む
+
+			cgc.printPopCodeGen("", "R1", "StatementAssign: 右辺値取り出しす");
+			cgc.printPopCodeGen("", "R0", "StatementAssign; 左辺番地取り出し");
+			cgc.printInstCodeGen("", "MOV R1, (R0)", "StatementAssign; 代入実行");
 		}
 		cgc.printCompleteComment(getBNF(getId()));
 	}

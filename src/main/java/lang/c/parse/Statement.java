@@ -41,36 +41,34 @@ public class Statement extends CParseRule {
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
-		if (factorAmp != null) {
-			factorAmp.semanticCheck(pcx);
-			this.setCType(factorAmp.getCType()); // factorAmp の型をそのままコピー
-			this.setConstant(factorAmp.isConstant());
-		}else if (number != null) {
-			number.semanticCheck(pcx);
-			this.setCType(number.getCType()); // number の型をそのままコピー
-			this.setConstant(number.isConstant());
-		}else if(expression != null){
-			expression.semanticCheck(pcx);
-			this.setCType(expression.getCType());
-			this.setConstant(expression.isConstant());
-		}else{
-			addressToValue.semanticCheck(pcx);
-			this.setCType(addressToValue.getCType());
-			this.setConstant(addressToValue.isConstant());
+		if (statementInput != null) {
+			statementInput.semanticCheck(pcx);
+			this.setCType(statementInput.getCType()); // statementInput の型をそのままコピー
+			this.setConstant(statementInput.isConstant());
+		}
+		if (statementOutput != null) {
+			statementOutput.semanticCheck(pcx);
+			this.setCType(statementOutput.getCType()); // statementOutput の型をそのままコピー
+			this.setConstant(statementOutput.isConstant());
+		}
+		if(statementAssign != null){
+			statementAssign.semanticCheck(pcx);
+			this.setCType(statementAssign.getCType());
+			this.setConstant(statementAssign.isConstant());
 		}
 	}
 
 	public void codeGen(CParseContext pcx) throws FatalErrorException {
 		CodeGenCommon cgc = pcx.getCodeGenCommon();
 		cgc.printStartComment(getBNF(getId()));
-		if (factorAmp != null) {
-			factorAmp.codeGen(pcx);
-		}else if (number != null) {
-			number.codeGen(pcx);
-		}else if (expression != null){
-			expression.codeGen(pcx);
-		}else if (addressToValue != null){
-			addressToValue.codeGen(pcx);
+		if (statementInput != null) {
+			statementInput.codeGen(pcx);
+		}
+		if (statementOutput != null) {
+			statementOutput.codeGen(pcx);
+		}
+		if (statementAssign != null){
+			statementAssign.codeGen(pcx);
 		}
 		cgc.printCompleteComment(getBNF(getId()));
 	}

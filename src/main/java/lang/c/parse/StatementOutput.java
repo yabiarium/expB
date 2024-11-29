@@ -55,10 +55,10 @@ public class StatementOutput extends CParseRule{
 		cgc.printStartComment(getBNF(getId()));
 		if(expression != null){
 			expression.codeGen(pcx);
-			cgc.printPopCodeGen("", "R0", "expressionの結果をR0に取り出す");
-			cgc.printPopCodeGen("", "R1", "配列の先頭アドレスをR1に取り出す");
-			cgc.printInstCodeGen("", "ADD R1, R0", "相対アドレスを求める");
-			cgc.printPushCodeGen("", "R0", "");
+
+			cgc.printPopCodeGen("", "R1", "expressionの結果をR0に取り出す");
+			cgc.printInstCodeGen("", "MOV #0xFFE0, R0", "MappedIOをR0に");
+			cgc.printInstCodeGen("", "MOV R1, (R0)", "LEDに出力");
 		}
 		cgc.printCompleteComment(getBNF(getId()));
 	}
