@@ -37,6 +37,9 @@ public class CTokenizer extends Tokenizer<CToken, CParseContext> {
 	private final int ST_IDENT = 17; //変数
 	private final int ST_LBRA = 18; // [
 	private final int ST_RBRA = 19; // ]
+	//CV05
+	private final int ST_ASSIGN = 20; // =
+	private final int ST_SEMI = 21; // ; (inputとoutputなどの予約語はST_IDENT内で判断するため、新規状態は必要ない)
 
 	private final char __EOF__ = (char)-1;
 
@@ -158,6 +161,14 @@ public class CTokenizer extends Tokenizer<CToken, CParseContext> {
 						startCol = colNo -1;
 						text.append(ch);
 						state = ST_IDENT;
+					} else if (ch == '='){
+						startCol = colNo - 1;
+						text.append(ch);
+						state = ST_ASSIGN;
+					} else if (ch == ';'){
+						startCol = colNo - 1;
+						text.append(ch);
+						state = ST_SEMI;
 					} else { // この時点で受理できない文字を読んだので，ST_ILL に遷移
 						startCol = colNo - 1;
 						text.append(ch);
@@ -293,8 +304,13 @@ public class CTokenizer extends Tokenizer<CToken, CParseContext> {
 						text.append(ch);
 					} else { // 変数の終わり
 						backChar(ch);
-						tk = new CToken(CToken.TK_IDENT, lineNo, startCol, text.toString());
-						accept = true;
+
+						//識別子を切り出す仕事が終わったら
+						String s = text.toString();
+						Integer i = (Integer)rule.get(s);
+						//切り出した字句が登録済みキーワードかどうかはiがnullかどうかで判定する
+						tk = new CToken(((i==null)?CToken.TK_IDENT:i.intValue()), lineNo, startCol, s);
+						accept=true;
 					}
 					break;
 				case ST_ZERO:
@@ -346,6 +362,14 @@ public class CTokenizer extends Tokenizer<CToken, CParseContext> {
 						}
 						accept = true;
 					}
+					break;
+				case ST_ASSIGN: // =を読んだ
+					tk = new CToken(CToken.TK_ASSIGN, lineNo, startCol, "=");
+					accept = true;
+					break;
+				case ST_SEMI: // ;を読んだ
+					tk = new CToken(CToken.TK_SEMI, lineNo, startCol, ";");
+					accept = true;
 					break;
 					
 			}

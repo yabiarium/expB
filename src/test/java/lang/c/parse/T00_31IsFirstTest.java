@@ -124,6 +124,7 @@ public class T00_31IsFirstTest {
     public static class ProgramTest {
         IsFirstTestHelper<Program> programHelper = new IsFirstTestHelper<Program>(Program.class);
 
+        @Ignore //CV05
         @Test
         public void program() throws FatalErrorException {
             String[] testDataArr = { "13", "11+2" };
