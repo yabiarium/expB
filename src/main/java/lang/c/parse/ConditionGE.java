@@ -5,10 +5,11 @@ import lang.c.*;
 
 public class ConditionGE  extends CParseRule {
 	// program ::= expression EOF
-	CParseRule statement;
+	CParseRule left, expression;
 
-	public ConditionGE(CParseContext pcx) {
+	public ConditionGE(CParseContext pcx, CParseRule left) {
 		super("ConditionGE");
+		this.left = left;
 		setBNF("conditionGE ::= GE expression"); //CV06~
 	}
 
@@ -17,6 +18,19 @@ public class ConditionGE  extends CParseRule {
 	}
 
 	public void parse(CParseContext pcx) throws FatalErrorException {
+		CTokenizer ct = pcx.getTokenizer();
+		CToken tk = ct.getCurrentToken(pcx);
+
+		// LT >= の次の字句を読む
+		tk = ct.getNextToken(pcx);
+		if(Expression.isFirst(tk)){
+			expression = new Expression(pcx);
+			expression.parse(pcx);
+			
+			tk = ct.getNextToken(pcx);
+		}else{
+			pcx.fatalError(tk + "ConditionGE: >=の後ろはexpressionです");
+		}
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {

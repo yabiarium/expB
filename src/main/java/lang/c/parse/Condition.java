@@ -5,7 +5,8 @@ import lang.c.*;
 
 public class Condition extends CParseRule {
 	// program ::= expression EOF
-	CParseRule statement;
+	CParseRule expression, conditionXX;
+	CToken conTrue, conFalse;
 
 	public Condition(CParseContext pcx) {
 		super("Condition");
@@ -17,6 +18,31 @@ public class Condition extends CParseRule {
 	}
 
 	public void parse(CParseContext pcx) throws FatalErrorException {
+		CTokenizer ct = pcx.getTokenizer();
+		CToken tk = ct.getCurrentToken(pcx);
+		
+		if(tk.getType() == CToken.TK_TRUE){
+			conTrue = tk;
+			tk = ct.getNextToken(pcx);
+		}if(tk.getType() == CToken.TK_FALSE){
+			conFalse = tk;
+			tk = ct.getNextToken(pcx);
+		}if(Expression.isFirst(tk)){
+			expression = new Expression(pcx);
+			expression.parse(pcx);
+			
+			tk = ct.getCurrentToken(pcx);
+			if(ConditionLT.isFirst(tk)) conditionXX = new ConditionLT(pcx, expression);
+			if(ConditionLE.isFirst(tk)) conditionXX = new ConditionLE(pcx, expression);
+			if(ConditionGT.isFirst(tk)) conditionXX = new ConditionGT(pcx, expression);
+			if(ConditionGE.isFirst(tk)) conditionXX = new ConditionGE(pcx, expression);
+			if(ConditionEQ.isFirst(tk)) conditionXX = new ConditionEQ(pcx, expression);
+			if(ConditionNE.isFirst(tk)) conditionXX = new ConditionNE(pcx, expression);
+
+			if(conditionXX != null){
+				conditionXX.parse(pcx);
+			}
+		}
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
