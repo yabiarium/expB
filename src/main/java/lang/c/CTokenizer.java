@@ -40,6 +40,10 @@ public class CTokenizer extends Tokenizer<CToken, CParseContext> {
 	//CV05
 	private final int ST_ASSIGN = 20; // =
 	private final int ST_SEMI = 21; // ; (inputとoutputなどの予約語はST_IDENT内で判断するため、新規状態は必要ない)
+	//CV06  
+	private final int ST_LT = 22; // <    TK_LE <=
+	private final int ST_GT = 23; // >    ST_GE >= 
+	private final int ST_EXCL = 24; // !=   TK_EQ == はST_ASSIGNから分岐
 
 	private final char __EOF__ = (char)-1;
 
@@ -169,6 +173,18 @@ public class CTokenizer extends Tokenizer<CToken, CParseContext> {
 						startCol = colNo - 1;
 						text.append(ch);
 						state = ST_SEMI;
+					} else if (ch == '<'){
+						startCol = colNo - 1;
+						text.append(ch);
+						state = ST_LT;
+					} else if (ch == '>'){
+						startCol = colNo - 1;
+						text.append(ch);
+						state = ST_GT;
+					} else if (ch == '!'){
+						startCol = colNo - 1;
+						text.append(ch);
+						state = ST_EXCL;
 					} else { // この時点で受理できない文字を読んだので，ST_ILL に遷移
 						startCol = colNo - 1;
 						text.append(ch);
@@ -364,12 +380,48 @@ public class CTokenizer extends Tokenizer<CToken, CParseContext> {
 					}
 					break;
 				case ST_ASSIGN: // =を読んだ
-					tk = new CToken(CToken.TK_ASSIGN, lineNo, startCol, "=");
+					ch = readChar();
+					if(ch == '='){
+						tk = new CToken(CToken.TK_EQ, lineNo, startCol, "==");
+					}else{
+						backChar(ch);
+						tk = new CToken(CToken.TK_ASSIGN, lineNo, startCol, "=");
+					}
 					accept = true;
 					break;
 				case ST_SEMI: // ;を読んだ
 					tk = new CToken(CToken.TK_SEMI, lineNo, startCol, ";");
 					accept = true;
+					break;
+				case ST_LT:
+					ch = readChar();
+					if(ch == '='){
+						tk = new CToken(CToken.TK_LE, lineNo, startCol, "<=");
+					}else{
+						backChar(ch);
+						tk = new CToken(CToken.TK_LT, lineNo, startCol, "<");
+					}
+					accept = true;
+					break;
+				case ST_GT:
+					ch = readChar();
+					if(ch == '='){
+						tk = new CToken(CToken.TK_GE, lineNo, startCol, ">=");
+					}else{
+						backChar(ch);
+						tk = new CToken(CToken.TK_GT, lineNo, startCol, ">");
+					}
+					accept = true;
+					break;
+				case ST_EXCL:
+					ch = readChar();
+					if(ch != '='){
+						backChar(ch);
+						state = ST_ILL;
+					}else{
+						tk = new CToken(CToken.TK_NE, lineNo, startCol, "!=");
+						accept = true;
+					}
 					break;
 					
 			}
