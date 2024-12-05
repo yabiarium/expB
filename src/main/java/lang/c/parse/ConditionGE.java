@@ -5,6 +5,7 @@ import lang.c.*;
 
 public class ConditionGE  extends CParseRule {
 	// program ::= expression EOF
+	CToken op;
 	CParseRule left, expression;
 
 	public ConditionGE(CParseContext pcx, CParseRule left) {
@@ -20,6 +21,7 @@ public class ConditionGE  extends CParseRule {
 	public void parse(CParseContext pcx) throws FatalErrorException {
 		CTokenizer ct = pcx.getTokenizer();
 		CToken tk = ct.getCurrentToken(pcx);
+		op = ct.getCurrentToken(pcx);
 
 		// LT >= の次の字句を読む
 		tk = ct.getNextToken(pcx);
@@ -34,6 +36,21 @@ public class ConditionGE  extends CParseRule {
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
+		if (left != null && expression != null){
+			left.semanticCheck(pcx);
+			expression.semanticCheck(pcx);
+			
+			int lt = left.getCType().getType();//<の左辺の型
+			int rt = expression.getCType().getType();//<の右辺の型
+			String lts = left.getCType().toString();
+			String rts = expression.getCType().toString();
+
+			if (lt != rt){
+				pcx.fatalError(op+":左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません");
+			}
+			this.setCType(CType.getCType(CType.T_bool));
+			this.setConstant(true);
+		}
 	}
 
 	public void codeGen(CParseContext pcx) throws FatalErrorException {

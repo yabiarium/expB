@@ -17,6 +17,15 @@ public class Program2 extends CParseRule {
 	}
 
 	public void parse(CParseContext pcx) throws FatalErrorException {
+		CTokenizer ct = pcx.getTokenizer();
+		CToken tk = ct.getCurrentToken(pcx);
+
+		if(Condition.isFirst(tk)){
+			condition = new Condition(pcx);
+			condition.parse(pcx);
+			
+			tk = ct.getNextToken(pcx);
+		}
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {

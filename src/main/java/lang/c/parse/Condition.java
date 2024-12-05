@@ -46,9 +46,29 @@ public class Condition extends CParseRule {
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
+		if(conTrue != null){
+			this.setCType(CType.getCType(CType.T_bool));
+			this.setConstant(true);
+		}if(conFalse != null){
+			this.setCType(CType.getCType(CType.T_bool));
+			this.setConstant(true);
+		}if (conditionXX != null) {
+			conditionXX.semanticCheck(pcx);
+			this.setCType(conditionXX.getCType()); // expression の型をそのままコピー
+			this.setConstant(conditionXX.isConstant());
+		}
 	}
 
 	public void codeGen(CParseContext pcx) throws FatalErrorException {
 		CodeGenCommon cgc = pcx.getCodeGenCommon();
+		cgc.printStartComment(getBNF(getId()));
+		if(conTrue != null){
+			cgc.printPushCodeGen("","#"+CToken.TRUE_NUM,"true をスタックに積む");
+		}if(conFalse != null){
+			cgc.printPushCodeGen("","#"+CToken.FALSE_NUM,"false をスタックに積む");
+		}if (conditionXX != null) { //expression != null
+			conditionXX.codeGen(pcx);
+		}
+		cgc.printCompleteComment(getBNF(getId()));
 	}
 }
