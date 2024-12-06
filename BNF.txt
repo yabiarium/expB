@@ -1,0 +1,10 @@
+
+CV07~
+
+statement ::= statementAssign | statementInput | statementOutput | statementIf | statementWhile | statementBlock
+statementIf ::= IF LPAR condition RPAR LCUR { statement } RCUR [ ELSE ( statementIf | LCUR { statement } RCUR )]
+    statementIf ::= IF conditionBlock statementBlock [ ELSE ( statementIf | LCUR { statement } RCUR )]
+
+statementWhile ::= WHILE conditionBlock statementBlock
+statementBlock ::= LCUR { statement } RCUR
+conditionBlock ::= LPAR condition RPAR
