@@ -55,5 +55,31 @@ public class ConditionNE  extends CParseRule {
 
 	public void codeGen(CParseContext pcx) throws FatalErrorException {
 		CodeGenCommon cgc = pcx.getCodeGenCommon();
+
+		if (left != null && expression != null){
+			cgc.printStartComment(getBNF(getId()));
+			left.codeGen(pcx);//左部分木のコード生成を頼む
+			expression.codeGen(pcx);//右部分木のコード生成を頼む
+
+			int seq = pcx.getSeqId("ConditionNE");
+			String seqLabel = "NE"+seq;
+			String lt = left.getCType().toString();
+			String rt = expression.getCType().toString();
+			String t = getCType().toString();
+
+			cgc.printPopCodeGen("","R0","ConditionNE:右辺の値を取り出す:["+rt+"]");
+			cgc.printPopCodeGen("","R1","ConditionNE:左辺の値を取り出す:["+lt+"]");
+			cgc.printInstCodeGen("","MOV #"+CToken.FALSE_NUM+",R2","ConditionNE:R2にfalse"+CToken.FALSE_NUM+"をセット");
+			cgc.printInstCodeGen("","CMP R0,R1","ConditionNE:R1==R0 ==>>"+"R1-R0==0(zeroflag)?");
+			cgc.printInstCodeGen("","BRZ "+seqLabel,"ConditionNE:zeroだったら"+seqLabel+"にジャンプ");
+			cgc.printInstCodeGen("","CLR R2","ConditionNE:zeroでなかったらtrue"+CToken.TRUE_NUM+"をR2にセット");
+			//もし，CToken.FALSE_NUMを"0xFFFF"で設定している場合は上の行は↓で書き換えること
+			//"0x0000"の場合も以下のコードでもいいが，CLR R2のほうが1WORDで実現できる（下記コードは2WORD使う)
+			//cgc.printInstCodeGen("","MOV #"+CToken.FALSE_NUM+",R2","ConditionLT:negativeじゃなかったら"+CToken.FALSE_NUM+"をR2にセット");
+			cgc.printLabel(seqLabel+":","ConditionNE:zeroだったときのジャンプ先");
+			cgc.printPushCodeGen("","R2","ConditionNE:条件式評価結果R2["+t+"]をスタックに積む");
+			cgc.printCompleteComment(getBNF(getId()));
+		}
 	}
+
 }

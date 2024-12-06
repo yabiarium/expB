@@ -59,6 +59,7 @@ public class Condition extends CParseRule {
 		}
 	}
 
+	
 	public void codeGen(CParseContext pcx) throws FatalErrorException {
 		CodeGenCommon cgc = pcx.getCodeGenCommon();
 		cgc.printStartComment(getBNF(getId()));
