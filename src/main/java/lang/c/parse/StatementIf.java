@@ -8,11 +8,11 @@ public class StatementIf extends CParseRule {
 
 	public StatementIf(CParseContext pcx) {
 		super("StatementIf");
-		setBNF("statementIf ::= IF conditionBlock statementBlock [ ELSE ( statementIf | LCUR { statement } RCUR )]"); //CV07~
+		setBNF("statementIf ::= IF conditionBlock statement [ ELSE ( statementIf | statement )]"); //CV07~
 	}
 
 	public static boolean isFirst(CToken tk) {
-        return true;
+        return tk.getType() == CToken.TK_IF;
 	}
 
 	public void parse(CParseContext pcx) throws FatalErrorException {

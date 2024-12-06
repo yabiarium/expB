@@ -8,11 +8,11 @@ public class StatementWhile extends CParseRule {
 
 	public StatementWhile(CParseContext pcx) {
 		super("StatementWhile");
-		setBNF("statementWhile ::= WHILE conditionBlock statementBlock"); //CV07~
+		setBNF("statementWhile ::= WHILE conditionBlock statement"); //CV07~
 	}
 
 	public static boolean isFirst(CToken tk) {
-        return true;
+        return tk.getType() == CToken.TK_WHILE;
 	}
 
 	public void parse(CParseContext pcx) throws FatalErrorException {

@@ -6,7 +6,7 @@ import lang.c.*;
 public class Statement extends CParseRule {
 	// 新しく非終端記号に対応するクラスを作成する際は，必ず拡張BNF をコメントでつけること
 	// また，更新する際は，拡張BNFの「履歴」を残すこと（例えば，実験３まで：．．．． と 実験４から：．．． のように）
-	CParseRule statementAssign, statementInput, statementOutput;
+	CParseRule statementAssign, statementInput, statementOutput, statementIf, statementWhile, statementBlock;
 
 	public Statement(CParseContext pcx) {
 		super("Statement");
@@ -19,6 +19,12 @@ public class Statement extends CParseRule {
 			return StatementInput.isFirst(tk);
 		}else if(tk.getType() == CToken.TK_OUTPUT){ // output
 			return StatementOutput.isFirst(tk);
+		}else if(tk.getType() == CToken.TK_IF){ //if
+			return StatementIf.isFirst(tk);
+		}else if(tk.getType() == CToken.TK_WHILE){ //while
+			return StatementWhile.isFirst(tk);
+		}else if(tk.getType() == CToken.TK_LCUR){ //{
+			return StatementBlock.isFirst(tk);
 		}else{ //上記以外
 			return StatementAssign.isFirst(tk);
 		}

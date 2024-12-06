@@ -12,7 +12,7 @@ public class StatementBlock extends CParseRule {
 	}
 
 	public static boolean isFirst(CToken tk) {
-        return true;
+        return tk.getType() == CToken.TK_LCUR;
 	}
 
 	public void parse(CParseContext pcx) throws FatalErrorException {
