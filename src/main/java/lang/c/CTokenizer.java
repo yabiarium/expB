@@ -44,6 +44,9 @@ public class CTokenizer extends Tokenizer<CToken, CParseContext> {
 	private final int ST_LT = 22; // <    TK_LE <=
 	private final int ST_GT = 23; // >    ST_GE >= 
 	private final int ST_EXCL = 24; // !=   TK_EQ == はST_ASSIGNから分岐
+	//CV07
+	private final int ST_LCUR = 25; // {
+	private final int ST_RCUR = 26; // }
 
 	private final char __EOF__ = (char)-1;
 
@@ -160,6 +163,14 @@ public class CTokenizer extends Tokenizer<CToken, CParseContext> {
 						startCol = colNo - 1;
 						text.append(ch);
 						state = ST_RBRA;
+					} else if (ch == '{') {
+						startCol = colNo - 1;
+						text.append(ch);
+						state = ST_LCUR;
+					} else if (ch == '}') {
+						startCol = colNo - 1;
+						text.append(ch);
+						state = ST_RCUR;
 					} else if (ch == '_' || Character.isAlphabetic(ch)) {
 						//変数ident １文字目は，’_’と英字(a-z A-Z)
 						startCol = colNo -1;
@@ -311,6 +322,14 @@ public class CTokenizer extends Tokenizer<CToken, CParseContext> {
 					break;
 				case ST_RBRA: // ]を読んだ
 					tk = new CToken(CToken.TK_RBRA, lineNo, startCol, "]");
+					accept = true;
+					break;
+				case ST_LCUR: // {を読んだ
+					tk = new CToken(CToken.TK_LCUR, lineNo, startCol, "{");
+					accept = true;
+					break;
+				case ST_RCUR: // }を読んだ
+					tk = new CToken(CToken.TK_RCUR, lineNo, startCol, "}");
 					accept = true;
 					break;
 				case ST_IDENT: // 変数の開始
