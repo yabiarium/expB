@@ -149,7 +149,7 @@ public class T06_51CodeGenTest {
                         MOV #0x0000, R2     ;;    R2に false を積む
                         CMP R0, R1          ;;    R1==R0  ==>>   R1-R0==0 (zeroか判定すればいい)
                         BRZ NE1             ;;    R1==R0なら LE1 に分岐
-                        CLR R2              ;;    R2 を true に
+                        MOV #0x0001, R2     ;;    R2 を true に
                     NE1:                    ;;    false(R1==R0) だったときのジャンプ先 (ここに飛ぶときは R2 は false)
                         MOV R2,(R6)+        ;;    真偽結果をスタックに積む
                     """;
