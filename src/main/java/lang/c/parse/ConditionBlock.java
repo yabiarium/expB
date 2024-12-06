@@ -4,7 +4,7 @@ import lang.*;
 import lang.c.*;
 
 public class ConditionBlock  extends CParseRule {
-	CParseRule expression;
+	CParseRule condition;
 
 	public ConditionBlock(CParseContext pcx) {
 		super("ConditionBlock");
@@ -16,6 +16,23 @@ public class ConditionBlock  extends CParseRule {
 	}
 
 	public void parse(CParseContext pcx) throws FatalErrorException {
+        CTokenizer ct = pcx.getTokenizer();
+		CToken tk = ct.getCurrentToken(pcx);
+
+        // ( の次のトークンを読む
+        tk = ct.getNextToken(pcx);
+		if(Condition.isFirst(tk)){
+			condition = new Condition(pcx);
+            condition.parse(pcx);
+		}else{
+            pcx.fatalError(tk + "ConditionBlock: parse(): (の後ろはconditionです");
+        }
+
+        // condition の次のトークンを読む
+        tk = ct.getCurrentToken(pcx);
+		if(tk.getType() != CToken.TK_RPAR){
+            pcx.fatalError(tk + "ConditionBlock: parse(): )がありません");
+        }
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {

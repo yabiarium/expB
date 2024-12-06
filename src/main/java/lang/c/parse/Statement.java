@@ -6,7 +6,7 @@ import lang.c.*;
 public class Statement extends CParseRule {
 	// 新しく非終端記号に対応するクラスを作成する際は，必ず拡張BNF をコメントでつけること
 	// また，更新する際は，拡張BNFの「履歴」を残すこと（例えば，実験３まで：．．．． と 実験４から：．．． のように）
-	CParseRule statementAssign, statementInput, statementOutput, statementIf, statementWhile, statementBlock;
+	CParseRule statementXX;
 
 	public Statement(CParseContext pcx) {
 		super("Statement");
@@ -36,46 +36,39 @@ public class Statement extends CParseRule {
 		CToken tk = ct.getCurrentToken(pcx);
 
 		if(StatementInput.isFirst(tk)){
-			statementInput = new StatementInput(pcx);
-			statementInput.parse(pcx);
+			statementXX = new StatementInput(pcx);
+
 		}else if(StatementOutput.isFirst(tk)){
-			statementOutput = new StatementOutput(pcx);
-			statementOutput.parse(pcx);
+			statementXX = new StatementOutput(pcx);
+
+		}else if(StatementIf.isFirst(tk)){ //if
+			statementXX = new StatementIf(pcx);
+
+		}else if(StatementWhile.isFirst(tk)){ //while
+			statementXX = new StatementWhile(pcx);
+
+		}else if(tk.getType() == CToken.TK_LCUR){ // {
+			statementXX = new StatementBlock(pcx);
+			
 		}else{
-			statementAssign = new StatementAssign(pcx);
-			statementAssign.parse(pcx);
+			statementXX = new StatementAssign(pcx);
 		}
+		statementXX.parse(pcx);
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
-		if (statementInput != null) {
-			statementInput.semanticCheck(pcx);
-			this.setCType(statementInput.getCType()); // statementInput の型をそのままコピー
-			this.setConstant(statementInput.isConstant());
-		}
-		if (statementOutput != null) {
-			statementOutput.semanticCheck(pcx);
-			this.setCType(statementOutput.getCType()); // statementOutput の型をそのままコピー
-			this.setConstant(statementOutput.isConstant());
-		}
-		if(statementAssign != null){
-			statementAssign.semanticCheck(pcx);
-			this.setCType(statementAssign.getCType());
-			this.setConstant(statementAssign.isConstant());
+		if (statementXX != null) {
+			statementXX.semanticCheck(pcx);
+			this.setCType(statementXX.getCType()); // statementXX の型をそのままコピー
+			this.setConstant(statementXX.isConstant());
 		}
 	}
 
 	public void codeGen(CParseContext pcx) throws FatalErrorException {
 		CodeGenCommon cgc = pcx.getCodeGenCommon();
 		cgc.printStartComment(getBNF(getId()));
-		if (statementInput != null) {
-			statementInput.codeGen(pcx);
-		}
-		if (statementOutput != null) {
-			statementOutput.codeGen(pcx);
-		}
-		if (statementAssign != null){
-			statementAssign.codeGen(pcx);
+		if (statementXX != null) {
+			statementXX.codeGen(pcx);
 		}
 		cgc.printCompleteComment(getBNF(getId()));
 	}
