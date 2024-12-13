@@ -4,7 +4,7 @@ import lang.*;
 import lang.c.*;
 
 public class StatementIf extends CParseRule {
-	CParseRule conditionBlock, statement;
+	CParseRule conditionBlock, statement1, statement2;
 
 	public StatementIf(CParseContext pcx) {
 		super("StatementIf");
@@ -31,8 +31,8 @@ public class StatementIf extends CParseRule {
         // conditionBlock の次のトークンを読む
         tk = ct.getNextToken(pcx);
         if(Statement.isFirst(tk)){
-            statement = new Statement(pcx);
-            statement.parse(pcx);
+            statement1 = new Statement(pcx);
+            statement1.parse(pcx);
         }else{
             pcx.fatalError(tk + "StatementIf: parse(): conditionBlockの後ろはstatementです");
         }
@@ -42,8 +42,8 @@ public class StatementIf extends CParseRule {
         if(tk.getType() == CToken.TK_ELSE){
             tk = ct.getNextToken(pcx);
             if(Statement.isFirst(tk)){
-                statement = new Statement(pcx);
-                statement.parse(pcx);
+                statement2 = new Statement(pcx);
+                statement2.parse(pcx);
             }else{
                 pcx.fatalError(tk + "StatementIf: parse(): elseの後ろはstatementです");
             }
@@ -51,8 +51,41 @@ public class StatementIf extends CParseRule {
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
+        if (conditionBlock != null) {
+            conditionBlock.semanticCheck(pcx);
+        }
+        if (statement1 != null) {
+			statement1.semanticCheck(pcx);
+		}
+        if (statement2 != null) {
+            statement2.semanticCheck(pcx);
+        }
 	}
 
 	public void codeGen(CParseContext pcx) throws FatalErrorException {
+        CodeGenCommon cgc = pcx.getCodeGenCommon();
+		cgc.printStartComment(getBNF(getId()));
+
+        int seq = pcx.getSeqId("StatementIf");
+		String seqLabelElse = "ELSE"+seq;
+        String seqLabelIfend = "IFEND"+seq;
+
+		if (conditionBlock != null) {
+            conditionBlock.codeGen(pcx);
+			cgc.printPopCodeGen("", "R0", "StatementIf: condition()実行結果を取り出す"); //conditionの結果がfalseならZフラグが立つ
+            cgc.printInstCodeGen("","BRZ "+seqLabelElse,"StatementIf: zeroだったら"+seqLabelElse+"にジャンプ"); //Zフラグが立っている場合にELSE1にジャンプ;;falseが0の場合
+            statement1.codeGen(pcx); // trueの時の処理内容を生成
+            cgc.printInstCodeGen("","JMP "+seqLabelIfend,"StatementIf: "+seqLabelIfend+"にジャンプ");//IFEND1へのジャンプ命令(ELSEの処理を飛ばして終了処理へ)
+            
+            cgc.printLabel(seqLabelElse+":","StatementIf: falseの時のジャンプ先"); //ELSE1:
+            // elseの処理がある場合
+            if (statement2 != null){
+                statement2.codeGen(pcx);
+            }
+            
+            cgc.printLabel(seqLabelIfend+":","StatementIf: if文の終了処理"); //IFEND1:
+		}
+
+		cgc.printCompleteComment(getBNF(getId()));
 	}
 }

@@ -36,8 +36,17 @@ public class ConditionBlock  extends CParseRule {
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
+        if(condition != null){
+            condition.semanticCheck(pcx);
+        }
 	}
 
 	public void codeGen(CParseContext pcx) throws FatalErrorException {
+		CodeGenCommon cgc = pcx.getCodeGenCommon();
+		cgc.printStartComment(getBNF(getId()));
+		if (condition != null) {
+            condition.codeGen(pcx);
+		}
+		cgc.printCompleteComment(getBNF(getId()));
 	}
 }

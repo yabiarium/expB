@@ -28,8 +28,6 @@ public class ConditionGE  extends CParseRule {
 		if(Expression.isFirst(tk)){
 			expression = new Expression(pcx);
 			expression.parse(pcx);
-			
-			tk = ct.getNextToken(pcx);
 		}else{
 			pcx.fatalError(tk + "ConditionGE: >=の後ろはexpressionです");
 		}
