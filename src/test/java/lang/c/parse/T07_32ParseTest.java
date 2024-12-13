@@ -110,4 +110,29 @@ public class T07_32ParseTest {
         }
     }
 
+    public static class ProgramTest {
+        ParseTestHelper<Program> ProgramHelper = new ParseTestHelper<Program>(Program.class);
+
+        @Test
+        public void accept() throws FatalErrorException {
+            String[] testDataArr = {
+                    "while (true) { i_a=1; }",
+                    "while (true) { while (true) { i_a=1; i_b=2;} }",
+                    // 以下は単独ステートメントも許す場合 (StatementBlock を使っている場合上手くやれば以下は自動的にできる)
+                    "while (true) i_a=1;",
+                    "while (true) while (true) while (true) i_a=1;",
+            };
+            ProgramHelper.parseAcceptTestList(testDataArr);
+        }
+
+        @Test
+        public void reject() throws FatalErrorException {
+            TestDataAndErrMessage[] arr = {
+                    new TestDataAndErrMessage("while i_a==1", "whileの後ろはconditionBlockです"),
+                    //else{}の後にelseがある
+                    new TestDataAndErrMessage("if (true){}else{}else", "プログラムの最後にゴミがあります"),
+            };
+            ProgramHelper.parseRejectTestList(arr);
+        }
+    }
 }
