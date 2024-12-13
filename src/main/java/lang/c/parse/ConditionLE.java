@@ -28,8 +28,6 @@ public class ConditionLE  extends CParseRule {
 		if(Expression.isFirst(tk)){
 			expression = new Expression(pcx);
 			expression.parse(pcx);
-			
-			tk = ct.getNextToken(pcx);
 		}else{
 			pcx.fatalError(tk + "ConditionLE: <=の後ろはexpressionです");
 		}

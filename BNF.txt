@@ -1,0 +1,14 @@
+
+CV07~
+
+statement ::= statementAssign | statementInput | statementOutput | statementIf | statementWhile | statementBlock
+
+statementIf ::= IF conditionBlock statement [ ELSE statement ]
+    ↑ 変更 statementIf ::= IF LPAR condition RPAR LCUR { statement } RCUR [ ELSE ( statementIf | LCUR { statement } RCUR )]
+        statemet → statementBlock とすることで、
+        if()statement; といった、1行だけで{}のないif文も認識できるようになる
+
+statementWhile ::= WHILE conditionBlock statement
+
+statementBlock ::= LCUR { statement } RCUR
+conditionBlock ::= LPAR condition RPAR
