@@ -36,7 +36,8 @@ public class T07_31IsFirstTest {
         @Test
         public void trueTest() throws FatalErrorException {
             String[] testDataArr = {"if",
-                                    "while",};
+                                    "while",
+                                    "{ input i_variable; }"};
             StatementHelper.trueListTest(testDataArr);
         }
     }

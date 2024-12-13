@@ -19,6 +19,8 @@ public class T07_32ParseTest {
         public void accept() throws FatalErrorException {
             String[] testDataArr = {
                     "{ i_c = 1; i_d = 3; }", // 全部解釈されて accept
+                    "{ i_c = 1;}",
+                    "{}",
             };
             statementBlockHelper.parseAcceptTestList(testDataArr);
         }
@@ -62,7 +64,9 @@ public class T07_32ParseTest {
                     "if (true) { i_a=1; i_b=2; }",
                     "if (true) { i_a=1; i_b=2; } else { i_a=2; i_b=3;}",
                     "if (true) { i_a=1; i_b=2; } else if ( true ) { i_a=2; } else { i_a=3; }",
+
                     "if (true) { if (true) { if (true) { i_a=1; i_b=2; }}}",
+                    
                     "if (true) i_a=1;",
                     "if (true) i_a=1; else i_a=2;",
                     "if (true) if (true) if (true) i_a=3;",
