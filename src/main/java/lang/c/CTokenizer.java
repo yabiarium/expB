@@ -25,7 +25,7 @@ public class CTokenizer extends Tokenizer<CToken, CParseContext> {
 	private final int ST_BLOCKCOM = 8;
 	private final int ST_BLOCKCOMASTA = 9; //ASTA=*
 	//CV02
-	private final int ST_AMP = 10;
+	private final int ST_AMP = 10; // &
 	private final int ST_ZERO = 11; //0と1~9を分ける
 	private final int ST_OCTNUM = 12;
 	private final int ST_HEXNUM = 13;
@@ -47,6 +47,8 @@ public class CTokenizer extends Tokenizer<CToken, CParseContext> {
 	//CV07
 	private final int ST_LCUR = 25; // {
 	private final int ST_RCUR = 26; // }
+	//CV08
+	private final int ST_VL = 27; // | Vertical Line
 
 	private final char __EOF__ = (char)-1;
 
@@ -196,6 +198,10 @@ public class CTokenizer extends Tokenizer<CToken, CParseContext> {
 						startCol = colNo - 1;
 						text.append(ch);
 						state = ST_EXCL;
+					} else if (ch == '|'){
+						startCol = colNo - 1;
+						text.append(ch);
+						state = ST_VL;
 					} else { // この時点で受理できない文字を読んだので，ST_ILL に遷移
 						startCol = colNo - 1;
 						text.append(ch);
@@ -305,7 +311,13 @@ public class CTokenizer extends Tokenizer<CToken, CParseContext> {
 					}
 					break;
 				case ST_AMP: // &を読んだ
-					tk = new CToken(CToken.TK_AMP, lineNo, startCol, "&");
+					ch = readChar();
+					if(ch == '&'){
+						tk = new CToken(CToken.TK_AND, lineNo, startCol, "&&");
+					}else{
+						backChar(ch);
+						tk = new CToken(CToken.TK_AMP, lineNo, startCol, "&");
+					}
 					accept = true;
 					break;
 				case ST_LPAR: // (を読んだ
@@ -432,13 +444,24 @@ public class CTokenizer extends Tokenizer<CToken, CParseContext> {
 					}
 					accept = true;
 					break;
-				case ST_EXCL:
+				case ST_EXCL: // ! を読んだ
 					ch = readChar();
-					if(ch != '='){
+					if(ch == '='){
+						tk = new CToken(CToken.TK_NE, lineNo, startCol, "!=");
+						accept = true;
+					}else{
+						backChar(ch);
+						tk = new CToken(CToken.TK_NOT, lineNo, startCol, "!");
+						accept = true;
+					}
+					break;
+				case ST_VL:
+					ch = readChar();
+					if(ch != '|'){
 						backChar(ch);
 						state = ST_ILL;
 					}else{
-						tk = new CToken(CToken.TK_NE, lineNo, startCol, "!=");
+						tk = new CToken(CToken.TK_OR, lineNo, startCol, "||");
 						accept = true;
 					}
 					break;
