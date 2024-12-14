@@ -39,6 +39,7 @@ statementBlock  ::= LCUR { statement } RCUR
 conditionBlock  ::= LPAR condition RPAR  
 
 # CV08
+conditionBlock  ::= LPAR conditionExpression RPAR　//変更
 conditionExpression ::= conditionTerm { ExpressionOr }
 expressionOr    ::= OR conditionTerm 
 conditionTerm   ::= conditionFactor { termAnd }
