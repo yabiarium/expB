@@ -18,11 +18,11 @@ public class TermAnd extends CParseRule {
 		setBNF("termAnd ::= AND conditionFactor"); //CV08~
 	}
 
-    // #######
     public static boolean isFirst(CToken tk) {
-        return tk.getType() == CToken.TK_DIV;
+        return tk.getType() == CToken.TK_AND;
 	}
 
+    // #######
 	public void parse(CParseContext pcx) throws FatalErrorException {
 		// ここにやってくるときは、必ずisFirst()が満たされている
 		CTokenizer ct = pcx.getTokenizer();

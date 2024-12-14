@@ -8,13 +8,14 @@ public class ConditionBlock  extends CParseRule {
 
 	public ConditionBlock(CParseContext pcx) {
 		super("ConditionBlock");
-		setBNF("conditionBlock ::= LPAR condition RPAR"); //CV07~
+		setBNF("conditionBlock ::= LPAR conditionExpression RPAR"); //CV07~
 	}
 
 	public static boolean isFirst(CToken tk) {
         return tk.getType() == CToken.TK_LPAR;
 	}
 
+	// #######
 	public void parse(CParseContext pcx) throws FatalErrorException {
         CTokenizer ct = pcx.getTokenizer();
 		CToken tk = ct.getCurrentToken(pcx);

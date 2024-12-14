@@ -11,17 +11,15 @@ public class ConditionFactor extends CParseRule {
 		setBNF("conditionFactor ::= notFactor | conditionUnsignedFactor"); //CV08~
 	}
 
-    // #######
 	public static boolean isFirst(CToken tk) {
-		if(tk.getType() == CToken.TK_PLUS){
-			return PlusFactor.isFirst(tk);
-		}else if(tk.getType() == CToken.TK_MINUS){
-			return MinusFactor.isFirst(tk);
+		if(tk.getType() == CToken.TK_NOT){ // !
+			return NotFactor.isFirst(tk);
 		}else{
-			return UnsignedFactor.isFirst(tk);
+			return ConditionUnsignedFactor.isFirst(tk);
 		}
 	}
 
+    // #######
 	public void parse(CParseContext pcx) throws FatalErrorException {
 		// ここにやってくるときは、必ずisFirst()が満たされている
 		CTokenizer ct = pcx.getTokenizer();

@@ -11,11 +11,11 @@ public class ConditionTerm extends CParseRule {
 		setBNF("conditionTerm ::= conditionFactor { termAnd }"); //CV08~
 	}
 
-    // ########
 	public static boolean isFirst(CToken tk) {
-		return Factor.isFirst(tk);
+		return ConditionFactor.isFirst(tk);
 	}
 
+    // ########
 	public void parse(CParseContext pcx) throws FatalErrorException {
 		// ここにやってくるときは、必ずisFirst()が満たされている
 		CParseRule factor = null, list = null;

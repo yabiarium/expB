@@ -12,11 +12,11 @@ public class NotFactor extends CParseRule {
 		setBNF("notFactor ::= NOT conditionUnsignedFactor"); //CV08~
 	}
 
-    // #######
 	public static boolean isFirst(CToken tk) {
-        return tk.getType() == CToken.TK_PLUS;
+        return tk.getType() == CToken.TK_NOT;
 	}
 
+    // #######
 	public void parse(CParseContext pcx) throws FatalErrorException {
         // ここにやってくるときは、必ずisFirst()が満たされている
 		CTokenizer ct = pcx.getTokenizer();

@@ -18,11 +18,11 @@ public class ExpressionOr extends CParseRule {
 		setBNF("expressionOr ::= OR conditionTerm "); //CV08~
 	}
 
-    // #######
 	public static boolean isFirst(CToken tk) {
-		return tk.getType() == CToken.TK_PLUS;
+		return tk.getType() == CToken.TK_OR;
 	}
 
+    // #######
 	public void parse(CParseContext pcx) throws FatalErrorException {
 		// ここにやってくるときは、必ずisFirst()が満たされている
 		CTokenizer ct = pcx.getTokenizer();

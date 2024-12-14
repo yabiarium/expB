@@ -11,19 +11,15 @@ public class ConditionUnsignedFactor extends CParseRule {
 		setBNF("conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA"); //CV08~
 	}
 
-    // ########
 	public static boolean isFirst(CToken tk) {
-		if(tk.getType() == CToken.TK_AMP){ // &
-			return FactorAmp.isFirst(tk);
-		}else if(tk.getType() == CToken.TK_LPAR){ // (
+		if(tk.getType() == CToken.TK_LBRA){ // [ ←条件式の優先度を表す括弧として用いる。(条件式内に数式を用いたとき、計算の優先順を表す()と区別するため)
 			return true;
-		}else if(tk.getType() == CToken.TK_NUM){ // 数字
-			return Number.isFirst(tk);
-		}else{ //上記以外
-			return AddressToValue.isFirst(tk);
+		}else{
+			return Condition.isFirst(tk);
 		}
 	}
 
+    // #######
 	public void parse(CParseContext pcx) throws FatalErrorException {
 		// ここにやってくるときは、必ずisFirst()が満たされている
 		CTokenizer ct = pcx.getTokenizer();
