@@ -4,7 +4,7 @@ import lang.*;
 import lang.c.*;
 
 public class ConditionUnsignedFactor extends CParseRule {
-	CParseRule number, factorAmp, expression, addressToValue;
+	CParseRule condition, conditionExpression;
 
 	public ConditionUnsignedFactor(CParseContext pcx) {
 		super("ConditionUnsignedFactor");
@@ -19,57 +19,35 @@ public class ConditionUnsignedFactor extends CParseRule {
 		}
 	}
 
-    // #######
 	public void parse(CParseContext pcx) throws FatalErrorException {
-		// ここにやってくるときは、必ずisFirst()が満たされている
 		CTokenizer ct = pcx.getTokenizer();
 		CToken tk = ct.getCurrentToken(pcx);
 
-		if(FactorAmp.isFirst(tk)){
-			factorAmp = new FactorAmp(pcx);
-			factorAmp.parse(pcx);
-		}else if(tk.getType() == CToken.TK_LPAR){
-			// ( の次の字句を読む
-			tk = ct.getNextToken(pcx);
-			if(Expression.isFirst(tk)){
-				expression = new Expression(pcx);
-				expression.parse(pcx);
-				// expressionの解析後,現在の字句を読む
-				tk = ct.getCurrentToken(pcx);
-				if(tk.getType() != CToken.TK_RPAR){
-					pcx.fatalError(tk + ")がありません");
-				}
+		if(tk.getType() == CToken.TK_LBRA){ // [
+			tk = ct.getNextToken(pcx); // [ の次のトークンを読む
+			if(ConditionExpression.isFirst(tk)){
+				conditionExpression = new ConditionExpression(pcx);
+				conditionExpression.parse(pcx);
+			}else{
+				pcx.fatalError(tk + "ConditionUnsignedFactor: parse(): [の後ろはconditionExpressionです");
+			}
+	
+			// conditionExpression の次のトークンを読む
+			tk = ct.getCurrentToken(pcx);
+			if(tk.getType() == CToken.TK_RBRA){
 				tk = ct.getNextToken(pcx);
 			}else{
-				pcx.fatalError(tk + "(の後ろはexpressionです");
+				pcx.fatalError(tk + "ConditionUnsignedFactor: parse(): ]がありません");
 			}
-		}else if(Number.isFirst(tk)){
-			number = new Number(pcx);
-			number.parse(pcx);
+
 		}else{
-			addressToValue = new AddressToValue(pcx);
-			addressToValue.parse(pcx);
+			condition = new Condition(pcx);
+			condition.parse(pcx);
 		}
 	}
 
+	// #######
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
-		if (factorAmp != null) {
-			factorAmp.semanticCheck(pcx);
-			this.setCType(factorAmp.getCType()); // factorAmp の型をそのままコピー
-			this.setConstant(factorAmp.isConstant());
-		}else if (number != null) {
-			number.semanticCheck(pcx);
-			this.setCType(number.getCType()); // number の型をそのままコピー
-			this.setConstant(number.isConstant());
-		}else if(expression != null){
-			expression.semanticCheck(pcx);
-			this.setCType(expression.getCType());
-			this.setConstant(expression.isConstant());
-		}else{
-			addressToValue.semanticCheck(pcx);
-			this.setCType(addressToValue.getCType());
-			this.setConstant(addressToValue.isConstant());
-		}
 	}
 
 	public void codeGen(CParseContext pcx) throws FatalErrorException {
@@ -77,10 +55,6 @@ public class ConditionUnsignedFactor extends CParseRule {
 		cgc.printStartComment(getBNF(getId()));
 		if (factorAmp != null) {
 			factorAmp.codeGen(pcx);
-		}else if (number != null) {
-			number.codeGen(pcx);
-		}else if (expression != null){
-			expression.codeGen(pcx);
 		}else if (addressToValue != null){
 			addressToValue.codeGen(pcx);
 		}

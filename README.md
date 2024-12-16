@@ -40,7 +40,7 @@ conditionBlock  ::= LPAR condition RPAR
 
 # CV08
 conditionBlock  ::= LPAR conditionExpression RPAR　//変更
-conditionExpression ::= conditionTerm { ExpressionOr }
+conditionExpression ::= conditionTerm { expressionOr }
 expressionOr    ::= OR conditionTerm 
 conditionTerm   ::= conditionFactor { termAnd }
 termAnd         ::= AND conditionFactor

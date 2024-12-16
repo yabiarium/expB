@@ -10,7 +10,7 @@ import lang.c.CodeGenCommon;
 
 public class ExpressionOr extends CParseRule {
 	CToken op;
-	CParseRule left, right;
+	CParseRule left, conditionTerm;
 
 	public ExpressionOr(CParseContext pcx, CParseRule left) {
 		super("ExpressionOr");
@@ -22,21 +22,20 @@ public class ExpressionOr extends CParseRule {
 		return tk.getType() == CToken.TK_OR;
 	}
 
-    // #######
 	public void parse(CParseContext pcx) throws FatalErrorException {
-		// ここにやってくるときは、必ずisFirst()が満たされている
 		CTokenizer ct = pcx.getTokenizer();
 		op = ct.getCurrentToken(pcx);
-		// +の次の字句を読む
+		// ||の次の字句を読む
 		CToken tk = ct.getNextToken(pcx);
-		if (Term.isFirst(tk)) {
-			right = new Term(pcx);
-			right.parse(pcx);
+		if (ConditionTerm.isFirst(tk)) {
+			conditionTerm = new ConditionTerm(pcx);
+			conditionTerm.parse(pcx);
 		} else {
-			pcx.fatalError(tk + "ExpressionAdd: parse(): +の後ろはtermです");
+			pcx.fatalError(tk + "ExpressionOr: parse(): ||の後ろはconditionTermです");
 		}
 	}
 
+	// #######
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
 		// 足し算の型計算規則
 		final int s[][] = {

@@ -4,38 +4,32 @@ import lang.*;
 import lang.c.*;
 
 public class ConditionExpression extends CParseRule {
-	CParseRule conditionTerm;
+	CParseRule conditionTerm, expressionOr;
 
 	public ConditionExpression(CParseContext pcx) {
 		super("ConditionExpression");
-		setBNF("conditionExpression ::= conditionTerm { ExpressionOr }"); // CV08~
+		setBNF("conditionExpression ::= conditionTerm { expressionOr }"); // CV08~
 	}
 
 	public static boolean isFirst(CToken tk) {
 		return ConditionTerm.isFirst(tk);
 	}
 
-    // #######
 	public void parse(CParseContext pcx) throws FatalErrorException {
-		// ここにやってくるときは、必ずisFirst()が満たされている
-		CParseRule term = null, list = null;
-		term = new Term(pcx);
-		term.parse(pcx);
+
+		conditionTerm = new ConditionTerm(pcx);
+		conditionTerm.parse(pcx);
+
 		CTokenizer ct = pcx.getTokenizer();
 		CToken tk = ct.getCurrentToken(pcx);
-		while (ExpressionAdd.isFirst(tk) | ExpressionSub.isFirst(tk)) {
-			if(ExpressionAdd.isFirst(tk)){
-				list = new ExpressionAdd(pcx, term);
-			}else if(ExpressionSub.isFirst(tk)){
-				list = new ExpressionSub(pcx, term);
-			}
-			list.parse(pcx);
-			term = list;
+		while (ExpressionOr.isFirst(tk)) {
+			expressionOr = new ExpressionOr(pcx, conditionTerm);
+			expressionOr.parse(pcx);
 			tk = ct.getCurrentToken(pcx);
 		}
-		expression = term;
 	}
 
+	// #######
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
 		if (expression != null) {
 			expression.semanticCheck(pcx);

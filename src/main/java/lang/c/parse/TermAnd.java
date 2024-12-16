@@ -10,7 +10,7 @@ import lang.c.CodeGenCommon;
 
 public class TermAnd extends CParseRule {
 	CToken op;
-	CParseRule left, right;
+	CParseRule left, conditionFactor;
 
 	public TermAnd(CParseContext pcx, CParseRule left) {
 		super("TermAnd");
@@ -22,21 +22,20 @@ public class TermAnd extends CParseRule {
         return tk.getType() == CToken.TK_AND;
 	}
 
-    // #######
 	public void parse(CParseContext pcx) throws FatalErrorException {
-		// ここにやってくるときは、必ずisFirst()が満たされている
 		CTokenizer ct = pcx.getTokenizer();
 		op = ct.getCurrentToken(pcx);
-		// /の次の字句を読む
+		// &&の次の字句を読む
 		CToken tk = ct.getNextToken(pcx);
-		if (Factor.isFirst(tk)) {
-			right = new Factor(pcx);
-			right.parse(pcx);
+		if (ConditionFactor.isFirst(tk)) {
+			conditionFactor = new ConditionFactor(pcx);
+			conditionFactor.parse(pcx);
 		} else {
-			pcx.fatalError(tk + "/の後ろはfactorです");
+			pcx.fatalError(tk + "&&の後ろはconditionFactorです");
 		}
 	}
 
+	// #######
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
 		// 割り算の型計算規則
 		final int s[][] = {

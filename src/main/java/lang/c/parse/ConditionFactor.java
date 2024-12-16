@@ -4,7 +4,7 @@ import lang.*;
 import lang.c.*;
 
 public class ConditionFactor extends CParseRule {
-	CParseRule plusfactor, minusfactor, ufactor;
+	CParseRule notFactor, conditionUnsignedFactor;
 
 	public ConditionFactor(CParseContext pcx) {
 		super("ConditionFactor");
@@ -19,24 +19,20 @@ public class ConditionFactor extends CParseRule {
 		}
 	}
 
-    // #######
 	public void parse(CParseContext pcx) throws FatalErrorException {
-		// ここにやってくるときは、必ずisFirst()が満たされている
 		CTokenizer ct = pcx.getTokenizer();
 		CToken tk = ct.getCurrentToken(pcx);
 
-		if(PlusFactor.isFirst(tk)){
-			plusfactor = new PlusFactor(pcx);
-			plusfactor.parse(pcx);
-		}else if(MinusFactor.isFirst(tk)){
-			minusfactor = new MinusFactor(pcx);
-			minusfactor.parse(pcx);
+		if(tk.getType() == CToken.TK_NOT){
+			notFactor = new NotFactor(pcx);
+			notFactor.parse(pcx);
 		}else{
-			ufactor = new UnsignedFactor(pcx);
-			ufactor.parse(pcx);
+			conditionUnsignedFactor = new ConditionUnsignedFactor(pcx);
+			conditionUnsignedFactor.parse(pcx);
 		}
 	}
 
+	// #######
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
 		if (plusfactor != null) {
 			plusfactor.semanticCheck(pcx);

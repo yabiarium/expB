@@ -5,7 +5,7 @@ import lang.c.*;
 
 public class NotFactor extends CParseRule {
 	CToken op;
-	CParseRule right;
+	CParseRule conditionUnsignedFactor;
 
 	public NotFactor(CParseContext pcx) {
 		super("NotFactor");
@@ -16,21 +16,20 @@ public class NotFactor extends CParseRule {
         return tk.getType() == CToken.TK_NOT;
 	}
 
-    // #######
 	public void parse(CParseContext pcx) throws FatalErrorException {
-        // ここにやってくるときは、必ずisFirst()が満たされている
 		CTokenizer ct = pcx.getTokenizer();
 		op = ct.getCurrentToken(pcx);
-		// +の次の字句を読む
+		// ! の次の字句を読む
 		CToken tk = ct.getNextToken(pcx);
-		if (UnsignedFactor.isFirst(tk)) {
-			right = new UnsignedFactor(pcx);
-			right.parse(pcx);
+		if (ConditionUnsignedFactor.isFirst(tk)) {
+			conditionUnsignedFactor = new ConditionUnsignedFactor(pcx);
+			conditionUnsignedFactor.parse(pcx);
 		} else {
-			pcx.fatalError(tk + "PlusFactor: parse(): +の後ろはuFactorです");
+			pcx.fatalError(tk + "NotFactor: parse(): !の後ろはConditionUnsignedFactorです");
 		}
 	}
 
+	// #######
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
 		if (right != null) {
 			right.semanticCheck(pcx);

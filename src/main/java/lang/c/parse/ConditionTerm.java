@@ -4,7 +4,7 @@ import lang.*;
 import lang.c.*;
 
 public class ConditionTerm extends CParseRule {
-	CParseRule term;
+	CParseRule conditionFactor, termAnd;
 
 	public ConditionTerm(CParseContext pcx) {
 		super("ConditionTerm");
@@ -15,27 +15,20 @@ public class ConditionTerm extends CParseRule {
 		return ConditionFactor.isFirst(tk);
 	}
 
-    // ########
 	public void parse(CParseContext pcx) throws FatalErrorException {
-		// ここにやってくるときは、必ずisFirst()が満たされている
-		CParseRule factor = null, list = null;
-		factor = new Factor(pcx);
-		factor.parse(pcx);
+		conditionFactor = new ConditionFactor(pcx);
+		conditionFactor.parse(pcx);
+
 		CTokenizer ct = pcx.getTokenizer();
 		CToken tk = ct.getCurrentToken(pcx);
-		while (TermMult.isFirst(tk) | TermDiv.isFirst(tk)) {
-			if(TermMult.isFirst(tk)){
-				list = new TermMult(pcx, factor);
-			}else if(TermDiv.isFirst(tk)){
-				list = new TermDiv(pcx, factor);
-			}
-			list.parse(pcx);
-			factor = list;
+		while (TermAnd.isFirst(tk)) {
+			termAnd = new TermAnd(pcx, conditionFactor);
+			termAnd.parse(pcx);
 			tk = ct.getCurrentToken(pcx);
 		}
-		term = factor;
 	}
 
+	// ########
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
 		if (term != null) {
 			term.semanticCheck(pcx);
