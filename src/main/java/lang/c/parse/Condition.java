@@ -39,7 +39,9 @@ public class Condition extends CParseRule {
 			if(ConditionEQ.isFirst(tk)) conditionXX = new ConditionEQ(pcx, expression);
 			if(ConditionNE.isFirst(tk)) conditionXX = new ConditionNE(pcx, expression);
 
-			if(conditionXX != null){
+			if(conditionXX == null){
+				pcx.fatalError(tk + "condition: parse(): expressionの後ろにはconditionXXが必要です");
+			}else{
 				conditionXX.parse(pcx);
 			}
 		}
