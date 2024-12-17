@@ -32,23 +32,19 @@ public class ConditionFactor extends CParseRule {
 		}
 	}
 
-	// #######
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
-		if (plusfactor != null) {
-			plusfactor.semanticCheck(pcx);
-			this.setCType(plusfactor.getCType()); // plusfactor の型をそのままコピー
-			this.setConstant(plusfactor.isConstant());
-		}else if (minusfactor != null) {
-			minusfactor.semanticCheck(pcx);
-			this.setCType(minusfactor.getCType()); // minusfactor の型をそのままコピー
-			this.setConstant(minusfactor.isConstant());
-		}else if (ufactor != null) {
-			ufactor.semanticCheck(pcx);
-			this.setCType(ufactor.getCType()); // ufactor の型をそのままコピー
-			this.setConstant(ufactor.isConstant());
+		if (notFactor != null) {
+			notFactor.semanticCheck(pcx);
+			this.setCType(notFactor.getCType()); // notFactor の型をそのままコピー
+			this.setConstant(notFactor.isConstant());
+		}else if (conditionUnsignedFactor != null) {
+			conditionUnsignedFactor.semanticCheck(pcx);
+			this.setCType(conditionUnsignedFactor.getCType()); // conditionUnsignedFactor の型をそのままコピー
+			this.setConstant(conditionUnsignedFactor.isConstant());
 		}
 	}
 
+	// #######
 	public void codeGen(CParseContext pcx) throws FatalErrorException {
 		CodeGenCommon cgc = pcx.getCodeGenCommon();
 		cgc.printStartComment(getBNF(getId()));

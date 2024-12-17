@@ -29,15 +29,15 @@ public class ConditionExpression extends CParseRule {
 		}
 	}
 
-	// #######
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
-		if (expression != null) {
-			expression.semanticCheck(pcx);
-			this.setCType(expression.getCType()); // expression の型をそのままコピー
-			this.setConstant(expression.isConstant());
+		if (expressionOr != null) {
+			expressionOr.semanticCheck(pcx);
+			this.setCType(expressionOr.getCType()); // expressionOr の型をそのままコピー
+			this.setConstant(expressionOr.isConstant());
 		}
 	}
 
+	// #######
 	public void codeGen(CParseContext pcx) throws FatalErrorException {
 		CodeGenCommon cgc = pcx.getCodeGenCommon();
 		cgc.printStartComment(getBNF(getId()));

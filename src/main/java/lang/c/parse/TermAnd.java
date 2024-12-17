@@ -35,31 +35,27 @@ public class TermAnd extends CParseRule {
 		}
 	}
 
-	// #######
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
-		// 割り算の型計算規則
-		final int s[][] = {
-				// T_err T_int T_pint
-				{ CType.T_err, CType.T_err, CType.T_err }, // T_err
-				{ CType.T_err, CType.T_int, CType.T_err }, // T_int
-				{ CType.T_err, CType.T_err, CType.T_err }, // T_pint
-		};
-		if (left != null && right != null) {
+		//T_bool=5(CTypeで定義)
+
+		if (left != null && conditionFactor != null) {
 			left.semanticCheck(pcx);
-			right.semanticCheck(pcx);
-			int lt = left.getCType().getType(); // +の左辺の型
-			int rt = right.getCType().getType(); // +の右辺の型
-			int nt = s[lt][rt]; // 規則による型計算
-			String lts = left.getCType().toString();
-			String rts = right.getCType().toString();
-			if (nt == CType.T_err) {
-				pcx.fatalError(op + ": 左辺の型[" + lts + "]は右辺の型[" + rts + "]で割れません");
+			conditionFactor.semanticCheck(pcx);
+			//parse()の時点で左右に付くものが制限されてbool型以外は来ないのでここでの型チェックは必要ないが一応確認
+			int lt = left.getCType().getType(); // &&の左辺の型
+			int rt = conditionFactor.getCType().getType(); // &&の右辺の型
+			
+			if (lt != CType.T_bool || rt != CType.T_bool) {
+				String lts = left.getCType().toString();
+				String rts = conditionFactor.getCType().toString();
+				pcx.fatalError(op + ": 左辺の型[" + lts + "]と右辺の型[" + rts + "]はT_boolである必要があります");
 			}
-			this.setCType(CType.getCType(nt));
-			this.setConstant(left.isConstant() && right.isConstant()); // +の左右両方が定数のときだけ定数
+			this.setCType(CType.getCType(CType.T_bool));
+			this.setConstant(true); // &&の左右両方が定数のときだけ定数
 		}
 	}
 
+	// #######
 	public void codeGen(CParseContext pcx) throws FatalErrorException {
 		CodeGenCommon cgc = pcx.getCodeGenCommon();
 		if (left != null && right != null) {

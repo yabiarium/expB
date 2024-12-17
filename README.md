@@ -46,7 +46,7 @@ conditionTerm   ::= conditionFactor { termAnd }
 termAnd         ::= AND conditionFactor
 conditionFactor ::= notFactor | conditionUnsignedFactor
 notFactor       ::= NOT conditionUnsignedFactor
-conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA
+conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA //条件式の優先度を示す括弧として[]を用いる
 ```
 
 > ### CV08のBNFの参考元  

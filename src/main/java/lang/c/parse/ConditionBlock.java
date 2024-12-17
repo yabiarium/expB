@@ -38,6 +38,8 @@ public class ConditionBlock  extends CParseRule {
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
         if(conditionExpression != null){
             conditionExpression.semanticCheck(pcx);
+			this.setCType(conditionExpression.getCType()); // conditionExpression の型をそのままコピー
+			this.setConstant(conditionExpression.isConstant());
         }
 	}
 

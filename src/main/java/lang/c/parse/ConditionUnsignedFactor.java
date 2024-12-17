@@ -46,10 +46,21 @@ public class ConditionUnsignedFactor extends CParseRule {
 		}
 	}
 
-	// #######
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
+		if(condition != null){
+            condition.semanticCheck(pcx);
+			this.setCType(condition.getCType()); // condition の型をそのままコピー
+			this.setConstant(condition.isConstant());
+        }
+
+		if(conditionExpression != null){
+            conditionExpression.semanticCheck(pcx);
+			this.setCType(conditionExpression.getCType()); // conditionExpression の型をそのままコピー
+			this.setConstant(conditionExpression.isConstant());
+        }
 	}
 
+	// #######
 	public void codeGen(CParseContext pcx) throws FatalErrorException {
 		CodeGenCommon cgc = pcx.getCodeGenCommon();
 		cgc.printStartComment(getBNF(getId()));

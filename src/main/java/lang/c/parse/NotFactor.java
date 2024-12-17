@@ -29,20 +29,21 @@ public class NotFactor extends CParseRule {
 		}
 	}
 
-	// #######
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
-		if (right != null) {
-			right.semanticCheck(pcx);
-			int rt = right.getCType().getType(); // +の右辺の型
-			String rts = right.getCType().toString();
-			if (rt != CType.T_int) {
-				pcx.fatalError(op + ": PlusFactor: semanticCheck(): +の後ろはT_intです[" + rts + "]");
+		if (conditionUnsignedFactor != null) {
+			conditionUnsignedFactor.semanticCheck(pcx);
+			//parse()の時点で後ろに付くものが制限されてbool型以外は来ないのでここでの型チェックは必要ないが一応確認
+			int rt = conditionUnsignedFactor.getCType().getType(); // !の右辺の型
+			String rts = conditionUnsignedFactor.getCType().toString();
+			if (rt != CType.T_bool) {
+				pcx.fatalError(op + ": NotFactor: semanticCheck(): !の後ろはT_boolです[" + rts + "]");
 			}
-			this.setCType(CType.getCType(rt));
-			this.setConstant(right.isConstant());
+			this.setCType(conditionUnsignedFactor.getCType());
+			this.setConstant(conditionUnsignedFactor.isConstant());
 		}
 	}
 
+	// #######
 	public void codeGen(CParseContext pcx) throws FatalErrorException {
 		CodeGenCommon cgc = pcx.getCodeGenCommon();
 		if (right != null) {

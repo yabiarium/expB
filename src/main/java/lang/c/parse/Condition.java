@@ -48,10 +48,7 @@ public class Condition extends CParseRule {
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
-		if(conTrue != null){
-			this.setCType(CType.getCType(CType.T_bool));
-			this.setConstant(true);
-		}if(conFalse != null){
+		if(conTrue != null || conFalse != null){
 			this.setCType(CType.getCType(CType.T_bool));
 			this.setConstant(true);
 		}if (conditionXX != null) {
