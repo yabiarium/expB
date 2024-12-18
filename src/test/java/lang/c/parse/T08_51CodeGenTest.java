@@ -189,9 +189,9 @@ public class T08_51CodeGenTest {
         @Test
         public void conditionUnsignedFactorTest() throws FatalErrorException {
             //優先順位が変更されているか
-            String testData =   "([i_a==0 || false] && i_a+3<=10)";
+            String testData =   "([!i_a==0 || false] && i_a+3<=10)";
             String expected = """
-                        MOV #i_a,(R6)+      ;; OR: 左辺EQ i_a==0
+                        MOV #i_a,(R6)+      ;; OR: 左辺EQ !i_a==0
                         MOV -(R6),R0
                         MOV (R0),(R6)+
                         MOV #0,(R6)+
@@ -203,6 +203,9 @@ public class T08_51CodeGenTest {
                         CLR R2
                     EQ1:
                         MOV R2,(R6)+
+                        MOV -(R6),R0  ;; NotFactor
+                        XOR #0x0001,R0
+                        MOV R0,(R6)+
                         
                         MOV #0x0000,(R6)+   ;; OR: 右辺 false
 
