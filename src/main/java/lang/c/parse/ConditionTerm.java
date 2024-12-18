@@ -29,6 +29,11 @@ public class ConditionTerm extends CParseRule {
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
+		if (conditionFactor != null){
+			conditionFactor.semanticCheck(pcx);
+			this.setCType(conditionFactor.getCType()); // conditionFactor の型をそのままコピー
+			this.setConstant(conditionFactor.isConstant());
+		}
 		if (termAnd != null) {
 			termAnd.semanticCheck(pcx);
 			this.setCType(termAnd.getCType()); // termAnd の型をそのままコピー
@@ -36,12 +41,15 @@ public class ConditionTerm extends CParseRule {
 		}
 	}
 
-	// ########
+
 	public void codeGen(CParseContext pcx) throws FatalErrorException {
 		CodeGenCommon cgc = pcx.getCodeGenCommon();
 		cgc.printStartComment(getBNF(getId()));
-		if (term != null) {
-			term.codeGen(pcx);
+
+		conditionFactor.codeGen(pcx);
+
+		if (termAnd != null) {
+			termAnd.codeGen(pcx);
 		}
 		cgc.printCompleteComment(getBNF(getId()));
 	}

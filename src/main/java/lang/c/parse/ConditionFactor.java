@@ -37,6 +37,7 @@ public class ConditionFactor extends CParseRule {
 			notFactor.semanticCheck(pcx);
 			this.setCType(notFactor.getCType()); // notFactor の型をそのままコピー
 			this.setConstant(notFactor.isConstant());
+
 		}else if (conditionUnsignedFactor != null) {
 			conditionUnsignedFactor.semanticCheck(pcx);
 			this.setCType(conditionUnsignedFactor.getCType()); // conditionUnsignedFactor の型をそのままコピー
@@ -44,16 +45,15 @@ public class ConditionFactor extends CParseRule {
 		}
 	}
 
-	// #######
+	
 	public void codeGen(CParseContext pcx) throws FatalErrorException {
 		CodeGenCommon cgc = pcx.getCodeGenCommon();
 		cgc.printStartComment(getBNF(getId()));
-		if (plusfactor != null) {
-			plusfactor.codeGen(pcx);
-		}else if (minusfactor != null) {
-			minusfactor.codeGen(pcx);
-		}else if (ufactor != null) {
-			ufactor.codeGen(pcx);
+		if (notFactor != null) {
+			notFactor.codeGen(pcx);
+
+		}else if (conditionUnsignedFactor != null) {
+			conditionUnsignedFactor.codeGen(pcx);
 		}
 		cgc.printCompleteComment(getBNF(getId()));
 	}

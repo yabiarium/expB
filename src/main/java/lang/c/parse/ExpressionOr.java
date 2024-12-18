@@ -51,26 +51,24 @@ public class ExpressionOr extends CParseRule {
 				pcx.fatalError(op + ": 左辺の型[" + lts + "]と右辺の型[" + rts + "]はT_boolである必要があります");
 			}
 			this.setCType(CType.getCType(CType.T_bool));
-			this.setConstant(left.isConstant() && conditionTerm.isConstant()); // ||の左右両方が定数のときだけ定数
+			this.setConstant(true);
 		}
 	}
 
-	// #######
+
 	public void codeGen(CParseContext pcx) throws FatalErrorException {
 		CodeGenCommon cgc = pcx.getCodeGenCommon();
-		if (left != null && right != null) {
+		if (left != null && conditionTerm != null) {
 			cgc.printStartComment(getBNF(getId()));
-			left.codeGen(pcx); // 左部分木のコード生成を頼む Number.javaのcodeGen()が動作する
-			right.codeGen(pcx); // 右部分木のコード生成を頼む
-			String lt = left.getCType().toString();
-			String rt = right.getCType().toString();
-			String t = getCType().toString();
-//			cgc.printInstCodeGen("", "MOV -(R6), R0", "ExpressionAdd: 右を取り出す:["+rt+"]");
-//			cgc.printInstCodeGen("", "MOV -(R6), R1", "ExpressionAdd: 左を取り出す:["+lt+"]");
-			cgc.printPopCodeGen("", "R0", "ExpressionAdd: 右を取り出す:["+rt+"]");
-			cgc.printPopCodeGen("", "R1", "ExpressionAdd: 左を取り出す:["+lt+"]");
-			cgc.printInstCodeGen("", "ADD R1, R0", "ExpressionAdd: R1["+lt+"]をR0["+rt+"] に足す:");
-			cgc.printPushCodeGen("", "R0", "ExpressionAdd: 演算結果R0["+t+"]をスタックに積む");
+			//左のコード生成はConditionExpressionで実行済み
+			//left.codeGen(pcx); // 左部分木のコード生成を頼む conditionTerm.javaのcodeGen()が動作する
+			conditionTerm.codeGen(pcx); // 右部分木のコード生成を頼む
+
+			cgc.printPopCodeGen("", "R0", "ExpressionOr: スタックから右辺の結果を取り出す");
+			cgc.printPopCodeGen("", "R1", "ExpressionOr: スタックから左辺の結果を取り出す");
+			cgc.printInstCodeGen("", "OR R1, R0", "ExpressionOr: OR演算");
+			cgc.printPushCodeGen("", "R0", "ExpressionOr: 演算結果をスタックに積む");
+
 			cgc.printCompleteComment(getBNF(getId()));
 		}
 	}

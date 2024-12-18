@@ -60,15 +60,17 @@ public class ConditionUnsignedFactor extends CParseRule {
         }
 	}
 
-	// #######
 	public void codeGen(CParseContext pcx) throws FatalErrorException {
 		CodeGenCommon cgc = pcx.getCodeGenCommon();
 		cgc.printStartComment(getBNF(getId()));
-		if (factorAmp != null) {
-			factorAmp.codeGen(pcx);
-		}else if (addressToValue != null){
-			addressToValue.codeGen(pcx);
+
+		if (condition != null) {
+			condition.codeGen(pcx);
+
+		}else if (conditionExpression != null){
+			conditionExpression.codeGen(pcx);
 		}
+		
 		cgc.printCompleteComment(getBNF(getId()));
 	}
 }

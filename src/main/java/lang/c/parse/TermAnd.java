@@ -51,24 +51,23 @@ public class TermAnd extends CParseRule {
 				pcx.fatalError(op + ": 左辺の型[" + lts + "]と右辺の型[" + rts + "]はT_boolである必要があります");
 			}
 			this.setCType(CType.getCType(CType.T_bool));
-			this.setConstant(true); // &&の左右両方が定数のときだけ定数
+			this.setConstant(true);
 		}
 	}
 
-	// #######
+
 	public void codeGen(CParseContext pcx) throws FatalErrorException {
 		CodeGenCommon cgc = pcx.getCodeGenCommon();
-		if (left != null && right != null) {
+		if (left != null && conditionFactor != null) {
 			cgc.printStartComment(getBNF(getId()));
-			left.codeGen(pcx); // 左部分木のコード生成を頼む Number.javaのcodeGen()が動作する
-			right.codeGen(pcx); // 右部分木のコード生成を頼む
-			String lt = left.getCType().toString();
-			String rt = right.getCType().toString();
-			String t = getCType().toString();
+			//左のコード生成はConditionTermで実行済み
+			//left.codeGen(pcx); // 左部分木のコード生成を頼む ConditionFactor.javaのcodeGen()が動作する
+			conditionFactor.codeGen(pcx); // 右部分木のコード生成を頼む
 
-			cgc.printInstCodeGen("", "JSR DIV", "サブルーチン呼び出し(返り値はR0に)");
-			cgc.printInstCodeGen("", "SUB #2, R6", "引数を消す");
-			cgc.printPushCodeGen("", "R0", "演算結果R0["+t+"]をスタックに積む");
+			cgc.printPopCodeGen("", "R0", "TermAnd: スタックから右辺の結果を取り出す");
+			cgc.printPopCodeGen("", "R1", "TermAnd: スタックから左辺の結果を取り出す");
+			cgc.printInstCodeGen("", "AND R1, R0", "TermAnd: AND演算");
+			cgc.printPushCodeGen("", "R0", "TermAnd: 演算結果をスタックに積む");
 
 			cgc.printCompleteComment(getBNF(getId()));
 		}

@@ -43,13 +43,17 @@ public class NotFactor extends CParseRule {
 		}
 	}
 
-	// #######
+	
 	public void codeGen(CParseContext pcx) throws FatalErrorException {
 		CodeGenCommon cgc = pcx.getCodeGenCommon();
-		if (right != null) {
+		if (conditionUnsignedFactor != null) {
 			cgc.printStartComment(getBNF(getId()));
-			right.codeGen(pcx); // 右部分木のコード生成を頼む
-			// + 符号は生成すべきコードなし
+			conditionUnsignedFactor.codeGen(pcx); // 右部分木のコード生成を頼む
+			
+			cgc.printPopCodeGen("", "R0", "NotFactor: condition()実行結果を取り出す");
+			cgc.printInstCodeGen("", "XOR #0x0001, R0", "NotFactor: NOT演算");
+			cgc.printPushCodeGen("", "R0", "NotFactor: 結果をスタックに積む");
+
 			cgc.printCompleteComment(getBNF(getId()));
 		}
 	}

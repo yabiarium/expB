@@ -48,7 +48,7 @@ public class T07_32ParseTest {
         @Test
         public void reject() throws FatalErrorException {
             TestDataAndErrMessage[] arr = {
-                    new TestDataAndErrMessage("(", "(の後ろはconditionです"),
+                    new TestDataAndErrMessage("(", "(の後ろはconditionExpressionです"),
                     new TestDataAndErrMessage("( true", ")がありません"),
             };
             conditionBlockHelper.parseRejectTestList(arr);
