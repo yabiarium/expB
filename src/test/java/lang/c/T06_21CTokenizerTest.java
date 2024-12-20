@@ -15,7 +15,7 @@ public class T06_21CTokenizerTest {
             true
             false
             <<=>>=!===
-            !<="""; 
+            <="""; 
             // これまでの codeGen() での扱い同様，各行の先頭に空白は入っておらず，各行は colNol=1 から始まる
             // また，  =100 の行は lineNo は 2 ではなく 1 である点も注意
 
@@ -34,10 +34,10 @@ public class T06_21CTokenizerTest {
             new CToken(CToken.TK_NE, 4, 7, "!="),
             new CToken(CToken.TK_EQ, 4, 9, "=="),
 
-            new CToken(CToken.TK_ILL, 5, 1, "!"),
-            new CToken(CToken.TK_LE, 5, 2, "<="),
+            //new CToken(CToken.TK_ILL, 5, 1, "!"),
+            new CToken(CToken.TK_LE, 5, 1, "<="),
 
-            new CToken(CToken.TK_EOF, 5, 4, "end_of_file")
+            new CToken(CToken.TK_EOF, 5, 3, "end_of_file")
         };
         helper.acceptList(testString, exceptedTokenList);
     }

@@ -65,6 +65,7 @@ public class T08_41SemanticCheckTest {
                 //bool型どうしがbool型になることを確認
                 new TestDataAndCType("i_a==10 && true", CType.T_bool),
                 new TestDataAndCType("true && false", CType.T_bool),
+                new TestDataAndCType("true || false", CType.T_bool),
             };
             Helper.typeListTest(ttList);
         }
