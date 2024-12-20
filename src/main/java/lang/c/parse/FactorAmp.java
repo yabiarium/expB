@@ -33,12 +33,12 @@ public class FactorAmp extends CParseRule {
 			number.parse(pcx);
 		} else if(Primary.isFirst(tk)) {
 			if(PrimaryMult.isFirst(tk)){
-				pcx.fatalError(tk + "FactorAmp: parse(): &の後ろに*は置けません");
+				pcx.fatalError(tk + "factorAmp: parse(): &の後ろに*は置けません");
 			}
 			primary = new Primary(pcx);
 			primary.parse(pcx);
 		} else {
-			pcx.fatalError(tk + "FactorAmp: parse(): &の後ろはnumberまたはprimaryです");
+			pcx.fatalError(tk + "factorAmp: parse(): &の後ろはnumberまたはprimaryです");
 		}
 	}
 
@@ -49,8 +49,9 @@ public class FactorAmp extends CParseRule {
 			this.setConstant(isConstant());
 		} else if (primary != null){
 			primary.semanticCheck(pcx);
+			String ts = primary.getCType().toString();
 			if(primary.getCType().getType() != CType.T_int){
-				pcx.fatalError("&の後ろはT_intです["+primary.getCType().toString()+"]");
+				pcx.fatalError("factorAmp: semanticCheck(): &の後ろはT_intです["+ts+"]");
 			}
 			this.setCType(CType.getCType(CType.T_pint));
 			this.setConstant(isConstant());

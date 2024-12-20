@@ -29,7 +29,7 @@ public class ConditionGE  extends CParseRule {
 			expression = new Expression(pcx);
 			expression.parse(pcx);
 		}else{
-			pcx.fatalError(tk + "ConditionGE: >=の後ろはexpressionです");
+			pcx.fatalError(tk + "conditionGE: parse(): >=の後ろはexpressionです");
 		}
 	}
 
@@ -44,7 +44,7 @@ public class ConditionGE  extends CParseRule {
 			String rts = expression.getCType().toString();
 
 			if (lt != rt){
-				pcx.fatalError(op+":左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません");
+				pcx.fatalError(op+"conditionGE: semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません");
 			}
 			this.setCType(CType.getCType(CType.T_bool));
 			this.setConstant(true);

@@ -28,7 +28,7 @@ public class MinusFactor extends CParseRule {
 			right = new UnsignedFactor(pcx);
 			right.parse(pcx);
 		} else {
-			pcx.fatalError(tk + "MinusFactor: parse(): -の後ろはuFactorです");
+			pcx.fatalError(tk + "minusFactor: parse(): -の後ろはunsignedFactorです");
 		}
 	}
 
@@ -38,7 +38,7 @@ public class MinusFactor extends CParseRule {
 			int rt = right.getCType().getType(); // -の右辺の型
 			String rts = right.getCType().toString();
 			if (rt != CType.T_int) {
-				pcx.fatalError(op + ": MinusFactor: semanticCheck(): -の後ろはT_intです[" + rts + "]");
+				pcx.fatalError(op + ": minusFactor: semanticCheck(): -の後ろはT_intです[" + rts + "]");
 			}
 			this.setCType(CType.getCType(rt));
 			this.setConstant(right.isConstant());

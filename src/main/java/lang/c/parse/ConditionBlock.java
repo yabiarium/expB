@@ -25,13 +25,13 @@ public class ConditionBlock  extends CParseRule {
 			conditionExpression = new ConditionExpression(pcx);
             conditionExpression.parse(pcx);
 		}else{
-            pcx.fatalError(tk + "ConditionBlock: parse(): (の後ろはconditionExpressionです");
+            pcx.fatalError(tk + "conditionBlock: parse(): (の後ろはconditionExpressionです");
         }
 
         // conditionExpression の次のトークンを読む
         tk = ct.getCurrentToken(pcx);
 		if(tk.getType() != CToken.TK_RPAR){
-            pcx.fatalError(tk + "ConditionBlock: parse(): )がありません");
+            pcx.fatalError(tk + "conditionBlock: parse(): )がありません");
         }
 	}
 

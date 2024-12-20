@@ -31,7 +31,7 @@ public class TermAnd extends CParseRule {
 			conditionFactor = new ConditionFactor(pcx);
 			conditionFactor.parse(pcx);
 		} else {
-			pcx.fatalError(tk + "&&の後ろはconditionFactorです");
+			pcx.fatalError(tk + "termAnd: parse(): &&の後ろはconditionFactorです");
 		}
 	}
 
@@ -48,7 +48,7 @@ public class TermAnd extends CParseRule {
 			if (lt != CType.T_bool || rt != CType.T_bool) {
 				String lts = left.getCType().toString();
 				String rts = conditionFactor.getCType().toString();
-				pcx.fatalError(op + ": 左辺の型[" + lts + "]と右辺の型[" + rts + "]はT_boolである必要があります");
+				pcx.fatalError(op + "termAnd: semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]はT_boolである必要があります");
 			}
 			this.setCType(CType.getCType(CType.T_bool));
 			this.setConstant(true);

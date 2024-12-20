@@ -31,7 +31,7 @@ public class StatementBlock extends CParseRule {
             tk = ct.getCurrentToken(pcx);
 		}
         if(tk.getType() != CToken.TK_RCUR){
-            pcx.fatalError(tk + "StatementBlock: parse(): }がありません");
+            pcx.fatalError(tk + "statementBlock: parse(): }がありません");
         }
 		
 		tk = ct.getNextToken(pcx);

@@ -28,7 +28,7 @@ public class PlusFactor extends CParseRule {
 			right = new UnsignedFactor(pcx);
 			right.parse(pcx);
 		} else {
-			pcx.fatalError(tk + "PlusFactor: parse(): +の後ろはuFactorです");
+			pcx.fatalError(tk + "plusFactor: parse(): +の後ろはunsignedFactorです");
 		}
 	}
 
@@ -38,7 +38,7 @@ public class PlusFactor extends CParseRule {
 			int rt = right.getCType().getType(); // +の右辺の型
 			String rts = right.getCType().toString();
 			if (rt != CType.T_int) {
-				pcx.fatalError(op + ": PlusFactor: semanticCheck(): +の後ろはT_intです[" + rts + "]");
+				pcx.fatalError(op + "plusFactor: semanticCheck(): +の後ろはT_intです[" + rts + "]");
 			}
 			this.setCType(CType.getCType(rt));
 			this.setConstant(right.isConstant());

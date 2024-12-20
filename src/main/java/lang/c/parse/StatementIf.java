@@ -25,7 +25,7 @@ public class StatementIf extends CParseRule {
 			conditionBlock = new ConditionBlock(pcx);
             conditionBlock.parse(pcx);
 		}else{
-            pcx.fatalError(tk + "StatementIf: parse(): ifの後ろはconditionBlockです");
+            pcx.fatalError(tk + "statementIf: parse(): ifの後ろはconditionBlockです");
         }
 
         // conditionBlock の次のトークンを読む
@@ -34,7 +34,7 @@ public class StatementIf extends CParseRule {
             statement1 = new Statement(pcx);
             statement1.parse(pcx);
         }else{
-            pcx.fatalError(tk + "StatementIf: parse(): conditionBlockの後ろはstatementです");
+            pcx.fatalError(tk + "statementIf: parse(): conditionBlockの後ろはstatementです");
         }
 
         // else がある場合
@@ -45,7 +45,7 @@ public class StatementIf extends CParseRule {
                 statement2 = new Statement(pcx);
                 statement2.parse(pcx);
             }else{
-                pcx.fatalError(tk + "StatementIf: parse(): elseの後ろはstatementです");
+                pcx.fatalError(tk + "statementIf: parse(): elseの後ろはstatementです");
             }
         }
 	}

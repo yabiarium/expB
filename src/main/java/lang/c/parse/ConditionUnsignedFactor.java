@@ -29,7 +29,7 @@ public class ConditionUnsignedFactor extends CParseRule {
 				conditionExpression = new ConditionExpression(pcx);
 				conditionExpression.parse(pcx);
 			}else{
-				pcx.fatalError(tk + "ConditionUnsignedFactor: parse(): [の後ろはconditionExpressionです");
+				pcx.fatalError(tk + "conditionUnsignedFactor: parse(): [の後ろはconditionExpressionです");
 			}
 	
 			// conditionExpression の次のトークンを読む
@@ -37,7 +37,7 @@ public class ConditionUnsignedFactor extends CParseRule {
 			if(tk.getType() == CToken.TK_RBRA){
 				tk = ct.getNextToken(pcx);
 			}else{
-				pcx.fatalError(tk + "ConditionUnsignedFactor: parse(): ]がありません");
+				pcx.fatalError(tk + "conditionUnsignedFactor: parse(): ]がありません");
 			}
 
 		}else{

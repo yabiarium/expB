@@ -11,7 +11,7 @@ public class Number extends CParseRule {
 
 	public Number(CParseContext pcx) {
 		super("Number");
-		setBNF("Number ::= NUM");
+		setBNF("number ::= NUM");
 	}
 
 	public static boolean isFirst(CToken tk) {

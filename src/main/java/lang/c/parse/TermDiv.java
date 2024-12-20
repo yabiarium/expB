@@ -34,7 +34,7 @@ public class TermDiv extends CParseRule {
 			right = new Factor(pcx);
 			right.parse(pcx);
 		} else {
-			pcx.fatalError(tk + "/の後ろはfactorです");
+			pcx.fatalError(tk + "termDiv: parse(): /の後ろはfactorです");
 		}
 	}
 
@@ -55,7 +55,7 @@ public class TermDiv extends CParseRule {
 			String lts = left.getCType().toString();
 			String rts = right.getCType().toString();
 			if (nt == CType.T_err) {
-				pcx.fatalError(op + ": 左辺の型[" + lts + "]は右辺の型[" + rts + "]で割れません");
+				pcx.fatalError(op + "termDiv: semanticCheck(): 左辺の型[" + lts + "]は右辺の型[" + rts + "]で割れません");
 			}
 			this.setCType(CType.getCType(nt));
 			this.setConstant(left.isConstant() && right.isConstant()); // +の左右両方が定数のときだけ定数

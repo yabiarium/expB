@@ -25,7 +25,7 @@ public class NotFactor extends CParseRule {
 			conditionUnsignedFactor = new ConditionUnsignedFactor(pcx);
 			conditionUnsignedFactor.parse(pcx);
 		} else {
-			pcx.fatalError(tk + "NotFactor: parse(): !の後ろはConditionUnsignedFactorです");
+			pcx.fatalError(tk + "notFactor: parse(): !の後ろはConditionUnsignedFactorです");
 		}
 	}
 
@@ -36,7 +36,7 @@ public class NotFactor extends CParseRule {
 			int rt = conditionUnsignedFactor.getCType().getType(); // !の右辺の型
 			String rts = conditionUnsignedFactor.getCType().toString();
 			if (rt != CType.T_bool) {
-				pcx.fatalError(op + ": NotFactor: semanticCheck(): !の後ろはT_boolです[" + rts + "]");
+				pcx.fatalError(op + ": notFactor: semanticCheck(): !の後ろはT_boolです[" + rts + "]");
 			}
 			this.setCType(conditionUnsignedFactor.getCType());
 			this.setConstant(conditionUnsignedFactor.isConstant());

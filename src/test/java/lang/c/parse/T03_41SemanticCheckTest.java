@@ -19,7 +19,7 @@ public class T03_41SemanticCheckTest {
         @Test
         public void typeList() throws FatalErrorException {
             TestDataAndErrMessage[] teList = {
-                new TestDataAndErrMessage("-&100", "MinusFactor: semanticCheck(): -の後ろはT_intです[int*]"),
+                new TestDataAndErrMessage("-&100", "minusFactor: semanticCheck(): -の後ろはT_intです[int*]"),
             }; 
             minusFactorHelper.rejectListTest(teList);
         }

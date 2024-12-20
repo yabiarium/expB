@@ -25,7 +25,7 @@ public class StatementWhile extends CParseRule {
 			conditionBlock = new ConditionBlock(pcx);
             conditionBlock.parse(pcx);
 		}else{
-            pcx.fatalError(tk + "StatementWhile: parse(): whileの後ろはconditionBlockです");
+            pcx.fatalError(tk + "statementWhile: parse(): whileの後ろはconditionBlockです");
         }
 
         // conditionBlock の次のトークンを読む
@@ -34,7 +34,7 @@ public class StatementWhile extends CParseRule {
             statement = new Statement(pcx);
             statement.parse(pcx);
         }else{
-            pcx.fatalError(tk + "StatementWhile: parse(): conditionBlockの後ろはstatementです");
+            pcx.fatalError(tk + "statementWhile: parse(): conditionBlockの後ろはstatementです");
         }
 	}
 

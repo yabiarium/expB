@@ -32,7 +32,7 @@ public class PrimaryMult extends CParseRule{
 			variable = new Variable(pcx);
 			variable.parse(pcx);
 		} else {
-			pcx.fatalError(tk + "PrimaryMult: parse(): *の後ろはvariableです");
+			pcx.fatalError(tk + "primaryMult: parse(): *の後ろはvariableです");
 		}
 		
 	}
@@ -42,7 +42,7 @@ public class PrimaryMult extends CParseRule{
 			variable.semanticCheck(pcx);
 			
 			if(variable.getCType().getType() != CType.T_pint){
-				pcx.fatalError("PrimaryMult: semanticCheck(): *の後ろは[int*]です");
+				pcx.fatalError("primaryMult: semanticCheck(): *の後ろは[int*]です");
 			}
 			this.setCType(CType.getCType(CType.T_int));
 			this.setConstant(variable.isConstant());

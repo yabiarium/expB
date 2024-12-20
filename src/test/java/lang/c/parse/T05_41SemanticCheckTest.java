@@ -42,14 +42,14 @@ public class T05_41SemanticCheckTest {
         public void falseTest() throws FatalErrorException {
             TestDataAndErrMessage[] teList = {
                 // (1) 整数型の扱い
-                new TestDataAndErrMessage("i_a=&1;", "[int]に[*int]は代入できません"),       // 不当
+                new TestDataAndErrMessage("i_a=&1;", "左辺の型[int]と右辺の型[int*]が異なります"),       // 不当
                 // (2) ポインタ型の扱い
-                new TestDataAndErrMessage("ip_a=1;", "[*int]に[int]は代入できません"),       // 不当
+                new TestDataAndErrMessage("ip_a=1;", "左辺の型[int*]と右辺の型[int]が異なります"),       // 不当
                 // (3) 配列型の扱い
-                new TestDataAndErrMessage("ia_a[10]=&1;", "[int]に[*int]は代入できません"),       // 不当
+                new TestDataAndErrMessage("ia_a[10]=&1;", "左辺の型[int]と右辺の型[int*]が異なります"),       // 不当
                 // (4) ポインタ配列型の扱い
-                new TestDataAndErrMessage("ipa_a[2]=10;", "[*int]に[int]は代入できません"),     // 不当
-                new TestDataAndErrMessage("*ipa_a[3]=&10;", "[int]に[*int]は代入できません"),  // 不当 
+                new TestDataAndErrMessage("ipa_a[2]=10;", "左辺の型[int*]と右辺の型[int]が異なります"),     // 不当
+                new TestDataAndErrMessage("*ipa_a[3]=&10;", "左辺の型[int]と右辺の型[int*]が異なります"),  // 不当 
                 // (5) 定数には代入できないことの確認
                 new TestDataAndErrMessage("c_a=1;", "定数には代入できません"),        // 不当
             }; 

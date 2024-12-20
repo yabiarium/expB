@@ -35,11 +35,11 @@ public class Array extends CParseRule{
 			// expressionの解析後,現在の字句を読む
 			tk = ct.getCurrentToken(pcx);
 			if(tk.getType() != CToken.TK_RBRA){
-				pcx.fatalError(tk + "Array: ]がありません");
+				pcx.fatalError(tk + "Array: parse(): ]がありません");
 			}
 			tk = ct.getNextToken(pcx);
 		}else{
-			pcx.fatalError(tk + "Array: [の後ろはexpressionです");
+			pcx.fatalError(tk + "Array: parse(): [の後ろはexpressionです");
 		}
 	}
 

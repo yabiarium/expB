@@ -35,11 +35,11 @@ public class StatementInput extends CParseRule{
 			// primary の解析後,現在の字句を読む
 			tk = ct.getCurrentToken(pcx);
 			if(tk.getType() != CToken.TK_SEMI){
-				pcx.fatalError(tk + "StatementInput: ;がありません");
+				pcx.fatalError(tk + "statementInput: parse(): ;がありません");
 			}
 			tk = ct.getNextToken(pcx);
 		}else{
-			pcx.fatalError(tk + "StatementInput: inputの後ろはprimaryです");
+			pcx.fatalError(tk + "statementInput: parse(): inputの後ろはprimaryです");
 		}
 	}
 
@@ -48,7 +48,7 @@ public class StatementInput extends CParseRule{
 			primary.semanticCheck(pcx);
 			
 			if(primary.isConstant()){
-				pcx.fatalError("定数には代入できません");
+				pcx.fatalError("statementInput: semanticCheck(): 定数には代入できません");
 			}
 			this.setCType(CType.getCType(primary.getCType().getType()));
 			this.setConstant(primary.isConstant());

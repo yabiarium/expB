@@ -32,7 +32,7 @@ public class StatementAssign extends CParseRule{
 			// primaryの解析後,現在の字句を読む
 			tk = ct.getCurrentToken(pcx);
 			if(tk.getType() != CToken.TK_ASSIGN){
-				pcx.fatalError(tk + "StatementAssign: =がありません");
+				pcx.fatalError(tk + "statementAssign: parse(): =がありません");
 			}
 
 			tk = ct.getNextToken(pcx);
@@ -42,10 +42,10 @@ public class StatementAssign extends CParseRule{
 				// expressionの解析後,現在の字句を読む
 				tk = ct.getCurrentToken(pcx);
 				if(tk.getType() != CToken.TK_SEMI){
-					pcx.fatalError(tk + "StatementAssign: ;がありません");
+					pcx.fatalError(tk + "statementAssign: parse(): ;がありません");
 				}
 			}else{
-				pcx.fatalError(tk + "StatementAssign: =の後ろはexpressionです");
+				pcx.fatalError(tk + "statementAssign: parse(): =の後ろはexpressionです");
 			}
 			
 			tk = ct.getNextToken(pcx);
@@ -58,13 +58,13 @@ public class StatementAssign extends CParseRule{
 
 			int lt = primary.getCType().getType(); //左辺の型
 			int rt = expression.getCType().getType(); //右辺の型
+			String lts = primary.getCType().toString();
+			String rts = expression.getCType().toString();
 			
-			if(lt == CType.T_int && rt == CType.T_pint){
-				pcx.fatalError("StatementAssign: [int]に[*int]は代入できません");
-			}else if(lt == CType.T_pint && rt == CType.T_int){
-				pcx.fatalError("StatementAssign: [*int]に[int]は代入できません");
+			if(lt != rt){
+				pcx.fatalError("statementAssign: semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が異なります");
 			}else if(primary.isConstant()){
-				pcx.fatalError("定数には代入できません");
+				pcx.fatalError("statementAssign: semanticCheck(): 定数には代入できません");
 			}
 			this.setCType(CType.getCType(lt));
 			this.setConstant(primary.isConstant());

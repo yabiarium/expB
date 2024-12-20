@@ -18,7 +18,7 @@ public class ExpressionAdd extends CParseRule {
 	public ExpressionAdd(CParseContext pcx, CParseRule left) {
 		super("ExpressionAdd");
 		this.left = left;
-		setBNF("ExpressionAdd ::= TK_PLUS Term");
+		setBNF("expressionAdd ::= TK_PLUS term");
 	}
 
 	public static boolean isFirst(CToken tk) {
@@ -35,7 +35,7 @@ public class ExpressionAdd extends CParseRule {
 			right = new Term(pcx);
 			right.parse(pcx);
 		} else {
-			pcx.fatalError(tk + "ExpressionAdd: parse(): +の後ろはtermです");
+			pcx.fatalError(tk + "expressionAdd: parse(): +の後ろはtermです");
 		}
 	}
 
@@ -58,7 +58,7 @@ public class ExpressionAdd extends CParseRule {
 			String lts = left.getCType().toString();
 			String rts = right.getCType().toString();
 			if (nt == CType.T_err) {
-				pcx.fatalError(op + ": ExpressionAdd: semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]は足せません");
+				pcx.fatalError(op + ": expressionAdd: semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]は足せません");
 			}
 			this.setCType(CType.getCType(nt));
 			this.setConstant(left.isConstant() && right.isConstant()); // +の左右両方が定数のときだけ定数

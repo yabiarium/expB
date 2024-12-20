@@ -34,7 +34,7 @@ public class TermMult extends CParseRule {
 			right = new Factor(pcx);
 			right.parse(pcx);
 		} else {
-			pcx.fatalError(tk + "*の後ろはfactorです");
+			pcx.fatalError(tk + "termMult: parse(): *の後ろはfactorです");
 		}
 	}
 
@@ -55,7 +55,7 @@ public class TermMult extends CParseRule {
 			String lts = left.getCType().toString();
 			String rts = right.getCType().toString();
 			if (nt == CType.T_err) {
-				pcx.fatalError(op + ": 左辺の型[" + lts + "]と右辺の型[" + rts + "]は掛けられません");
+				pcx.fatalError(op + "termMult: semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]は掛けられません");
 			}
 			this.setCType(CType.getCType(nt));
 			this.setConstant(left.isConstant() && right.isConstant()); // *の左右両方が定数のときだけ定数

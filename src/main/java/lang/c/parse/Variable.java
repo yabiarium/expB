@@ -45,7 +45,7 @@ public class Variable extends CParseRule{
 			// 後ろに[]が存在しているのにidentがint,pintなのはおかしい
 			if(array != null){
 				if(rt == CType.T_int || rt == CType.T_pint){
-					pcx.fatalError("配列変数は T_int_array か T_pint_array です");
+					pcx.fatalError("variable: semanticCheck(): 配列変数は T_int_array か T_pint_array です");
 				}
 				array.semanticCheck(pcx); //arrayの型によってvariableの型が変わることはない
 			}
@@ -53,7 +53,7 @@ public class Variable extends CParseRule{
 			// 配列型なのに後ろに[]が無いのはおかしい
 			if(rt == CType.T_int_array || rt == CType.T_pint_array){
 				if(array == null){
-					pcx.fatalError("配列型の後ろに[]がありません");
+					pcx.fatalError("variable: semanticCheck(): 配列型の後ろに[]がありません");
 				}
 				// variableより上の階層では配列型は存在しない
 				if (rt == CType.T_int_array) {

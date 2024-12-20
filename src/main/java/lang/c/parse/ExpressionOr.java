@@ -31,7 +31,7 @@ public class ExpressionOr extends CParseRule {
 			conditionTerm = new ConditionTerm(pcx);
 			conditionTerm.parse(pcx);
 		} else {
-			pcx.fatalError(tk + "ExpressionOr: parse(): ||の後ろはconditionTermです");
+			pcx.fatalError(tk + "expressionOr: parse(): ||の後ろはconditionTermです");
 		}
 	}
 
@@ -48,7 +48,7 @@ public class ExpressionOr extends CParseRule {
 			if (lt != CType.T_bool || rt != CType.T_bool) {
 				String lts = left.getCType().toString();
 				String rts = conditionTerm.getCType().toString();
-				pcx.fatalError(op + ": 左辺の型[" + lts + "]と右辺の型[" + rts + "]はT_boolである必要があります");
+				pcx.fatalError(op + "expressionOr: semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]はT_boolである必要があります");
 			}
 			this.setCType(CType.getCType(CType.T_bool));
 			this.setConstant(true);
