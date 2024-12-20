@@ -4,7 +4,7 @@ miniCV00 for expB on Faculty of Informatics, Shizuoka University.
 ## BNF
 ```
 program         ::= { statement } EOF  
-statement       ::= statementAssign | statementInput | statementOutput  
+statement       ::= statementAssign | statementInput | statementOutput | statementIf | statementWhile | statementBlock  
 statementAssign ::= primary ASSIGN expression SEMI  
 statementInput  ::= INPUT primary SEMI  
 statementOutput ::= OUTPUT expression SEMI  
@@ -24,6 +24,7 @@ primaryMult     ::= MULT variable
 variable        ::= ident [ array ]  
 array           ::= LBRA expression RBRA  
 ident           ::= IDENT  
+addressToValue  ::= primary  
 number          ::= NUM  
 condition       ::= TRUE | FALSE | expression ( conditionLT | conditionLE | conditionGT | conditionGE | conditionEQ | conditionNE )  
 conditionLT     ::= LT expression  
@@ -49,14 +50,27 @@ notFactor       ::= NOT conditionUnsignedFactor
 conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA //条件式の優先度を示す括弧として[]を用いる
 ```
 
-> ### CV08のBNFの参考元  
-> expression      ::= term { expressionAdd | expressionSub }  
+<details>
+<summary>CV08以降について</summary>
+
+### CV08のBNFの参考元  
+```
+expression      ::= term { expressionAdd | expressionSub }  
 expressionAdd   ::= PLUS term  
 term            ::= factor { termMult | termDiv }  
 termMult        ::= MULT factor  
 factor          ::= plusFactor | minusFactor | unsignedFactor  
 plusFactor      ::= PLUS unsignedFactor  
 unsignedFactor  ::= number | LPAR expression RPAR 
+```
+
+### CV09のエラー仕様書
+[ERROR.md](./ERROR.md)
+
+</details>
+
+
+
 ## memo
 term ::= factor { (PLUS | MINUS) factor }  
 小文字の名前は「非終端記号」Non Terminal を，大文字の名前は「終端記号」Terminal を表す
