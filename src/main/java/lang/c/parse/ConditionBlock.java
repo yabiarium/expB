@@ -4,11 +4,11 @@ import lang.*;
 import lang.c.*;
 
 public class ConditionBlock  extends CParseRule {
-	CParseRule condition;
+	CParseRule conditionExpression;
 
 	public ConditionBlock(CParseContext pcx) {
 		super("ConditionBlock");
-		setBNF("conditionBlock ::= LPAR condition RPAR"); //CV07~
+		setBNF("conditionBlock ::= LPAR conditionExpression RPAR"); //CV07~
 	}
 
 	public static boolean isFirst(CToken tk) {
@@ -21,14 +21,14 @@ public class ConditionBlock  extends CParseRule {
 
         // ( の次のトークンを読む
         tk = ct.getNextToken(pcx);
-		if(Condition.isFirst(tk)){
-			condition = new Condition(pcx);
-            condition.parse(pcx);
+		if(ConditionExpression.isFirst(tk)){
+			conditionExpression = new ConditionExpression(pcx);
+            conditionExpression.parse(pcx);
 		}else{
-            pcx.fatalError(tk + "ConditionBlock: parse(): (の後ろはconditionです");
+            pcx.fatalError(tk + "ConditionBlock: parse(): (の後ろはconditionExpressionです");
         }
 
-        // condition の次のトークンを読む
+        // conditionExpression の次のトークンを読む
         tk = ct.getCurrentToken(pcx);
 		if(tk.getType() != CToken.TK_RPAR){
             pcx.fatalError(tk + "ConditionBlock: parse(): )がありません");
@@ -36,16 +36,18 @@ public class ConditionBlock  extends CParseRule {
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
-        if(condition != null){
-            condition.semanticCheck(pcx);
+        if(conditionExpression != null){
+            conditionExpression.semanticCheck(pcx);
+			this.setCType(conditionExpression.getCType()); // conditionExpression の型をそのままコピー
+			this.setConstant(conditionExpression.isConstant());
         }
 	}
 
 	public void codeGen(CParseContext pcx) throws FatalErrorException {
 		CodeGenCommon cgc = pcx.getCodeGenCommon();
 		cgc.printStartComment(getBNF(getId()));
-		if (condition != null) {
-            condition.codeGen(pcx);
+		if (conditionExpression != null) {
+            conditionExpression.codeGen(pcx);
 		}
 		cgc.printCompleteComment(getBNF(getId()));
 	}

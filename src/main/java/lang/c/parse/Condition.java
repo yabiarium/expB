@@ -39,17 +39,16 @@ public class Condition extends CParseRule {
 			if(ConditionEQ.isFirst(tk)) conditionXX = new ConditionEQ(pcx, expression);
 			if(ConditionNE.isFirst(tk)) conditionXX = new ConditionNE(pcx, expression);
 
-			if(conditionXX != null){
+			if(conditionXX == null){
+				pcx.fatalError(tk + "condition: parse(): expressionの後ろにはconditionXXが必要です");
+			}else{
 				conditionXX.parse(pcx);
 			}
 		}
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
-		if(conTrue != null){
-			this.setCType(CType.getCType(CType.T_bool));
-			this.setConstant(true);
-		}if(conFalse != null){
+		if(conTrue != null || conFalse != null){
 			this.setCType(CType.getCType(CType.T_bool));
 			this.setConstant(true);
 		}if (conditionXX != null) {
