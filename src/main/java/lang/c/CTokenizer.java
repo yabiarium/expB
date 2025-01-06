@@ -107,6 +107,39 @@ public class CTokenizer extends Tokenizer<CToken, CParseContext> {
 		return currentTk;
 	}
 
+	// 指定されたトークンまで読み飛ばす
+	public void skipTo(CParseContext pctx, int ... tokens) {
+		CToken currentToken = getCurrentToken(pctx);
+		while (true) {
+			if (currentToken.getType() == CToken.TK_EOF) {
+				break;
+			}
+			
+			for (int token : tokens) {
+				if (token == currentToken.getType()) {
+					break;
+				}
+			}
+
+			currentToken = getNextToken(pctx);
+		}
+	}
+
+
+	// 行末(;)まで読み飛ばす
+	public void skipToLineEndSemi(CParseContext pctx) {
+		CToken currentToken = getCurrentToken(pctx);
+		int lineNo = currentToken.getLineNo();
+		while (true) {
+			if (currentToken.getType() == CToken.TK_SEMI || lineNo != currentToken.getLineNo()) {
+				break;
+			}
+			currentToken = getNextToken(pctx);
+		}
+		CToken tk = getCurrentToken(pctx);
+		System.out.printf("method %s, %s\n", tk.toDetailExplainString(), tk.getText());
+	}
+
 	private CToken readToken() {
 		CToken tk = null; // 受理した字句 (Token)
 		char ch; // 最後に読んだ文字
