@@ -67,13 +67,14 @@ public abstract class ParseContext {
 
 	// 警告（回復できる些細な誤り）
 	public void warning(final String s) {
-		message(s);
+		//message(s);
+		message("Warning: " + s);
 		++warningNo;
 	}
 
 	// 回復できるエラー
 	public void recoverableError(final String s) throws RecoverableErrorException {
-		error(s);
+		error("RecoverableError: " + s);
 		throw new RecoverableErrorException(s);
 	}
 }
