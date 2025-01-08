@@ -145,13 +145,16 @@ o conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA //条件
  - 💫 semanticCheck(): 配列型の後ろに[]がありません
 
 ### array: 
- - 🍀 parse(): ]がありません  
-        → expressionの終わりが不明。次の;まで飛ばす
- - 🍀 parse(): [の後ろはexpressionです  
-        → expressionが不定。]までか、無ければ次の;まで飛ばす
+ - [x] 💫 parse(): ]がありません  
+        → expression解析後のエラーなので、expressinはそこで終了とみなして]を補う
+ - [x] 🍀 parse(): [の後ろはexpressionです  
+        → expression内でのエラー。expressionが不明となる。]か;まで飛ばす  
+          （]はarray自身の範囲内の終了を示す。;は外側の（例えばStatementAssign）の終わりを表す。そこも飛んだら次の行の;を読む。「if(){ i_a[0 = 1 } i_a=0; 」の文だと、次の;まで飛ぶのでifの}を飛ばしてしまうが、if側でどうにかする。間違いまみれならどうしようもないのでまともなコンパイルエラーは諦める）
 
 ### ident:
- - 💫 semanticCheck(): 変数名規則にマッチしません
+ - [x] 🍀 semanticCheck(): 変数名規則に合っていません  
+       → 意味解析でのエラー。変数の型が不明だと以降の意味解析に支障が出る。  
+         一時的にint型として、以降で出る意味解析でのエラーは構文木の上の階層の意味解析に任せる。
 
 ### condition:
  - 🍀 parse(): expressionの後ろにはconditionXXが必要です  
@@ -197,7 +200,8 @@ o conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA //条件
         → 次の;まで飛ばす
 
 ### statementBlock:
- - 💫 parse(): }がありません  
+ - [x] statement内部でエラー → ;か}まで読み飛ばす  
+ - [x] 💫 parse(): }がありません  
         → }を補う
 
 ### conditionBlock:

@@ -28,7 +28,7 @@ public class T07_32ParseTest {
         @Test
         public void reject() throws FatalErrorException {
             TestDataAndErrMessage[] arr = {
-                    new TestDataAndErrMessage("{ i_a = 1; ip_b = &i_a;", "}がありません"),
+                    //new TestDataAndErrMessage("{ i_a = 1; ip_b = &i_a;", "}がありません"), //CV09: StatementBlockにて}が補われ棄却されなくなった
             };
             statementBlockHelper.parseRejectTestList(arr);
         }

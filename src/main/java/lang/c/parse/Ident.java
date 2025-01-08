@@ -35,7 +35,7 @@ public class Ident extends CParseRule{
 		if(var.contains("_")){
 			var = var.substring(0, var.indexOf('_'));
 		}else{
-			pcx.fatalError("ident: semanticCheck(): 変数名規則にマッチしません");
+			pcx.fatalError("ident: semanticCheck(): 変数名規則に合っていません");
 		}
 		
 		if(var.equals("i")){
@@ -57,6 +57,8 @@ public class Ident extends CParseRule{
 		}else if(var.equals("c")){
 			this.setCType(CType.getCType(CType.T_int));
 			this.setConstant(true);
+		}else{
+			pcx.fatalError("ident: semanticCheck(): 変数名規則に合っていません");
 		}
 		
 	}

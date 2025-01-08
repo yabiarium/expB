@@ -43,7 +43,7 @@ public class T04_41SemanticCheckTest {
         @Test
         public void falseTest() throws FatalErrorException {
             TestDataAndErrMessage[] teList = {
-                new TestDataAndErrMessage("aaa", "変数名規則にマッチしません"),
+                new TestDataAndErrMessage("aaa", "変数名規則に合っていません"),
             }; 
             identHelper.rejectListTest(teList);
         }
