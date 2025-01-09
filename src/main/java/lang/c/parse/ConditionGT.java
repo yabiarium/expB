@@ -23,13 +23,18 @@ public class ConditionGT  extends CParseRule {
 		CToken tk = ct.getCurrentToken(pcx);
 		op = ct.getCurrentToken(pcx);
 
-		// LT > の次の字句を読む
-		tk = ct.getNextToken(pcx);
-		if(Expression.isFirst(tk)){
-			expression = new Expression(pcx);
-			expression.parse(pcx);
-		}else{
-			pcx.fatalError(tk + "conditionGT: parse(): >の後ろはexpressionです");
+		// GT > の次の字句を読む
+		try {
+			tk = ct.getNextToken(pcx);
+			if(Expression.isFirst(tk)){
+				expression = new Expression(pcx);
+				expression.parse(pcx);
+			}else{
+				//pcx.fatalError(tk + "conditionGT: parse(): >の後ろはexpressionです");
+				pcx.recoverableError(tk + "conditionGT: >の後ろはexpressionです");
+			}
+		} catch (RecoverableErrorException e) {
+			// ; ) {まで読み飛ばす処理はconditionBlockに継ぐ
 		}
 	}
 

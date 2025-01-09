@@ -24,13 +24,19 @@ public class ConditionLE  extends CParseRule {
 		op = ct.getCurrentToken(pcx);
 
 		// LT <= の次の字句を読む
-		tk = ct.getNextToken(pcx);
-		if(Expression.isFirst(tk)){
-			expression = new Expression(pcx);
-			expression.parse(pcx);
-		}else{
-			pcx.fatalError(tk + "conditionLE: parse(): <=の後ろはexpressionです");
+		try {
+			tk = ct.getNextToken(pcx);
+			if(Expression.isFirst(tk)){
+				expression = new Expression(pcx);
+				expression.parse(pcx);
+			}else{
+				//pcx.fatalError(tk + "conditionLE: parse(): <=の後ろはexpressionです");
+				pcx.recoverableError(tk + "conditionLE: <=の後ろはexpressionです");
+			}
+		} catch (RecoverableErrorException e) {
+			// ; ) {まで読み飛ばす処理はconditionBlockに継ぐ
 		}
+		
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
