@@ -44,7 +44,7 @@ public class StatementBlock extends CParseRule {
             tk = ct.getNextToken(pcx);
         }else{
 			//pcx.fatalError(tk + "statementBlock: parse(): }がありません");
-			pcx.warning(tk + "} を補いました");
+			pcx.warning(tk + "statementBlock: } を補いました");
 		}
 	}
 

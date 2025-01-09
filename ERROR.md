@@ -59,9 +59,11 @@ o conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA //条件
 ## 各非終端記号でのエラー処理一覧
 💫 warning          → コード生成可能  
 🍀 recoverableError → ひとつでもあったらコード生成しない、parseと意味チェックはどうにか進めてエラーを出す  
-❌ fatalerror       → 0個の可能性もある。自分が致命的と思ったら使ってもいい  
+❌ fatalerror       → 0個の可能性もある。自分が致命的と思ったら使ってもいい    
+  
 すべての行で;が抜けていたり、(){}, 予約語のミスなど、ユーザのミスがかなり多い場合はコンパイラはどうにもできない。全行;が無くてコンパイルすっ飛ばす可能性も全然ある。  
-エラーの分類基準が一貫していればよい。こだわりだすとずっとこだわれる部分なので、実装のやりやすい範囲で作ればよい
+エラーの分類基準が一貫していればよい。こだわりだすとずっとこだわれる部分なので、実装のやりやすい範囲で作ればよい  
+今回は構文解析でのエラー仕様を変更する。意味解析でのエラーはfatalErrorのままでよい。
 
 ### program:
  - 💫 parse(): プログラムの最後にゴミがあります  
@@ -74,16 +76,16 @@ o conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA //条件
         → 次の;まで飛ばす（expressionが不定）
  - 💫 parse(): ;がありません  
         → expressionの解析後なので;を補う（「i_a=1 2;」のようにexpressionの途中であろう位置で抜けてしまう場合は1で解析が止まる）
- - 🍀 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が異なります  
+ - [x] semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が異なります  
         → 変なアドレスに書き込むようになっているといけないのでコード生成しない
- - 💫 semanticCheck(): 定数には代入できません
+ - [x] semanticCheck(): 定数には代入できません
 
 ### statementInput:
  - 🍀 parse(): inputの後ろはprimaryです  
         → 次の;まで飛ばす（primaryが不定）  
  - 💫 parse(): ;がありません  
         → primaryの解析後なので、;を補う
- - 💫 semanticCheck(): 定数には代入できません
+ - [x] semanticCheck(): 定数には代入できません
 
 ### statementOutput:
  - 💫 parse(): ;がありません  
@@ -94,32 +96,32 @@ o conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA //条件
 ### expressionAdd:
  - 🍀 parse(): +の後ろはtermです  
         → 次の;まで飛ばす（termが不定）
- - 💫 semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]は足せません
+ - [x] semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]は足せません
 
 ### expressionSub:
  - 🍀 parse(): -の後ろはtermです  
         → 次の;まで飛ばす（termが不定）
- - 💫 semanticCheck(): 左辺の型[" + lts + "]から右辺の型[" + rts + "]は引けません
+ - [x] semanticCheck(): 左辺の型[" + lts + "]から右辺の型[" + rts + "]は引けません
 
 ### termMult:
  - 🍀 parse(): *の後ろはfactorです  
         → 次の;まで飛ばす（factorが不定）
- - 💫 semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]は掛けられません
+ - [x] semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]は掛けられません
 
 ### termDiv:
  - 🍀 parse(): /の後ろはfactorです  
         → 次の;まで飛ばす（factorが不定）
- - 💫 semanticCheck(): 左辺の型[" + lts + "]は右辺の型[" + rts + "]で割れません
+ - [x] semanticCheck(): 左辺の型[" + lts + "]は右辺の型[" + rts + "]で割れません
 
 ### plusFactor:
  - 🍀 parse(): +の後ろはunsignedFactorです  
         → 次の;まで飛ばす（unsignedFactorが不定）
- - 💫 semanticCheck(): +の後ろはT_intです[" + rts + "]
+ - [x] semanticCheck(): +の後ろはT_intです[" + rts + "]
 
 ### minusFactor:
  - 🍀 parse(): -の後ろはunsignedFactorです  
         → 次の;まで飛ばす（unsignedFactorが不定）
- - 💫 semanticCheck(): -の後ろはT_intです[" + rts + "]
+ - [x] semanticCheck(): -の後ろはT_intです[" + rts + "]
 
 ### unsignedFactor:
  - 💫 parse(): )がありません  
@@ -133,16 +135,17 @@ o conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA //条件
          → 次の;まで飛ばす
  - 🍀 parse(): &の後ろはnumberまたはprimaryです  
          → 次の;まで飛ばす
- - 💫 semanticCheck(): &の後ろはT_intです["+ts+"]
+ - [x] semanticCheck(): &の後ろはT_intです["+ts+"]
 
 ### primaryMult:
  - 🍀 parse(): *の後ろはvariableです  
         → ]まで飛ばす。なければ次の;まで飛ばす
- - 💫 semanticCheck(): \*の後ろは[int*]です
+ - [x] semanticCheck(): \*の後ろは[int*]です
 
 ### variable:
- - 💫 semanticCheck(): 配列変数は T_int_array か T_pint_array です
- - 💫 semanticCheck(): 配列型の後ろに[]がありません
+ - [x] semanticCheck(): 配列変数は T_int_array か T_pint_array です
+ - [x] semanticCheck(): 配列型の後ろに[]がありません  
+       → 意味解析でのエラーは変更なし 
 
 ### array: 
  - [x] 💫 parse(): ]がありません  
@@ -152,38 +155,41 @@ o conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA //条件
           （]はarray自身の範囲内の終了を示す。;は外側の（例えばStatementAssign）の終わりを表す。そこも飛んだら次の行の;を読む。「if(){ i_a[0 = 1 } i_a=0; 」の文だと、次の;まで飛ぶのでifの}を飛ばしてしまうが、if側でどうにかする。間違いまみれならどうしようもないのでまともなコンパイルエラーは諦める）
 
 ### ident:
- - [x] 🍀 semanticCheck(): 変数名規則に合っていません  
-       → 意味解析でのエラー。変数の型が不明だと以降の意味解析に支障が出る。  
-         一時的にint型として、以降で出る意味解析でのエラーは構文木の上の階層の意味解析に任せる。
+ - [x] semanticCheck(): 変数名規則に合っていません  
+       → ~~意味解析でのエラー。変数の型が不明だと以降の意味解析に支障が出る。~~  
+         ~~一時的にint型として、以降で出る意味解析でのエラーは構文木の上の階層の意味解析に任せる。~~  
+         今回は構文解析でのエラー仕様を変えるだけなので意味解析でのエラーはfatalErrorのままにする。  
 
 ### condition:
- - 🍀 parse(): expressionの後ろにはconditionXXが必要です  
-        → )まで飛ばす→{からstatementBlock
+ - [x] 🍀 parse(): expressionの後ろにはconditionXXが必要です  
+        → ~~)まで飛ばす→{からstatementBlock~~  
+        → ) ; まで飛ばす処理はcondithionBlockに継ぐ
 
 ### conditionLT:
- - 🍀 parse(): <の後ろはexpressionです  
-        → )まで飛ばす→{からstatementBlock（他のconditionXXも同様）
- - 💫 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません
+ - [x] 🍀 parse(): <の後ろはexpressionです  
+        → ~~)まで飛ばす→{からstatementBlock（他のconditionXXも同様）~~   
+        → conditionに引き継ぐために、conditionXX内では回復エラーを出すだけで何もしない  
+ - [x] semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません
 
 ### conditionLE:
  - 🍀 parse(): <=の後ろはexpressionです
- - 💫 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません
+ - [x] semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません
 
 ### conditionGT:
  - 🍀 parse(): >の後ろはexpressionです
- - 💫 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません
+ - [x] semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません
  
 ### conditionGE:
  - 🍀 parse(): >=の後ろはexpressionです
- - 💫 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません
+ - [x] semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません
 
 ### conditionEQ:
  - 🍀 parse(): ==の後ろはexpressionです
- - 💫 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません
+ - [x] semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません
 
 ### conditionNE:
  - 🍀 parse(): !=の後ろはexpressionです
- - 💫 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません
+ - [x] semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません
 
 ### statementIf:
  - 🍀 parse(): ifの後ろはconditionBlockです  
@@ -205,25 +211,25 @@ o conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA //条件
         → }を補う
 
 ### conditionBlock:
- - 🍀 parse(): (の後ろはconditionExpressionです  
+ - [x] 🍀 parse(): (の後ろはconditionExpressionです  
         → )まで飛ばす →{からstatement →なければ次の;まで飛ばす
- - 💫 parse(): )がありません  
+ - [x] 💫 parse(): )がありません  
         → )を補う
 
 ### expressionOr:
  - 🍀　parse(): ||の後ろはconditionTermです  
         → )まで飛ばす →{からstatement →なければ次の;まで飛ばす
- - 💫 semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]はT_boolである必要があります
+ - [x] semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]はT_boolである必要があります
 
 ### termAnd:
  - 🍀 parse(): &&の後ろはconditionFactorです  
         → )まで飛ばす →{からstatement →なければ次の;まで飛ばす
- - 💫 semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]はT_boolである必要があります
+ - [x] semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]はT_boolである必要があります
 
 ### notFactor:
  - 🍀 parse(): !の後ろはConditionUnsignedFactorです  
          → )まで飛ばす →{からstatement →なければ次の;まで飛ばす
- - 💫 semanticCheck(): !の後ろはT_boolです[" + rts + "]
+ - [x] semanticCheck(): !の後ろはT_boolです[" + rts + "]
 
 ### conditionUnsignedFactor:
  - 🍀 parse(): [の後ろはconditionExpressionです  

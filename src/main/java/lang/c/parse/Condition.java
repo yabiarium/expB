@@ -27,23 +27,31 @@ public class Condition extends CParseRule {
 		}if(tk.getType() == CToken.TK_FALSE){
 			conFalse = tk;
 			tk = ct.getNextToken(pcx);
-		}if(Expression.isFirst(tk)){
-			expression = new Expression(pcx);
-			expression.parse(pcx);
-			
-			tk = ct.getCurrentToken(pcx);
-			if(ConditionLT.isFirst(tk)) conditionXX = new ConditionLT(pcx, expression);
-			if(ConditionLE.isFirst(tk)) conditionXX = new ConditionLE(pcx, expression);
-			if(ConditionGT.isFirst(tk)) conditionXX = new ConditionGT(pcx, expression);
-			if(ConditionGE.isFirst(tk)) conditionXX = new ConditionGE(pcx, expression);
-			if(ConditionEQ.isFirst(tk)) conditionXX = new ConditionEQ(pcx, expression);
-			if(ConditionNE.isFirst(tk)) conditionXX = new ConditionNE(pcx, expression);
+		}
+		
+		if(Expression.isFirst(tk)){
+			try {
+				expression = new Expression(pcx);
+				expression.parse(pcx);
+				
+				tk = ct.getCurrentToken(pcx);
+				if(ConditionLT.isFirst(tk)) conditionXX = new ConditionLT(pcx, expression);
+				if(ConditionLE.isFirst(tk)) conditionXX = new ConditionLE(pcx, expression);
+				if(ConditionGT.isFirst(tk)) conditionXX = new ConditionGT(pcx, expression);
+				if(ConditionGE.isFirst(tk)) conditionXX = new ConditionGE(pcx, expression);
+				if(ConditionEQ.isFirst(tk)) conditionXX = new ConditionEQ(pcx, expression);
+				if(ConditionNE.isFirst(tk)) conditionXX = new ConditionNE(pcx, expression);
 
-			if(conditionXX == null){
-				pcx.fatalError(tk + "condition: parse(): expressionの後ろにはconditionXXが必要です");
-			}else{
-				conditionXX.parse(pcx);
+				if(conditionXX == null){
+					//pcx.fatalError(tk + "condition: parse(): expressionの後ろにはconditionXXが必要です");
+					pcx.recoverableError(tk + "condition: expressionの後ろにはconditionXXが必要です");
+				}else{
+					conditionXX.parse(pcx);
+				}
+			} catch (RecoverableErrorException e) {
+				// ; ) {まで読み飛ばす処理はconditionBlockに継ぐ
 			}
+			
 		}
 	}
 

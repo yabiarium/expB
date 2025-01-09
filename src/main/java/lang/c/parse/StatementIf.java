@@ -29,7 +29,7 @@ public class StatementIf extends CParseRule {
         }
 
         // conditionBlock の次のトークンを読む
-        tk = ct.getNextToken(pcx);
+        tk = ct.getCurrentToken(pcx);
         if(Statement.isFirst(tk)){
             statement1 = new Statement(pcx);
             statement1.parse(pcx);

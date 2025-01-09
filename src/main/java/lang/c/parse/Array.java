@@ -36,16 +36,18 @@ public class Array extends CParseRule{
 				expression = new Expression(pcx);
 				expression.parse(pcx);
 			} else {
-				pcx.recoverableError(tk + "Array: parse(): [の後ろはexpressionです"); //→エラーへ
+				//pcx.fatalError(tk + "array: parse(): [の後ろはexpressionです");
+				pcx.recoverableError(tk + "array: [の後ろはexpressionです"); //→エラーへ
 			}
 			
 			// expressionの解析後,現在の字句を読む
 			tk = ct.getCurrentToken(pcx);
-			if(tk.getType() != CToken.TK_RBRA){
-				//pcx.fatalError(tk + "Array: parse(): ]がありません");
-				pcx.warning(tk+"] を補いました");
+			if(tk.getType() == CToken.TK_RBRA){
+				tk = ct.getNextToken(pcx); //正常終了 ]の次に移動して引き継ぐ
+			}else{
+				//pcx.fatalError(tk + "array: parse(): ]がありません");
+				pcx.warning(tk + "array: ] を補いました");
 			}
-			tk = ct.getNextToken(pcx); //正常終了
 
 		} catch (RecoverableErrorException e) {
 			// ;か]まで読み飛ばす
