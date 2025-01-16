@@ -44,7 +44,7 @@ public class Condition extends CParseRule {
 
 				if(conditionXX == null){
 					//pcx.fatalError(tk + "condition: parse(): expressionの後ろにはconditionXXが必要です");
-					pcx.recoverableError(tk + "condition: expressionの後ろにはconditionXXが必要です");
+					pcx.recoverableError(tk + " condition: expressionの後ろにはconditionXXが必要です");
 				}else{
 					conditionXX.parse(pcx);
 				}

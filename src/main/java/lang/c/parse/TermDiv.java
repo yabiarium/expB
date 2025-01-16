@@ -38,7 +38,7 @@ public class TermDiv extends CParseRule {
 				right.parse(pcx);
 			} else {
 				//pcx.fatalError(tk + "termDiv: parse(): /の後ろはfactorです");
-				pcx.recoverableError(tk + "termDiv: /の後ろはfactorです");
+				pcx.recoverableError(tk + " termDiv: /の後ろはfactorです");
 			}
 
 		} catch (RecoverableErrorException e) {
@@ -65,7 +65,7 @@ public class TermDiv extends CParseRule {
 			try {
 				if (nt == CType.T_err) {
 					//pcx.fatalError(op + "termDiv: semanticCheck(): 左辺の型[" + lts + "]は右辺の型[" + rts + "]で割れません");
-					pcx.recoverableError(op + "termDiv: semanticCheck(): 左辺の型[" + lts + "]は右辺の型[" + rts + "]で割れません");
+					pcx.recoverableError(op + " termDiv: 左辺の型[" + lts + "]は右辺の型[" + rts + "]で割れません");
 				}
 			} catch (RecoverableErrorException e) {
 			}

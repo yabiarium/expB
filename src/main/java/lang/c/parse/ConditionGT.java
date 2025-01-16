@@ -31,7 +31,7 @@ public class ConditionGT  extends CParseRule {
 				expression.parse(pcx);
 			}else{
 				//pcx.fatalError(tk + "conditionGT: parse(): >の後ろはexpressionです");
-				pcx.recoverableError(tk + "conditionGT: >の後ろはexpressionです");
+				pcx.recoverableError(tk + " conditionGT: >の後ろはexpressionです");
 			}
 		} catch (RecoverableErrorException e) {
 			// ; ) まで読み飛ばす処理はconditionBlockに継ぐ

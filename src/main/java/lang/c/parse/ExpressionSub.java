@@ -38,7 +38,7 @@ public class ExpressionSub extends CParseRule {
 				right.parse(pcx);
 			} else {
 				//pcx.fatalError(tk + "expressionSub: parse(): -の後ろはtermです");
-				pcx.recoverableError(tk + "expressionSub: -の後ろはtermです");
+				pcx.recoverableError(tk + " expressionSub: -の後ろはtermです");
 			}
 
 		} catch (RecoverableErrorException e) {
@@ -67,7 +67,7 @@ public class ExpressionSub extends CParseRule {
 			try {
 				if (nt == CType.T_err) {
 					//pcx.fatalError(op + ": expressionSub: semanticCheck(): 左辺の型[" + lts + "]から右辺の型[" + rts + "]は引けません");
-					pcx.recoverableError(op + ": expressionSub: semanticCheck(): 左辺の型[" + lts + "]から右辺の型[" + rts + "]は引けません");
+					pcx.recoverableError(op + " expressionSub: semanticCheck(): 左辺の型[" + lts + "]から右辺の型[" + rts + "]は引けません");
 				}
 			} catch (RecoverableErrorException e) {
 			}

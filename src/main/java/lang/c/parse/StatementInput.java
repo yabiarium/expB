@@ -45,7 +45,7 @@ public class StatementInput extends CParseRule{
 				}
 			}else{
 				//pcx.fatalError(tk + "statementInput: parse(): inputの後ろはprimaryです");
-				pcx.recoverableError(tk + "statementInput: inputの後ろはprimaryです");
+				pcx.recoverableError(tk + " statementInput: inputの後ろはprimaryです");
 			}
 
 		} catch (RecoverableErrorException e) {

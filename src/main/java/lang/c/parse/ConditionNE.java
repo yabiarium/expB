@@ -31,7 +31,7 @@ public class ConditionNE  extends CParseRule {
 				expression.parse(pcx);
 			}else{
 				//pcx.fatalError(tk + "conditionNE: parse(): !=の後ろはexpressionです");
-				pcx.recoverableError(tk + "conditionNE: !=の後ろはexpressionです");
+				pcx.recoverableError(tk + " conditionNE: !=の後ろはexpressionです");
 			}
 		} catch (RecoverableErrorException e) {
 			// ; ) まで読み飛ばす処理はconditionBlockに継ぐ

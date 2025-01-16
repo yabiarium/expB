@@ -27,7 +27,7 @@ public class ConditionBlock  extends CParseRule {
 				conditionExpression.parse(pcx);
 			}else{
 				//pcx.fatalError(tk + "conditionBlock: parse(): (の後ろはconditionExpressionです");
-				pcx.recoverableError(tk + "conditionBlock: (の後ろはconditionExpressionです");
+				pcx.recoverableError(tk + " conditionBlock: (の後ろはconditionExpressionです");
 			}
 
 			// conditionExpression の次のトークンを読む

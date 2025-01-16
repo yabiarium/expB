@@ -42,7 +42,7 @@ public class StatementAssign extends CParseRule{
 					pcx.warning(tk + "statementAssign: = を補いました");
 				}else{
 					//pcx.fatalError(tk + "statementAssign: parse(): =がありません");
-					pcx.recoverableError(tk + "statementAssign: =がありません");
+					pcx.recoverableError(tk + " statementAssign: =がありません");
 				}
 			}
 
@@ -59,7 +59,7 @@ public class StatementAssign extends CParseRule{
 				}
 			}else{
 				//pcx.fatalError(tk + "statementAssign: parse(): =の後ろはexpressionです");
-				pcx.recoverableError(tk + "statementAssign: =の後ろはexpressionです");
+				pcx.recoverableError(tk + " statementAssign: =の後ろはexpressionです");
 			}
 		
 		} catch (RecoverableErrorException e) {

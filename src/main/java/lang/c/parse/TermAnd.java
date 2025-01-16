@@ -34,7 +34,7 @@ public class TermAnd extends CParseRule {
 				conditionFactor.parse(pcx);
 			} else {
 				//pcx.fatalError(tk + "termAnd: parse(): &&の後ろはconditionFactorです");
-				pcx.recoverableError(tk + "termAnd: &&の後ろはconditionFactorです");
+				pcx.recoverableError(tk + " termAnd: &&の後ろはconditionFactorです");
 			}
 
 		} catch (RecoverableErrorException e) {

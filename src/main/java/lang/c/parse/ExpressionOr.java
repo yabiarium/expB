@@ -34,7 +34,7 @@ public class ExpressionOr extends CParseRule {
 				conditionTerm.parse(pcx);
 			}else{
 				//pcx.fatalError(tk + "expressionOr: parse(): ||の後ろはconditionTermです");
-				pcx.recoverableError(tk + "expressionOr: ||の後ろはconditionTermです");
+				pcx.recoverableError(tk + " expressionOr: ||の後ろはconditionTermです");
 			}
 
 		} catch (RecoverableErrorException e) {

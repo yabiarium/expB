@@ -51,7 +51,7 @@ public class UnsignedFactor extends CParseRule {
 					}
 				}else{
 					//pcx.fatalError(tk + "unsignedFactor: parse(): (の後ろはexpressionです");
-					pcx.recoverableError(tk + "unsignedFactor: (の後ろはexpressionです");
+					pcx.recoverableError(tk + " unsignedFactor: (の後ろはexpressionです");
 				}
 			}else if(Number.isFirst(tk)){
 				number = new Number(pcx);

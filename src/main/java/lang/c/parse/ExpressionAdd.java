@@ -39,7 +39,7 @@ public class ExpressionAdd extends CParseRule {
 				right.parse(pcx);
 			} else {
 				//pcx.fatalError(tk + "expressionAdd: parse(): +の後ろはtermです");
-				pcx.recoverableError(tk + "expressionAdd: +の後ろはtermです");
+				pcx.recoverableError(tk + " expressionAdd: +の後ろはtermです");
 			}
 
 		} catch (RecoverableErrorException e) {
@@ -69,7 +69,7 @@ public class ExpressionAdd extends CParseRule {
 			try {
 				if (nt == CType.T_err) {
 					//pcx.fatalError(op + ": expressionAdd: semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]は足せません");
-					pcx.recoverableError(op + ": expressionAdd: 左辺の型[" + lts + "]と右辺の型[" + rts + "]は足せません");
+					pcx.recoverableError(op + " expressionAdd: 左辺の型[" + lts + "]と右辺の型[" + rts + "]は足せません");
 				}
 			} catch (Exception e) {
 			}

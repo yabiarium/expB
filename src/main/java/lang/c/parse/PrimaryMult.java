@@ -37,7 +37,7 @@ public class PrimaryMult extends CParseRule{
 				variable.parse(pcx);
 			} else {
 				//pcx.fatalError(tk + "primaryMult: parse(): *の後ろはvariableです");
-				pcx.recoverableError(tk + "primaryMult: *の後ろはvariableです");
+				pcx.recoverableError(tk + " primaryMult: *の後ろはvariableです");
 			}
 
 		} catch (RecoverableErrorException e) {

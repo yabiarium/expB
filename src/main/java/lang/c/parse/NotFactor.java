@@ -27,7 +27,7 @@ public class NotFactor extends CParseRule {
 				conditionUnsignedFactor.parse(pcx);
 			} else {
 				//pcx.fatalError(tk + "notFactor: parse(): !の後ろはConditionUnsignedFactorです");
-				pcx.recoverableError(tk + "notFactor: !の後ろはConditionUnsignedFactorです");
+				pcx.recoverableError(tk + " notFactor: !の後ろはConditionUnsignedFactorです");
 			}
 
 		} catch (RecoverableErrorException e) {

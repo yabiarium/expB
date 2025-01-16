@@ -31,7 +31,7 @@ public class PlusFactor extends CParseRule {
 				right.parse(pcx);
 			} else {
 				//pcx.fatalError(tk + "plusFactor: parse(): +の後ろはunsignedFactorです");
-				pcx.recoverableError(tk + "plusFactor: +の後ろはunsignedFactorです");
+				pcx.recoverableError(tk + " plusFactor: +の後ろはunsignedFactorです");
 			}
 		} catch (RecoverableErrorException e) {
 			// 回復エラーだけ出して処理はStatementXXに任せる
@@ -46,7 +46,7 @@ public class PlusFactor extends CParseRule {
 			try {
 				if (rt != CType.T_int) {
 					//pcx.fatalError(op + "plusFactor: semanticCheck(): +の後ろはT_intです[" + rts + "]");
-					pcx.recoverableError(op + "plusFactor: semanticCheck(): +の後ろはT_intです[" + rts + "]");
+					pcx.recoverableError(op + " plusFactor: +の後ろはT_intです[" + rts + "]");
 				}
 			} catch (RecoverableErrorException e) {
 			}

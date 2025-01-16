@@ -31,7 +31,7 @@ public class ConditionEQ  extends CParseRule {
 				expression.parse(pcx);
 			}else{
 				//pcx.fatalError(tk + "conditionEQ: parse(): ==の後ろはexpressionです");
-				pcx.recoverableError(tk + "conditionEQ: ==の後ろはexpressionです");
+				pcx.recoverableError(tk + " conditionEQ: ==の後ろはexpressionです");
 			}
 		} catch (RecoverableErrorException e) {
 			// ; ) まで読み飛ばす処理はconditionBlockに継ぐ

@@ -38,7 +38,7 @@ public class TermMult extends CParseRule {
 				right.parse(pcx);
 			} else {
 				//pcx.fatalError(tk + "termMult: parse(): *の後ろはfactorです");
-				pcx.recoverableError(tk + "termMult: *の後ろはfactorです");
+				pcx.recoverableError(tk + " termMult: *の後ろはfactorです");
 			}
 
 		} catch (RecoverableErrorException e) {
@@ -65,7 +65,7 @@ public class TermMult extends CParseRule {
 			try {
 				if (nt == CType.T_err) {
 					//pcx.fatalError(op + "termMult: semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]は掛けられません");
-					pcx.recoverableError(op + "termMult: semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]は掛けられません");
+					pcx.recoverableError(op + " termMult: 左辺の型[" + lts + "]と右辺の型[" + rts + "]は掛けられません");
 				}
 			} catch (RecoverableErrorException e) {
 			}

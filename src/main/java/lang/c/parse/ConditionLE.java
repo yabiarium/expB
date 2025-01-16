@@ -31,7 +31,7 @@ public class ConditionLE  extends CParseRule {
 				expression.parse(pcx);
 			}else{
 				//pcx.fatalError(tk + "conditionLE: parse(): <=の後ろはexpressionです");
-				pcx.recoverableError(tk + "conditionLE: <=の後ろはexpressionです");
+				pcx.recoverableError(tk + " conditionLE: <=の後ろはexpressionです");
 			}
 		} catch (RecoverableErrorException e) {
 			// ; ) まで読み飛ばす処理はconditionBlockに継ぐ

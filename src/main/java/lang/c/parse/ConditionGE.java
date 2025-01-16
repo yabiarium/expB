@@ -31,7 +31,7 @@ public class ConditionGE  extends CParseRule {
 				expression.parse(pcx);
 			}else{
 				//pcx.fatalError(tk + "conditionGE: parse(): >=の後ろはexpressionです");
-				pcx.recoverableError(tk + "conditionGE: >=の後ろはexpressionです");
+				pcx.recoverableError(tk + " conditionGE: >=の後ろはexpressionです");
 			}
 		} catch (RecoverableErrorException e) {
 			// ; ) まで読み飛ばす処理はconditionBlockに継ぐ
