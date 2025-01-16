@@ -41,8 +41,13 @@ public class NotFactor extends CParseRule {
 			//parse()の時点で後ろに付くものが制限されてbool型以外は来ないのでここでの型チェックは必要ないが一応確認
 			int rt = conditionUnsignedFactor.getCType().getType(); // !の右辺の型
 			String rts = conditionUnsignedFactor.getCType().toString();
-			if (rt != CType.T_bool) {
-				pcx.fatalError(op + ": notFactor: semanticCheck(): !の後ろはT_boolです[" + rts + "]");
+
+			try {
+				if (rt != CType.T_bool) {
+					//pcx.fatalError(op + " notFactor: semanticCheck(): !の後ろはT_boolです[" + rts + "]");
+					pcx.recoverableError(op + " notFactor: !の後ろはT_boolです[" + rts + "]");
+				}
+			} catch (RecoverableErrorException e) {
 			}
 			this.setCType(conditionUnsignedFactor.getCType());
 			this.setConstant(conditionUnsignedFactor.isConstant());

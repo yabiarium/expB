@@ -296,22 +296,25 @@ o conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA //条件
  - [x] 🍀　parse(): ||の後ろはconditionTermです  
         → ConditionBlockで対処するのでここでは回復エラーだけ出して何もしない  
         ` if(i_a < 0 || ) i_a=0; `
- - [ ] semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]はT_boolである必要があります  
-        → 実行できてしまって想定通りの動作をしなかった場合のデバッグが面倒になりそうなのでコンパイルしない
+ - [x] semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]はT_boolである必要があります  
+        → 実行できてしまって想定通りの動作をしなかった場合のデバッグが面倒になりそうなのでコンパイルしない  
+        ` if(true || i_a > 0){} `  || の左右にbool型以外を入れられない作りになっている
 
 ### termAnd:
  - [x] 🍀 parse(): &&の後ろはconditionFactorです  
         → ConditionBlockで対処するのでここでは回復エラーだけ出して何もしない  
         ` if(i_a < 0 && ) i_a=0; `
- - [ ] semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]はT_boolである必要があります  
-        → 実行できてしまって想定通りの動作をしなかった場合のデバッグが面倒になりそうなのでコンパイルしない
+ - [x] semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]はT_boolである必要があります  
+        → 実行できてしまって想定通りの動作をしなかった場合のデバッグが面倒になりそうなのでコンパイルしない  
+        ` if(true && i_a > 0){} `  || の左右にbool型以外を入れられない作りになっている
 
 ### notFactor:
  - [x] 🍀 parse(): !の後ろはConditionUnsignedFactorです  
         → ConditionBlockで対処するのでここでは回復エラーだけ出して何もしない  
         ` if(! ) i_a=0; `
- - [ ] semanticCheck(): !の後ろはT_boolです[" + rts + "]  
-        → 実行できてしまって想定通りの動作をしなかった場合のデバッグが面倒になりそうなのでコンパイルしない
+ - [x] semanticCheck(): !の後ろはT_boolです[" + rts + "]  
+        → 実行できてしまって想定通りの動作をしなかった場合のデバッグが面倒になりそうなのでコンパイルしない  
+        ` if(!i_a > 0){} `  ! の後ろにbool型以外を入れられない作りになっている
 
 ### conditionUnsignedFactor:
  - [x] 🍀 parse(): [の後ろはconditionExpressionです  

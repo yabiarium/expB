@@ -52,10 +52,14 @@ public class ExpressionOr extends CParseRule {
 			int lt = left.getCType().getType(); // ||の左辺の型
 			int rt = conditionTerm.getCType().getType(); // ||の右辺の型
 			
-			if (lt != CType.T_bool || rt != CType.T_bool) {
-				String lts = left.getCType().toString();
-				String rts = conditionTerm.getCType().toString();
-				pcx.fatalError(op + "expressionOr: semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]はT_boolである必要があります");
+			try {
+				if (lt != CType.T_bool || rt != CType.T_bool) {
+					String lts = left.getCType().toString();
+					String rts = conditionTerm.getCType().toString();
+					//pcx.fatalError(op + " expressionOr: semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]はT_boolである必要があります");
+					pcx.recoverableError(op + " expressionOr: 左辺の型[" + lts + "]と右辺の型[" + rts + "]はT_boolである必要があります");
+				}
+			} catch (RecoverableErrorException e) {
 			}
 			this.setCType(CType.getCType(CType.T_bool));
 			this.setConstant(true);
