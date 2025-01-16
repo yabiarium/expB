@@ -49,7 +49,9 @@ public class StatementAssign extends CParseRule{
 				expression.parse(pcx);
 				// expressionの解析後,現在の字句を読む
 				tk = ct.getCurrentToken(pcx);
-				if(tk.getType() != CToken.TK_SEMI){
+				if(tk.getType() == CToken.TK_SEMI){
+					tk = ct.getNextToken(pcx); //正常終了
+				}else{
 					//pcx.fatalError(tk + "statementAssign: parse(): ;がありません");
 					pcx.warning(tk + "statementAssign: ; を補いました");
 				}
@@ -57,9 +59,7 @@ public class StatementAssign extends CParseRule{
 				//pcx.fatalError(tk + "statementAssign: parse(): =の後ろはexpressionです");
 				pcx.recoverableError(tk + "statementAssign: =の後ろはexpressionです");
 			}
-			
-			tk = ct.getNextToken(pcx);
-
+		
 		} catch (RecoverableErrorException e) {
 			// ; まで飛ばす(primary内部/expression内部/isFirstのどこで回復エラーが出た場合もここに来る)
 			ct.skipTo(pcx, CToken.TK_SEMI);

@@ -36,11 +36,12 @@ public class StatementInput extends CParseRule{
 				primary.parse(pcx);
 				// primary の解析後,現在の字句を読む
 				tk = ct.getCurrentToken(pcx);
-				if(tk.getType() != CToken.TK_SEMI){
+				if(tk.getType() == CToken.TK_SEMI){
+					tk = ct.getNextToken(pcx); //正常終了
+				}else{
 					//pcx.fatalError(tk + "statementInput: parse(): ;がありません");
 					pcx.warning(tk + "statementInput: ; を補いました");
 				}
-				tk = ct.getNextToken(pcx);
 			}else{
 				//pcx.fatalError(tk + "statementInput: parse(): inputの後ろはprimaryです");
 				pcx.recoverableError(tk + "statementInput: inputの後ろはprimaryです");

@@ -36,11 +36,12 @@ public class StatementOutput extends CParseRule{
 				expression.parse(pcx);
 				// expression の解析後,現在の字句を読む
 				tk = ct.getCurrentToken(pcx);
-				if(tk.getType() != CToken.TK_SEMI){
+				if(tk.getType() == CToken.TK_SEMI){
+					tk = ct.getNextToken(pcx); //正常終了
+				}else{
 					//pcx.fatalError(tk + "statementOutput: parse(): ;がありません");
 					pcx.warning(tk + "statementOutput: ; を補いました");
 				}
-				tk = ct.getNextToken(pcx);
 			}else{
 				//pcx.fatalError(tk + "statementOutput: parse(): outputの後ろはexpressionです");
 				pcx.recoverableError(tk + "statementOutput: outputの後ろはexpressionです");
