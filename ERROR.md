@@ -63,83 +63,107 @@ o conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA //条件
   
 すべての行で;が抜けていたり、(){}, 予約語のミスなど、ユーザのミスがかなり多い場合はコンパイラはどうにもできない。全行;が無くてコンパイルすっ飛ばす可能性も全然ある。  
 エラーの分類基準が一貫していればよい。こだわりだすとずっとこだわれる部分なので、実装のやりやすい範囲で作ればよい  
-今回は構文解析でのエラー仕様を変更する。意味解析でのエラーはfatalErrorのままでよい。
 
 ### program:
- - 💫 parse(): プログラムの最後にゴミがあります  
-        → 読み飛ばす
+ - [x] 💫 parse(): プログラムの最後にゴミがあります  
+        → 読み飛ばす  
+        ` i_a = 0 ;; ` **←test.cに貼り付けてテストする**
 
 ### statementAssign:
- - 🍀 parse(): =がありません  
-        → 次のトークンがexpressionなら=を補って💫にする
- - 🍀 parse(): =の後ろはexpressionです  
-        → 次の;まで飛ばす（expressionが不定）
- - 💫 parse(): ;がありません  
-        → expressionの解析後なので;を補う（「i_a=1 2;」のようにexpressionの途中であろう位置で抜けてしまう場合は1で解析が止まる）
+ - [x] 🍀 parse(): =がありません  
+        → 今のトークンがexpressionなら=を補って💫にする  
+        ` i_a  0; `  
+        ` i_a ; `  
+ - [x] 🍀 parse(): =の後ろはexpressionです  
+        → 次の;まで飛ばす（expressionが不定）  
+        ` i_a = ; `  
+ - [x] 💫 parse(): ;がありません  
+        → expressionの解析後なので;を補う（「i_a=1 2;」のようにexpressionの途中であろう位置で抜けてしまう場合は1で解析が止まる）  
+        ` i_a = 0 `  
+        ` i_a = 7  1; //7までで止まる `  
  - [x] semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が異なります  
         → 変なアドレスに書き込むようになっているといけないのでコード生成しない
  - [x] semanticCheck(): 定数には代入できません
 
 ### statementInput:
- - 🍀 parse(): inputの後ろはprimaryです  
+ - [x] 🍀 parse(): inputの後ろはprimaryです  
         → 次の;まで飛ばす（primaryが不定）  
- - 💫 parse(): ;がありません  
-        → primaryの解析後なので、;を補う
- - [x] semanticCheck(): 定数には代入できません
+        ` input ; `  
+ - [x] 💫 parse(): ;がありません  
+        → primaryの解析後なので、;を補う  
+        ` input i_a `  
+ - [x] semanticCheck(): 定数には代入できません  
+        ` input c_a; `
 
 ### statementOutput:
- - 💫 parse(): ;がありません  
-        → primaryの解析後なので、;を補う
- - 🍀 parse(): outputの後ろはexpressionです  
-        → 次の;まで飛ばす
+ - [x] 🍀 parse(): outputの後ろはexpressionです  
+        → 次の;まで飛ばす  
+        ` output ; `  
+ - [x] 💫 parse(): ;がありません  
+        → primaryの解析後なので、;を補う  
+        ` output c_a `  
 
 ### expressionAdd:
- - 🍀 parse(): +の後ろはtermです  
-        → 次の;まで飛ばす（termが不定）
+ - [x] 🍀 parse(): +の後ろはtermです  
+        → 回復エラーだけ出して処理はstatementAssign/Input/Output/Blockに任せる  
+        ` i_a = 7 + ; ` 
  - [x] semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]は足せません
 
 ### expressionSub:
- - 🍀 parse(): -の後ろはtermです  
-        → 次の;まで飛ばす（termが不定）
+ - [x] 🍀 parse(): -の後ろはtermです  
+        → 回復エラーだけ出して処理はstatementAssign/Input/Output/Blockに任せる  
+        ` i_a = 7 - ; `
  - [x] semanticCheck(): 左辺の型[" + lts + "]から右辺の型[" + rts + "]は引けません
 
 ### termMult:
- - 🍀 parse(): *の後ろはfactorです  
-        → 次の;まで飛ばす（factorが不定）
+ - [x] 🍀 parse(): *の後ろはfactorです  
+        → 回復エラーだけ出して処理はstatementAssign/Input/Output/Blockに任せる  
+        ` i_a = 7 * ; `
  - [x] semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]は掛けられません
 
 ### termDiv:
- - 🍀 parse(): /の後ろはfactorです  
-        → 次の;まで飛ばす（factorが不定）
+ - [x] 🍀 parse(): /の後ろはfactorです  
+        → 回復エラーだけ出して処理はstatementAssign/Input/Output/Blockに任せる  
+        ` i_a = 7 / ; // 単体/の後ろが数式(+,-,(,数字)以外の場合は字句解析で/=ILLとなる `  
+        ↑ なのでこのエラーが出ることはない
  - [x] semanticCheck(): 左辺の型[" + lts + "]は右辺の型[" + rts + "]で割れません
 
 ### plusFactor:
- - 🍀 parse(): +の後ろはunsignedFactorです  
-        → 次の;まで飛ばす（unsignedFactorが不定）
+ - [x] 🍀 parse(): +の後ろはunsignedFactorです  
+        → 回復エラーだけ出して処理はstatementAssign/Input/Output/Blockに任せる  
+        ` i_a = 7 + +; `
  - [x] semanticCheck(): +の後ろはT_intです[" + rts + "]
 
 ### minusFactor:
- - 🍀 parse(): -の後ろはunsignedFactorです  
-        → 次の;まで飛ばす（unsignedFactorが不定）
+ - [x] 🍀 parse(): -の後ろはunsignedFactorです  
+        → 回復エラーだけ出して処理はstatementAssign/Input/Output/Blockに任せる  
+        ` i_a = 7 + -; `
  - [x] semanticCheck(): -の後ろはT_intです[" + rts + "]
 
 ### unsignedFactor:
- - 💫 parse(): )がありません  
+ - [x] 💫 parse(): )がありません  
         → expressionの解析後なので)を補う。（「(3+2 4)だと、2の後に)を補うことになる。4)はprogramのisFirst()でエラーになる」）  
-        ↑ isFirst()でエラーになる場合ってコンパイルの経過どうなるの？
- - 🍀 parse(): (の後ろはexpressionです  
-        → 次の;まで飛ばす（expressionが不定）
+        ↑ isFirst()でエラーになる場合ってコンパイルの経過どうなるの？  
+        `i_a = (7 + 0 ; `
+ - [x] 🍀 parse(): (の後ろはexpressionです  
+        → 回復エラーだけ出して処理はstatementAssign/Input/Output/Blockに任せる  
+        ` i_a = ( ; `
 
 ### factorAmp:
- - 🍀 parse(): &の後ろに*は置けません  
-         → 次の;まで飛ばす
- - 🍀 parse(): &の後ろはnumberまたはprimaryです  
-         → 次の;まで飛ばす
+ - [x] 🍀 parse(): &の後ろに*は置けません  
+         → 回復エラーだけ出して処理はstatementAssign/Input/Output/Blockに任せる  
+         ` i_a = &* ; `
+ - [x] 🍀 parse(): &の後ろはnumberまたはprimaryです  
+         → 回復エラーだけ出して処理はstatementAssign/Input/Output/Blockに任せる  
+         ` i_a = &[] ; `
  - [x] semanticCheck(): &の後ろはT_intです["+ts+"]
 
 ### primaryMult:
- - 🍀 parse(): *の後ろはvariableです  
-        → ]まで飛ばす。なければ次の;まで飛ばす
+ - [x] 🍀 parse(): *の後ろはvariableです  
+        → ~~]まで飛ばす。なければ次の;まで飛ばす~~  
+        ~~（*が使われるのはAddressToValueか代入先の変数の前のどちらか。前者なら後ろに;があるはず、後者でも;まで行って一行まるっと飛ばすか、配列に使われていたなら]で止められる）~~  
+        → 回復エラーだけ出して処理はstatementAssign/Input/Output/Blockに任せる  
+        ` i_a = * ; `
  - [x] semanticCheck(): \*の後ろは[int*]です
 
 ### variable:
@@ -149,10 +173,12 @@ o conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA //条件
 
 ### array: 
  - [x] 💫 parse(): ]がありません  
-        → expression解析後のエラーなので、expressinはそこで終了とみなして]を補う
+        → expression解析後のエラーなので、expressinはそこで終了とみなして]を補う  
+        ` ia_a[0 = 0; `
  - [x] 🍀 parse(): [の後ろはexpressionです  
         → expression内でのエラー。expressionが不明となる。]か;まで飛ばす  
-          （]はarray自身の範囲内の終了を示す。;は外側の（例えばStatementAssign）の終わりを表す。そこも飛んだら次の行の;を読む。「if(){ i_a[0 = 1 } i_a=0; 」の文だと、次の;まで飛ぶのでifの}を飛ばしてしまうが、if側でどうにかする。間違いまみれならどうしようもないのでまともなコンパイルエラーは諦める）
+          （]はarray自身の範囲内の終了を示す。;は外側の（例えばStatementAssign）の終わりを表す。そこも飛んだら次の行の;を読む。「if(){ i_a[0 = 1 } i_a=0; 」の文だと、次の;まで飛ぶのでifの}を飛ばしてしまうが、if側でどうにかする。間違いまみれならどうしようもないのでまともなコンパイルエラーは諦める）  
+        ` ia_a[] = 0; `
 
 ### ident:
  - [x] semanticCheck(): 変数名規則に合っていません  
@@ -163,77 +189,102 @@ o conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA //条件
 ### condition:
  - [x] 🍀 parse(): expressionの後ろにはconditionXXが必要です  
         → ~~)まで飛ばす→{からstatementBlock~~  
-        → ) ; まで飛ばす処理はcondithionBlockに継ぐ
+        → ) ; まで飛ばす処理はcondithionBlockに継ぐ  
+        ` if(i_a )i_a=0; `
 
 ### conditionLT:
  - [x] 🍀 parse(): <の後ろはexpressionです  
         → ~~)まで飛ばす→{からstatementBlock（他のconditionXXも同様）~~   
         → conditionに引き継ぐために、conditionXX内では回復エラーを出すだけで何もしない  
+        ` if(i_a < )i_a=0; `
  - [x] semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません
 
 ### conditionLE:
- - 🍀 parse(): <=の後ろはexpressionです
+ - [x] 🍀 parse(): <=の後ろはexpressionです  
+        ` if(i_a <= )i_a=0; `
  - [x] semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません
 
 ### conditionGT:
- - 🍀 parse(): >の後ろはexpressionです
+ - [x] 🍀 parse(): >の後ろはexpressionです  
+        ` if(i_a > )i_a=0; `
  - [x] semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません
  
 ### conditionGE:
- - 🍀 parse(): >=の後ろはexpressionです
+ - [x] 🍀 parse(): >=の後ろはexpressionです  
+        ` if(i_a >= )i_a=0; `
  - [x] semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません
 
 ### conditionEQ:
- - 🍀 parse(): ==の後ろはexpressionです
+ - [x] 🍀 parse(): ==の後ろはexpressionです  
+        ` if(i_a == )i_a=0; `
  - [x] semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません
 
 ### conditionNE:
- - 🍀 parse(): !=の後ろはexpressionです
+ - [x] 🍀 parse(): !=の後ろはexpressionです  
+        ` if(i_a != )i_a=0; `
  - [x] semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません
 
 ### statementIf:
- - 🍀 parse(): ifの後ろはconditionBlockです  
-        → )まで飛ばす →{からstatement →なければ次の;まで飛ばす
- - 🍀 parse(): conditionBlockの後ろはstatementです  
-        → 次の;まで飛ばす
- - 🍀 parse(): elseの後ろはstatementです  
-        → 次の;まで飛ばす
+ - [x] 🍀 parse(): ifの後ろはconditionBlockです  
+        → )まで飛ばす →{からstatement →なければ次の;まで飛ばす  
+        ` if i_a>0){ i_a=0; } `  
+        ` if i_a>0{ i_a=0; } `  
+        ` if i_a>0 i_a=0; } //;までconditionBlock判定になる `    
+ - [x] 🍀 parse(): conditionBlockの後ろはstatementです  
+        → 次の;まで飛ばす  
+        ` if(i_a>0); `  
+        ` if(i_a>0) i_a=0; } //}だけが余計なもの `  
+ - [x] 🍀 parse(): elseの後ろはstatementです  
+        → 次の;まで飛ばす  
+        ` if(i_a>0){}else; `
  
 ### statementWhile:
- - parse(): whileの後ろはconditionBlockです  
-        → )まで飛ばす →{からstatement →なければ次の;まで飛ばす
- - parse(): conditionBlockの後ろはstatementです  
-        → 次の;まで飛ばす
+ - [x] parse(): whileの後ろはconditionBlockです  
+        → )まで飛ばす →{からstatement →なければ次の;まで飛ばす  
+        ` while i_a>0){ i_a=0; } `
+ - [x] parse(): conditionBlockの後ろはstatementです  
+        → 次の;まで飛ばす  
+        ` while(i_a>0); `
 
 ### statementBlock:
- - [x] statement内部でエラー → ;か}まで読み飛ばす  
+ - [x] statement内部でエラー  
+        → ;か}まで読み飛ばす  
+        ` if(i_a > 0){ if(i_a < ) i_a=0; }else if(){ i_a=0; } // statementBlock内部で回復エラーが発生した場合、}以降から再開されるかの確認`
  - [x] 💫 parse(): }がありません  
-        → }を補う
+        → }を補う  
+        ` if(i_a > 0){ i_a=0; `
 
 ### conditionBlock:
  - [x] 🍀 parse(): (の後ろはconditionExpressionです  
-        → )まで飛ばす →{からstatement →なければ次の;まで飛ばす
+        → )まで飛ばす →{からstatement →なければ次の;まで飛ばす  
+        ` if() i_a=0; `  
  - [x] 💫 parse(): )がありません  
-        → )を補う
+        → )を補う  
+        ` if(i_a < 0 i_a=0; // )が補われ、コード生成 `
 
 ### expressionOr:
- - 🍀　parse(): ||の後ろはconditionTermです  
-        → )まで飛ばす →{からstatement →なければ次の;まで飛ばす
+ - [x] 🍀　parse(): ||の後ろはconditionTermです  
+        → ConditionBlockで対処するのでここでは回復エラーだけ出して何もしない  
+        ` if(i_a < 0 || ) i_a=0; `
  - [x] semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]はT_boolである必要があります
 
 ### termAnd:
- - 🍀 parse(): &&の後ろはconditionFactorです  
-        → )まで飛ばす →{からstatement →なければ次の;まで飛ばす
+ - [x] 🍀 parse(): &&の後ろはconditionFactorです  
+        → ConditionBlockで対処するのでここでは回復エラーだけ出して何もしない  
+        ` if(i_a < 0 && ) i_a=0; `
  - [x] semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]はT_boolである必要があります
 
 ### notFactor:
- - 🍀 parse(): !の後ろはConditionUnsignedFactorです  
-         → )まで飛ばす →{からstatement →なければ次の;まで飛ばす
+ - [x] 🍀 parse(): !の後ろはConditionUnsignedFactorです  
+        → ConditionBlockで対処するのでここでは回復エラーだけ出して何もしない  
+        ` if(! ) i_a=0; `
  - [x] semanticCheck(): !の後ろはT_boolです[" + rts + "]
 
 ### conditionUnsignedFactor:
- - 🍀 parse(): [の後ろはconditionExpressionです  
-        → ]まで飛ばす →)でconditionBlock終わり →{からstatement
- - 💫 parse(): ]がありません
-        → ]を補う
+ - [x] 🍀 parse(): [の後ろはconditionExpressionです  
+        → ]まで飛ばす →なければ)まで飛ばしてconditionBlockで終わり、保険で;  
+        ` if([ < 0]) i_a=0; `
+ - [x] 💫 parse(): ]がありません
+        → ]を補う  
+        ` if([i_a < 0 ) i_a=0; `
 
