@@ -34,7 +34,7 @@ public class ConditionGT  extends CParseRule {
 				pcx.recoverableError(tk + "conditionGT: >の後ろはexpressionです");
 			}
 		} catch (RecoverableErrorException e) {
-			// ; ) {まで読み飛ばす処理はconditionBlockに継ぐ
+			// ; ) まで読み飛ばす処理はconditionBlockに継ぐ
 		}
 	}
 

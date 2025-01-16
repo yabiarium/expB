@@ -34,7 +34,7 @@ public class ConditionEQ  extends CParseRule {
 				pcx.recoverableError(tk + "conditionEQ: ==の後ろはexpressionです");
 			}
 		} catch (RecoverableErrorException e) {
-			// ; ) {まで読み飛ばす処理はconditionBlockに継ぐ
+			// ; ) まで読み飛ばす処理はconditionBlockに継ぐ
 		}
 	}
 

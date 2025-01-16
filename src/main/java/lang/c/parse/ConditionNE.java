@@ -34,7 +34,7 @@ public class ConditionNE  extends CParseRule {
 				pcx.recoverableError(tk + "conditionNE: !=の後ろはexpressionです");
 			}
 		} catch (RecoverableErrorException e) {
-			// ; ) {まで読み飛ばす処理はconditionBlockに継ぐ
+			// ; ) まで読み飛ばす処理はconditionBlockに継ぐ
 		}
 	}
 
