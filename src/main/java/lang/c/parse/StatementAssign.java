@@ -13,6 +13,7 @@ import lang.c.CodeGenCommon;
 public class StatementAssign extends CParseRule{
 
     CParseRule expression, primary;
+	CToken sem; //意味解析でエラー場所を表示する用
 
 	public StatementAssign(CParseContext pcx) {
 		super("StatementAssign");
@@ -27,6 +28,7 @@ public class StatementAssign extends CParseRule{
 		// ここにやってくるときは、必ずisFirst()が満たされている
 		CTokenizer ct = pcx.getTokenizer();
 		CToken tk = ct.getCurrentToken(pcx);
+		sem = tk;
 
 		try {
 			primary = new Primary(pcx);
@@ -77,11 +79,17 @@ public class StatementAssign extends CParseRule{
 			String lts = primary.getCType().toString();
 			String rts = expression.getCType().toString();
 			
-			if(lt != rt){
-				pcx.fatalError("statementAssign: semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が異なります");
-			}else if(primary.isConstant()){
-				pcx.fatalError("statementAssign: semanticCheck(): 定数には代入できません");
+			try {
+				if(lt != rt){
+					//pcx.fatalError("statementAssign: semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が異なります");
+					pcx.recoverableError(sem + "statementAssign: 左辺の型["+lts+"]と右辺の型["+rts+"]が異なります");
+				}else if(primary.isConstant()){
+					//pcx.fatalError("statementAssign: semanticCheck(): 定数には代入できません");
+					pcx.recoverableError(sem + "statementAssign: 定数には代入できません");
+				}
+			} catch (RecoverableErrorException e) {
 			}
+			
 			this.setCType(CType.getCType(lt));
 			this.setConstant(primary.isConstant());
 		}
