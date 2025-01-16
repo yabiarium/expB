@@ -269,15 +269,15 @@ o conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA //条件
         ` if(i_a>0){}else; `
  
 ### statementWhile:
- - [x] parse(): whileの後ろはconditionBlockです  
+ - [x] 🍀 parse(): whileの後ろはconditionBlockです  
         → )まで飛ばす →{からstatement →なければ次の;まで飛ばす  
         ` while i_a>0){ i_a=0; } `
- - [x] parse(): conditionBlockの後ろはstatementです  
+ - [x] 🍀 parse(): conditionBlockの後ろはstatementです  
         → 次の;まで飛ばす  
         ` while(i_a>0); `
 
 ### statementBlock:
- - [x] statement内部でエラー  
+ - [x] 🍀 statement内部でエラー  
         → ;か}まで読み飛ばす  
         ` if(i_a > 0){ if(i_a < ) i_a=0; }else if(){ i_a=0; } // statementBlock内部で回復エラーが発生した場合、}以降から再開されるかの確認`
  - [x] 💫 parse(): }がありません  
@@ -296,7 +296,7 @@ o conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA //条件
  - [x] 🍀　parse(): ||の後ろはconditionTermです  
         → ConditionBlockで対処するのでここでは回復エラーだけ出して何もしない  
         ` if(i_a < 0 || ) i_a=0; `
- - [x] semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]はT_boolである必要があります  
+ - [x] 🍀 semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]はT_boolである必要があります  
         → 実行できてしまって想定通りの動作をしなかった場合のデバッグが面倒になりそうなのでコンパイルしない  
         ` if(true || i_a > 0){} `  || の左右にbool型以外を入れられない作りになっている
 
@@ -304,7 +304,7 @@ o conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA //条件
  - [x] 🍀 parse(): &&の後ろはconditionFactorです  
         → ConditionBlockで対処するのでここでは回復エラーだけ出して何もしない  
         ` if(i_a < 0 && ) i_a=0; `
- - [x] semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]はT_boolである必要があります  
+ - [x] 🍀 semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]はT_boolである必要があります  
         → 実行できてしまって想定通りの動作をしなかった場合のデバッグが面倒になりそうなのでコンパイルしない  
         ` if(true && i_a > 0){} `  || の左右にbool型以外を入れられない作りになっている
 
@@ -312,7 +312,7 @@ o conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA //条件
  - [x] 🍀 parse(): !の後ろはConditionUnsignedFactorです  
         → ConditionBlockで対処するのでここでは回復エラーだけ出して何もしない  
         ` if(! ) i_a=0; `
- - [x] semanticCheck(): !の後ろはT_boolです[" + rts + "]  
+ - [x] 🍀 semanticCheck(): !の後ろはT_boolです[" + rts + "]  
         → 実行できてしまって想定通りの動作をしなかった場合のデバッグが面倒になりそうなのでコンパイルしない  
         ` if(!i_a > 0){} `  ! の後ろにbool型以外を入れられない作りになっている
 
