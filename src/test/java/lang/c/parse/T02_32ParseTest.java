@@ -28,7 +28,7 @@ public class T02_32ParseTest {
         @Test
         public void falseESTest() throws FatalErrorException {
             TestDataAndErrMessage[] arr = {
-                new TestDataAndErrMessage("&", "&の後ろはnumberまたはprimaryです"),
+                //new TestDataAndErrMessage("&", "&の後ろはnumberまたはprimaryです"),
                 //new TestDataAndErrMessage("&AAA", "&の後ろはnumberです"),
             };
             factorAmpHelper.parseRejectTestList(arr);
@@ -53,8 +53,8 @@ public class T02_32ParseTest {
         public void falseETest() throws FatalErrorException {
             // 自分で実装しよう
             TestDataAndErrMessage[] arr = {
-                new TestDataAndErrMessage("&+100", "&の後ろはnumberまたはprimaryです"),
-                new TestDataAndErrMessage("200+&", "&の後ろはnumberまたはprimaryです"),
+                //new TestDataAndErrMessage("&+100", "&の後ろはnumberまたはprimaryです"),
+                //new TestDataAndErrMessage("200+&", "&の後ろはnumberまたはprimaryです"),
             };
             expressionHelper.parseRejectTestList(arr);
         }

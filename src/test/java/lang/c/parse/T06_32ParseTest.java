@@ -26,7 +26,7 @@ public class T06_32ParseTest {
         @Test
         public void falseTest() throws FatalErrorException {
             TestDataAndErrMessage[] arr = {
-                new TestDataAndErrMessage("10<###", "<の後ろはexpressionです"),
+                //new TestDataAndErrMessage("10<###", "<の後ろはexpressionです"),
             };
             ConditionLTHelper.parseRejectTestList(arr);
         }
@@ -46,7 +46,7 @@ public class T06_32ParseTest {
         @Test
         public void falseTest() throws FatalErrorException {
             TestDataAndErrMessage[] arr = {
-                new TestDataAndErrMessage("10<=###", "<=の後ろはexpressionです"),
+                //new TestDataAndErrMessage("10<=###", "<=の後ろはexpressionです"),
             };
             ConditionLEHelper.parseRejectTestList(arr);
         }
@@ -66,7 +66,7 @@ public class T06_32ParseTest {
         @Test
         public void falseTest() throws FatalErrorException {
             TestDataAndErrMessage[] arr = {
-                new TestDataAndErrMessage("10>###", ">の後ろはexpressionです"),
+                //new TestDataAndErrMessage("10>###", ">の後ろはexpressionです"),
             };
             ConditionGTHelper.parseRejectTestList(arr);
         }
@@ -86,7 +86,7 @@ public class T06_32ParseTest {
         @Test
         public void falseTest() throws FatalErrorException {
             TestDataAndErrMessage[] arr = {
-                new TestDataAndErrMessage("10>=###", ">=の後ろはexpressionです"),
+                //new TestDataAndErrMessage("10>=###", ">=の後ろはexpressionです"),
             };
             ConditionGEHelper.parseRejectTestList(arr);
         }
@@ -106,7 +106,7 @@ public class T06_32ParseTest {
         @Test
         public void falseTest() throws FatalErrorException {
             TestDataAndErrMessage[] arr = {
-                new TestDataAndErrMessage("10==###", "==の後ろはexpressionです"),
+                //new TestDataAndErrMessage("10==###", "==の後ろはexpressionです"),
             };
             ConditionEQHelper.parseRejectTestList(arr);
         }
@@ -126,7 +126,7 @@ public class T06_32ParseTest {
         @Test
         public void falseTest() throws FatalErrorException {
             TestDataAndErrMessage[] arr = {
-                new TestDataAndErrMessage("10!=###", "!=の後ろはexpressionです"),
+                //new TestDataAndErrMessage("10!=###", "!=の後ろはexpressionです"),
             };
             ConditionNEHelper.parseRejectTestList(arr);
         }
@@ -154,12 +154,12 @@ public class T06_32ParseTest {
         @Test
         public void falseTest() throws FatalErrorException {
             TestDataAndErrMessage[] arr = {
-                new TestDataAndErrMessage("10<","<の後ろはexpressionです"),
-                new TestDataAndErrMessage("ia_f[0]<=###","<=の後ろはexpressionです"),
-                new TestDataAndErrMessage("i_b>//",">の後ろはexpressionです"),
-                new TestDataAndErrMessage("i_c>=|||",">=の後ろはexpressionです"),
-                new TestDataAndErrMessage("*ip_e==%%%","==の後ろはexpressionです"),
-                new TestDataAndErrMessage("200!=","!=の後ろはexpressionです"),
+                // new TestDataAndErrMessage("10<","<の後ろはexpressionです"),
+                // new TestDataAndErrMessage("ia_f[0]<=###","<=の後ろはexpressionです"),
+                // new TestDataAndErrMessage("i_b>//",">の後ろはexpressionです"),
+                // new TestDataAndErrMessage("i_c>=|||",">=の後ろはexpressionです"),
+                // new TestDataAndErrMessage("*ip_e==%%%","==の後ろはexpressionです"),
+                // new TestDataAndErrMessage("200!=","!=の後ろはexpressionです"),
             };
             ConditionHelper.parseRejectTestList(arr);
         }

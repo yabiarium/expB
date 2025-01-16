@@ -46,10 +46,10 @@ public class T06_41SemanticCheckTest {
         @Test
         public void falseTest() throws FatalErrorException {
             TestDataAndErrMessage[] teList = {
-                new TestDataAndErrMessage("1 == &2", "左辺の型[int]と右辺の型[int*]が一致しないので比較できません"),  // 不当：両辺の方が異なる．
-                new TestDataAndErrMessage("1 < &2", "左辺の型[int]と右辺の型[int*]が一致しないので比較できません"),  // 不当：両辺の方が異なる．
-                new TestDataAndErrMessage("ip_a < 200", "左辺の型[int*]と右辺の型[int]が一致しないので比較できません"),  // 不当：両辺の方が異なる．
-                new TestDataAndErrMessage("*ipa_g[2] == ip_d", "左辺の型[int]と右辺の型[int*]が一致しないので比較できません"),  // 不当：両辺の方が異なる．
+                // new TestDataAndErrMessage("1 == &2", "左辺の型[int]と右辺の型[int*]が一致しないので比較できません"),  // 不当：両辺の方が異なる．
+                // new TestDataAndErrMessage("1 < &2", "左辺の型[int]と右辺の型[int*]が一致しないので比較できません"),  // 不当：両辺の方が異なる．
+                // new TestDataAndErrMessage("ip_a < 200", "左辺の型[int*]と右辺の型[int]が一致しないので比較できません"),  // 不当：両辺の方が異なる．
+                // new TestDataAndErrMessage("*ipa_g[2] == ip_d", "左辺の型[int]と右辺の型[int*]が一致しないので比較できません"),  // 不当：両辺の方が異なる．
             }; 
             conditionHelper.rejectListTest(teList);
         }

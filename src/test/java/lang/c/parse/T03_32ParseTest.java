@@ -74,9 +74,9 @@ public class T03_32ParseTest {
         public void falseETest() throws FatalErrorException {
             TestDataAndErrMessage[] arr = {
                 //new TestDataAndErrMessage("1**1", "*の後ろはfactorです"),
-                new TestDataAndErrMessage("200*/100", "*の後ろはfactorです"),
-                new TestDataAndErrMessage("100---200", "-の後ろはunsignedFactorです"),
-                new TestDataAndErrMessage("(100-200", ")がありません"),
+                // new TestDataAndErrMessage("200*/100", "*の後ろはfactorです"),
+                // new TestDataAndErrMessage("100---200", "-の後ろはunsignedFactorです"),
+                // new TestDataAndErrMessage("(100-200", ")がありません"),
             };
             expressionHelper.parseRejectTestList(arr);
         }

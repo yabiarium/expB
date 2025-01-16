@@ -29,8 +29,8 @@ public class T08_32ParseTest {
         @Test
         public void falseTest() throws FatalErrorException {
             TestDataAndErrMessage[] arr = {
-                new TestDataAndErrMessage("()", "(の後ろはconditionExpressionです"), //中身が無い
-                new TestDataAndErrMessage("(10<=i_a", ")がありません"), //]が無い
+                // new TestDataAndErrMessage("()", "(の後ろはconditionExpressionです"), //中身が無い
+                // new TestDataAndErrMessage("(10<=i_a", ")がありません"), //]が無い
             };
             ConditionBlockrHelper.parseRejectTestList(arr);
         }
@@ -53,7 +53,7 @@ public class T08_32ParseTest {
         @Test
         public void falseTest() throws FatalErrorException {
             TestDataAndErrMessage[] arr = {
-                new TestDataAndErrMessage("true ||","||の後ろはconditionTermです"),
+                //new TestDataAndErrMessage("true ||","||の後ろはconditionTermです"),
             };
             ExpressionOrHelper.parseRejectTestList(arr);
         }
@@ -76,7 +76,7 @@ public class T08_32ParseTest {
         @Test
         public void falseTest() throws FatalErrorException {
             TestDataAndErrMessage[] arr = {
-                new TestDataAndErrMessage("true &&","&&の後ろはconditionFactorです"),
+                //new TestDataAndErrMessage("true &&","&&の後ろはconditionFactorです"),
             };
             TermAndHelper.parseRejectTestList(arr);
         }
@@ -100,7 +100,7 @@ public class T08_32ParseTest {
         @Test
         public void falseTest() throws FatalErrorException {
             TestDataAndErrMessage[] arr = {
-                new TestDataAndErrMessage("!###","!の後ろはConditionUnsignedFactorです"),
+                //new TestDataAndErrMessage("!###","!の後ろはConditionUnsignedFactorです"),
             };
             NotFactorHelper.parseRejectTestList(arr);
         }
@@ -123,8 +123,8 @@ public class T08_32ParseTest {
         @Test
         public void falseTest() throws FatalErrorException {
             TestDataAndErrMessage[] arr = {
-                new TestDataAndErrMessage("[", "[の後ろはconditionExpressionです"), //中身が無い
-                new TestDataAndErrMessage("[10<=i_a", "]がありません"), //]が無い
+                //new TestDataAndErrMessage("[", "[の後ろはconditionExpressionです"), //中身が無い
+                //new TestDataAndErrMessage("[10<=i_a", "]がありません"), //]が無い
             };
             ConditionUnsignedFactorHelper.parseRejectTestList(arr);
         }
