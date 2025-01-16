@@ -50,7 +50,7 @@ public class Variable extends CParseRule{
 				try {
 					if(rt == CType.T_int || rt == CType.T_pint){
 						//pcx.fatalError("variable: semanticCheck(): 配列変数は T_int_array か T_pint_array です");
-						pcx.recoverableError(sem + "variable: 配列変数は ia_x(T_int_array) か ipa_x(T_pint_array) です");
+						pcx.recoverableError(sem + " variable: 配列変数は ia_x(T_int_array) か ipa_x(T_pint_array) です");
 					}
 				} catch (RecoverableErrorException e) {
 				}
@@ -63,7 +63,7 @@ public class Variable extends CParseRule{
 				try {
 					if(array == null){
 						//pcx.fatalError("variable: semanticCheck(): 配列型の後ろに[]がありません");
-						pcx.recoverableError(sem + "variable: 配列型の後ろに[]がありません");
+						pcx.recoverableError(sem + " variable: 配列型の後ろに[]がありません");
 					}
 				} catch (Exception e) {
 				}

@@ -63,7 +63,7 @@ public class StatementInput extends CParseRule{
 			try {
 				if(primary.isConstant()){
 					//pcx.fatalError("statementInput: semanticCheck(): 定数には代入できません");
-					pcx.recoverableError(sem + "statementInput: 定数には代入できません");
+					pcx.recoverableError(sem + " statementInput: 定数には代入できません");
 				}
 			} catch (RecoverableErrorException e) {
 			}

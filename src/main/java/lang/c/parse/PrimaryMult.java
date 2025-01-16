@@ -52,7 +52,7 @@ public class PrimaryMult extends CParseRule{
 			try {
 				if(variable.getCType().getType() != CType.T_pint){
 					//pcx.fatalError("primaryMult: semanticCheck(): *の後ろは[int*]です");
-					pcx.recoverableError(sem + "primaryMult: *の後ろは[int*]です");
+					pcx.recoverableError(sem + " primaryMult: *の後ろは[int*]です");
 				}
 			} catch (Exception e) {
 			}

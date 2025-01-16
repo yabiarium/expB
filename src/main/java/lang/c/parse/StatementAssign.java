@@ -82,10 +82,10 @@ public class StatementAssign extends CParseRule{
 			try {
 				if(lt != rt){
 					//pcx.fatalError("statementAssign: semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が異なります");
-					pcx.recoverableError(sem + "statementAssign: 左辺の型["+lts+"]と右辺の型["+rts+"]が異なります");
+					pcx.recoverableError(sem + " statementAssign: 左辺の型["+lts+"]と右辺の型["+rts+"]が異なります");
 				}else if(primary.isConstant()){
 					//pcx.fatalError("statementAssign: semanticCheck(): 定数には代入できません");
-					pcx.recoverableError(sem + "statementAssign: 定数には代入できません");
+					pcx.recoverableError(sem + " statementAssign: 定数には代入できません");
 				}
 			} catch (RecoverableErrorException e) {
 			}
