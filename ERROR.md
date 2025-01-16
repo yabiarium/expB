@@ -81,9 +81,9 @@ o conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA //条件
         → expressionの解析後なので;を補う（「i_a=1 2;」のようにexpressionの途中であろう位置で抜けてしまう場合は1で解析が止まる）  
         ` i_a = 0 `  
         ` i_a = 7  1; //7までで止まる `  
- - [] 🍀 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が異なります  
+ - [ ] 🍀 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が異なります  
         → 書き換えてはいけないアドレスに書き込むようになっているといけないのでコード生成しない
- - [] 🍀 semanticCheck(): 定数には代入できません
+ - [ ] 🍀 semanticCheck(): 定数には代入できません
 
 ### statementInput:
  - [x] 🍀 parse(): inputの後ろはprimaryです  
@@ -92,7 +92,7 @@ o conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA //条件
  - [x] 💫 parse(): ;がありません  
         → primaryの解析後なので、;を補う  
         ` input i_a `  
- - [] 🍀 semanticCheck(): 定数には代入できません  
+ - [ ] 🍀 semanticCheck(): 定数には代入できません  
         ` input c_a; `
 
 ### statementOutput:
@@ -107,7 +107,7 @@ o conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA //条件
  - [x] 🍀 parse(): +の後ろはtermです  
         → 回復エラーだけ出して処理はstatementAssign/Input/Output/Blockに任せる  
         ` i_a = 7 + ; ` 
- - [] 🍀 semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]は足せません  
+ - [ ] 🍀 semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]は足せません  
         → ~~演算は結果をスタックに積むだけでメモリの変更ないのでコード生成してもよさそう~~  
         → 実行できてしまって想定通りの動作をしなかった場合のデバッグが面倒になりそうなのでコンパイルしない
 
@@ -115,14 +115,14 @@ o conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA //条件
  - [x] 🍀 parse(): -の後ろはtermです  
         → 回復エラーだけ出して処理はstatementAssign/Input/Output/Blockに任せる  
         ` i_a = 7 - ; `
- - [] 🍀 semanticCheck(): 左辺の型[" + lts + "]から右辺の型[" + rts + "]は引けません 
+ - [ ] 🍀 semanticCheck(): 左辺の型[" + lts + "]から右辺の型[" + rts + "]は引けません   
         → 実行できてしまって想定通りの動作をしなかった場合のデバッグが面倒になりそうなのでコンパイルしない
 
 ### termMult:
  - [x] 🍀 parse(): *の後ろはfactorです  
         → 回復エラーだけ出して処理はstatementAssign/Input/Output/Blockに任せる  
         ` i_a = 7 * ; `
- - [] 🍀 semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]は掛けられません  
+ - [ ] 🍀 semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]は掛けられません  
         → 実行できてしまって想定通りの動作をしなかった場合のデバッグが面倒になりそうなのでコンパイルしない
 
 ### termDiv:
@@ -130,21 +130,21 @@ o conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA //条件
         → 回復エラーだけ出して処理はstatementAssign/Input/Output/Blockに任せる  
         ` i_a = 7 / ; // 単体/の後ろが数式(+,-,(,数字)以外の場合は字句解析で/=ILLとなる `  
         ↑ なのでこのエラーが出ることはない
- - [] 🍀 semanticCheck(): 左辺の型[" + lts + "]は右辺の型[" + rts + "]で割れません
+ - [ ] 🍀 semanticCheck(): 左辺の型[" + lts + "]は右辺の型[" + rts + "]で割れません  
         → 実行できてしまって想定通りの動作をしなかった場合のデバッグが面倒になりそうなのでコンパイルしない
 
 ### plusFactor:
  - [x] 🍀 parse(): +の後ろはunsignedFactorです  
         → 回復エラーだけ出して処理はstatementAssign/Input/Output/Blockに任せる  
         ` i_a = 7 + +; `
- - [] 🍀 semanticCheck(): +の後ろはT_intです[" + rts + "] 
+ - [ ] 🍀 semanticCheck(): +の後ろはT_intです[" + rts + "]  
         → 想定以外の型がくると生成コードがめちゃくちゃになりそう
 
 ### minusFactor:
  - [x] 🍀 parse(): -の後ろはunsignedFactorです  
         → 回復エラーだけ出して処理はstatementAssign/Input/Output/Blockに任せる  
         ` i_a = 7 + -; `
- - [] 🍀 semanticCheck(): -の後ろはT_intです[" + rts + "] 
+ - [ ] 🍀 semanticCheck(): -の後ろはT_intです[" + rts + "]  
         → 想定以外の型がくると生成コードがめちゃくちゃになりそう
 
 ### unsignedFactor:
@@ -163,7 +163,7 @@ o conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA //条件
  - [x] 🍀 parse(): &の後ろはnumberまたはprimaryです  
          → 回復エラーだけ出して処理はstatementAssign/Input/Output/Blockに任せる  
          ` i_a = &[] ; `
- - [] 🍀 semanticCheck(): &の後ろはT_intです["+ts+"] 
+ - [ ] 🍀 semanticCheck(): &の後ろはT_intです["+ts+"]  
         → 想定以外の型がくると生成コードがめちゃくちゃになりそう
 
 ### primaryMult:
@@ -172,13 +172,13 @@ o conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA //条件
         ~~（*が使われるのはAddressToValueか代入先の変数の前のどちらか。前者なら後ろに;があるはず、後者でも;まで行って一行まるっと飛ばすか、配列に使われていたなら]で止められる）~~  
         → 回復エラーだけ出して処理はstatementAssign/Input/Output/Blockに任せる  
         ` i_a = * ; `
- - [] 🍀 semanticCheck(): \*の後ろは[int*]です 
+ - [ ] 🍀 semanticCheck(): \*の後ろは[int*]です  
         → 想定以外の型がくると生成コードがめちゃくちゃになりそう
 
 ### variable:
- - [] 🍀 semanticCheck(): 配列変数は T_int_array か T_pint_array です 
+ - [ ] 🍀 semanticCheck(): 配列変数は T_int_array か T_pint_array です  
         → 想定以外の型がくると生成コードがめちゃくちゃになりそう
- - [] 🍀 semanticCheck(): 配列型の後ろに[]がありません  
+ - [ ] 🍀 semanticCheck(): 配列型の後ろに[]がありません  
 
 ### array: 
  - [x] 💫 parse(): ]がありません  
@@ -190,9 +190,10 @@ o conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA //条件
         ` ia_a[] = 0; `
 
 ### ident:
- - [] 💫 semanticCheck(): 変数名規則に合っていません  
+ - [ ] 🍀 semanticCheck(): 変数名規則に合っていません  
        → ~~意味解析でのエラー。変数の型が不明だと以降の意味解析に支障が出る。~~  
-         一時的にint型として、以降で出る意味解析でのエラーは構文木の上の階層の意味解析に任せる  
+         ~~一時的にint型として、以降で出る意味解析でのエラーは構文木の上の階層の意味解析に任せる~~  
+        → 実行できてしまって想定通りの動作をしなかった場合のデバッグが面倒になりそうなのでコンパイルしない
 
 ### condition:
  - [x] 🍀 parse(): expressionの後ろにはconditionXXが必要です  
@@ -205,32 +206,32 @@ o conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA //条件
         → ~~)まで飛ばす→{からstatementBlock（他のconditionXXも同様）~~   
         → conditionに引き継ぐために、conditionXX内では回復エラーを出すだけで何もしない  
         ` if(i_a < )i_a=0; `
- - [] 🍀 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません
+ - [ ] 🍀 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません
 
 ### conditionLE:
  - [x] 🍀 parse(): <=の後ろはexpressionです  
         ` if(i_a <= )i_a=0; `
- - [] 🍀 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません
+ - [ ] 🍀 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません
 
 ### conditionGT:
  - [x] 🍀 parse(): >の後ろはexpressionです  
         ` if(i_a > )i_a=0; `
- - [] 🍀 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません
+ - [ ] 🍀 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません
  
 ### conditionGE:
  - [x] 🍀 parse(): >=の後ろはexpressionです  
         ` if(i_a >= )i_a=0; `
- - [] 🍀 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません
+ - [ ] 🍀 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません
 
 ### conditionEQ:
  - [x] 🍀 parse(): ==の後ろはexpressionです  
         ` if(i_a == )i_a=0; `
- - [] 🍀 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません
+ - [ ] 🍀 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません
 
 ### conditionNE:
  - [x] 🍀 parse(): !=の後ろはexpressionです  
         ` if(i_a != )i_a=0; `
- - [] 🍀 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません
+ - [ ] 🍀 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません
 
 ### statementIf:
  - [x] 🍀 parse(): ifの後ろはconditionBlockです  
@@ -274,21 +275,21 @@ o conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA //条件
  - [x] 🍀　parse(): ||の後ろはconditionTermです  
         → ConditionBlockで対処するのでここでは回復エラーだけ出して何もしない  
         ` if(i_a < 0 || ) i_a=0; `
- - [] semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]はT_boolである必要があります
+ - [ ] semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]はT_boolである必要があります  
         → 実行できてしまって想定通りの動作をしなかった場合のデバッグが面倒になりそうなのでコンパイルしない
 
 ### termAnd:
  - [x] 🍀 parse(): &&の後ろはconditionFactorです  
         → ConditionBlockで対処するのでここでは回復エラーだけ出して何もしない  
         ` if(i_a < 0 && ) i_a=0; `
- - [] semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]はT_boolである必要があります
+ - [ ] semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]はT_boolである必要があります  
         → 実行できてしまって想定通りの動作をしなかった場合のデバッグが面倒になりそうなのでコンパイルしない
 
 ### notFactor:
  - [x] 🍀 parse(): !の後ろはConditionUnsignedFactorです  
         → ConditionBlockで対処するのでここでは回復エラーだけ出して何もしない  
         ` if(! ) i_a=0; `
- - [] semanticCheck(): !の後ろはT_boolです[" + rts + "]
+ - [ ] semanticCheck(): !の後ろはT_boolです[" + rts + "]  
         → 実行できてしまって想定通りの動作をしなかった場合のデバッグが面倒になりそうなのでコンパイルしない
 
 ### conditionUnsignedFactor:
