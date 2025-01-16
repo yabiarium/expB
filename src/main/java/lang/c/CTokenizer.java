@@ -115,10 +115,14 @@ public class CTokenizer extends Tokenizer<CToken, CParseContext> {
 				break;
 			}
 			
+			boolean isBreak = false;
 			for (int token : tokens) {
 				if (token == currentToken.getType()) {
-					break;
+					isBreak = true;
 				}
+			}
+			if (isBreak) {
+				break;
 			}
 
 			currentToken = getNextToken(pctx);
