@@ -69,7 +69,7 @@ public class ExpressionSub extends CParseRule {
 					//pcx.fatalError(op + ": expressionSub: semanticCheck(): 左辺の型[" + lts + "]から右辺の型[" + rts + "]は引けません");
 					pcx.recoverableError(op + ": expressionSub: semanticCheck(): 左辺の型[" + lts + "]から右辺の型[" + rts + "]は引けません");
 				}
-			} catch (Exception e) {
+			} catch (RecoverableErrorException e) {
 			}
 			this.setCType(CType.getCType(nt));
 			this.setConstant(left.isConstant() && right.isConstant()); // -の左右両方が定数のときだけ定数
