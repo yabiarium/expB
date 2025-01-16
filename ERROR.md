@@ -221,32 +221,38 @@ o conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA //条件
         → ~~)まで飛ばす→{からstatementBlock（他のconditionXXも同様）~~   
         → conditionに引き継ぐために、conditionXX内では回復エラーを出すだけで何もしない  
         ` if(i_a < )i_a=0; `
- - [ ] 🍀 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません
+ - [x] 🍀 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません  
+        ` if(i_a < ip_a){} `
 
 ### conditionLE:
  - [x] 🍀 parse(): <=の後ろはexpressionです  
         ` if(i_a <= )i_a=0; `
- - [ ] 🍀 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません
+ - [x] 🍀 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません  
+        ` if(i_a <= ip_a){} `
 
 ### conditionGT:
  - [x] 🍀 parse(): >の後ろはexpressionです  
         ` if(i_a > )i_a=0; `
- - [ ] 🍀 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません
+ - [x] 🍀 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません  
+        ` if(i_a > ip_a){} `
  
 ### conditionGE:
  - [x] 🍀 parse(): >=の後ろはexpressionです  
         ` if(i_a >= )i_a=0; `
- - [ ] 🍀 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません
+ - [x] 🍀 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません  
+        ` if(i_a >= ip_a){} `
 
 ### conditionEQ:
  - [x] 🍀 parse(): ==の後ろはexpressionです  
         ` if(i_a == )i_a=0; `
- - [ ] 🍀 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません
+ - [x] 🍀 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません  
+        ` if(i_a == ip_a){} `
 
 ### conditionNE:
  - [x] 🍀 parse(): !=の後ろはexpressionです  
         ` if(i_a != )i_a=0; `
- - [ ] 🍀 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません
+ - [x] 🍀 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません  
+        ` if(i_a != ip_a){} `
 
 ### statementIf:
  - [x] 🍀 parse(): ifの後ろはconditionBlockです  

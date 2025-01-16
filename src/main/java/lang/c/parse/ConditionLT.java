@@ -49,8 +49,12 @@ public class ConditionLT  extends CParseRule {
 			String lts = left.getCType().toString();
 			String rts = expression.getCType().toString();
 
-			if (lt != rt){
-				pcx.fatalError(op+"conditionLT: semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません");
+			try {
+				if (lt != rt){
+					//pcx.fatalError(op + " conditionLT: semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません");
+					pcx.recoverableError(op + " conditionLT: 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません");
+				}
+			} catch (RecoverableErrorException e) {
 			}
 			this.setCType(CType.getCType(CType.T_bool));
 			this.setConstant(true);
