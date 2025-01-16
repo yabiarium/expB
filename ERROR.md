@@ -172,8 +172,9 @@ o conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA //条件
  - [x] 🍀 parse(): &の後ろはnumberまたはprimaryです  
          → 回復エラーだけ出して処理はstatementAssign/Input/Output/Blockに任せる  
          ` i_a = &[] ; `
- - [ ] 🍀 semanticCheck(): &の後ろはT_intです["+ts+"]  
-        → 想定以外の型がくると生成コードがめちゃくちゃになりそう
+ - [x] 🍀 semanticCheck(): &の後ろはT_intです["+ts+"]  
+        → 想定以外の型がくると生成コードがめちゃくちゃになりそう  
+        ` ip_a = i_a + &ip_a; `
 
 ### primaryMult:
  - [x] 🍀 parse(): *の後ろはvariableです  
