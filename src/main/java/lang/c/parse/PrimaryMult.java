@@ -11,6 +11,7 @@ import lang.c.CodeGenCommon;
 
 public class PrimaryMult extends CParseRule{
     CParseRule variable;
+	CToken sem; //意味解析でエラー場所を表示する用
 
 	public PrimaryMult(CParseContext pcx) {
 		super("PrimaryMult");
@@ -26,6 +27,7 @@ public class PrimaryMult extends CParseRule{
 		// ここにやってくるときは、必ずisFirst()が満たされている
 		CTokenizer ct = pcx.getTokenizer();
 		CToken tk = ct.getCurrentToken(pcx);
+		sem = tk;
 
 		// *の次の字句を読む
 		try {
@@ -47,8 +49,12 @@ public class PrimaryMult extends CParseRule{
 		if (variable != null) {
 			variable.semanticCheck(pcx);
 			
-			if(variable.getCType().getType() != CType.T_pint){
-				pcx.fatalError("primaryMult: semanticCheck(): *の後ろは[int*]です");
+			try {
+				if(variable.getCType().getType() != CType.T_pint){
+					//pcx.fatalError("primaryMult: semanticCheck(): *の後ろは[int*]です");
+					pcx.recoverableError(sem + "primaryMult: *の後ろは[int*]です");
+				}
+			} catch (Exception e) {
 			}
 			this.setCType(CType.getCType(CType.T_int));
 			this.setConstant(variable.isConstant());
