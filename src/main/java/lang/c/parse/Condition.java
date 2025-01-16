@@ -24,12 +24,12 @@ public class Condition extends CParseRule {
 		if(tk.getType() == CToken.TK_TRUE){
 			conTrue = tk;
 			tk = ct.getNextToken(pcx);
-		}if(tk.getType() == CToken.TK_FALSE){
+			
+		}else if(tk.getType() == CToken.TK_FALSE){
 			conFalse = tk;
 			tk = ct.getNextToken(pcx);
-		}
-		
-		if(Expression.isFirst(tk)){
+
+		}else if(Expression.isFirst(tk)){
 			try {
 				expression = new Expression(pcx);
 				expression.parse(pcx);
