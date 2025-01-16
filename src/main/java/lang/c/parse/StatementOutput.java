@@ -6,7 +6,6 @@ import lang.c.CParseContext;
 import lang.c.CParseRule;
 import lang.c.CToken;
 import lang.c.CTokenizer;
-import lang.c.CType;
 //import lang.c.CType;
 import lang.c.CodeGenCommon;
 

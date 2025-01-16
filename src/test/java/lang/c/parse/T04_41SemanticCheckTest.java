@@ -7,7 +7,7 @@ import org.junit.runner.RunWith;
 import lang.FatalErrorException;
 import lang.c.CType;
 import lang.c.testhelpter.SemanticCheckTestHelper;
-import lang.c.testhelpter.TestDataAndCType;
+// import lang.c.testhelpter.TestDataAndCType;
 import lang.c.testhelpter.TestDataAndCTypeAndConstant;
 import lang.c.testhelpter.TestDataAndErrMessage;
 

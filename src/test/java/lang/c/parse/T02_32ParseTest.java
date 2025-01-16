@@ -7,7 +7,7 @@ import org.junit.runner.RunWith;
 
 import lang.FatalErrorException;
 import lang.c.testhelpter.ParseTestHelper;
-import lang.c.testhelpter.ParseTestHelper2;
+// import lang.c.testhelpter.ParseTestHelper2;
 import lang.c.testhelpter.TestDataAndErrMessage;
 
 @RunWith(Enclosed.class)

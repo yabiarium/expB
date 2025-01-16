@@ -1,6 +1,6 @@
 package lang.c.parse;
 
-import javax.lang.model.type.NullType;
+//import javax.lang.model.type.NullType;
 
 import lang.FatalErrorException;
 import lang.c.CParseContext;

@@ -76,8 +76,8 @@ public class TermMult extends CParseRule {
 			cgc.printStartComment(getBNF(getId()));
 			left.codeGen(pcx); // 左部分木のコード生成を頼む Number.javaのcodeGen()が動作する
 			right.codeGen(pcx); // 右部分木のコード生成を頼む
-			String lt = left.getCType().toString();
-			String rt = right.getCType().toString();
+			//String lt = left.getCType().toString();
+			//String rt = right.getCType().toString();
 			String t = getCType().toString();
 			cgc.printInstCodeGen("", "JSR MUL", "サブルーチン呼び出し(返り値はR0に)");
 			cgc.printInstCodeGen("", "SUB #2, R6", "引数を消す");
