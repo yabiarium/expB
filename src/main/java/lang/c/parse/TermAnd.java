@@ -1,6 +1,7 @@
 package lang.c.parse;
 
 import lang.FatalErrorException;
+import lang.RecoverableErrorException;
 import lang.c.CParseContext;
 import lang.c.CParseRule;
 import lang.c.CToken;
@@ -26,12 +27,18 @@ public class TermAnd extends CParseRule {
 		CTokenizer ct = pcx.getTokenizer();
 		op = ct.getCurrentToken(pcx);
 		// &&の次の字句を読む
-		CToken tk = ct.getNextToken(pcx);
-		if (ConditionFactor.isFirst(tk)) {
-			conditionFactor = new ConditionFactor(pcx);
-			conditionFactor.parse(pcx);
-		} else {
-			pcx.fatalError(tk + "termAnd: parse(): &&の後ろはconditionFactorです");
+		try {
+			CToken tk = ct.getNextToken(pcx);
+			if (ConditionFactor.isFirst(tk)) {
+				conditionFactor = new ConditionFactor(pcx);
+				conditionFactor.parse(pcx);
+			} else {
+				//pcx.fatalError(tk + "termAnd: parse(): &&の後ろはconditionFactorです");
+				pcx.recoverableError(tk + "termAnd: &&の後ろはconditionFactorです");
+			}
+
+		} catch (RecoverableErrorException e) {
+			// ; ) まで読み飛ばす処理はconditionBlockに継ぐ
 		}
 	}
 

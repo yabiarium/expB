@@ -20,12 +20,18 @@ public class NotFactor extends CParseRule {
 		CTokenizer ct = pcx.getTokenizer();
 		op = ct.getCurrentToken(pcx);
 		// ! の次の字句を読む
-		CToken tk = ct.getNextToken(pcx);
-		if (ConditionUnsignedFactor.isFirst(tk)) {
-			conditionUnsignedFactor = new ConditionUnsignedFactor(pcx);
-			conditionUnsignedFactor.parse(pcx);
-		} else {
-			pcx.fatalError(tk + "notFactor: parse(): !の後ろはConditionUnsignedFactorです");
+		try {
+			CToken tk = ct.getNextToken(pcx);
+			if (ConditionUnsignedFactor.isFirst(tk)) {
+				conditionUnsignedFactor = new ConditionUnsignedFactor(pcx);
+				conditionUnsignedFactor.parse(pcx);
+			} else {
+				//pcx.fatalError(tk + "notFactor: parse(): !の後ろはConditionUnsignedFactorです");
+				pcx.recoverableError(tk + "notFactor: !の後ろはConditionUnsignedFactorです");
+			}
+
+		} catch (RecoverableErrorException e) {
+			// ; ) まで読み飛ばす処理はconditionBlockに継ぐ
 		}
 	}
 
