@@ -144,15 +144,17 @@ o conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA //条件
  - [x] 🍀 parse(): +の後ろはunsignedFactorです  
         → 回復エラーだけ出して処理はstatementAssign/Input/Output/Blockに任せる  
         ` i_a = 7 + +; `
- - [ ] 🍀 semanticCheck(): +の後ろはT_intです[" + rts + "]  
-        → 想定以外の型がくると生成コードがめちゃくちゃになりそう
+ - [x] 🍀 semanticCheck(): +の後ろはT_intです[" + rts + "]  
+        → 想定以外の型がくると生成コードがめちゃくちゃになりそう  
+        ` ip_a = i_a + +ip_a; `
 
 ### minusFactor:
  - [x] 🍀 parse(): -の後ろはunsignedFactorです  
         → 回復エラーだけ出して処理はstatementAssign/Input/Output/Blockに任せる  
         ` i_a = 7 + -; `
- - [ ] 🍀 semanticCheck(): -の後ろはT_intです[" + rts + "]  
-        → 想定以外の型がくると生成コードがめちゃくちゃになりそう
+ - [x] 🍀 semanticCheck(): -の後ろはT_intです[" + rts + "]  
+        → 想定以外の型がくると生成コードがめちゃくちゃになりそう  
+        ` ip_a = i_a + -ip_a; `
 
 ### unsignedFactor:
  - [x] 💫 parse(): )がありません  
