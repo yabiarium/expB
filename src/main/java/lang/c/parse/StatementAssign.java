@@ -1,6 +1,7 @@
 package lang.c.parse;
 
 import lang.FatalErrorException;
+import lang.RecoverableErrorException;
 import lang.c.CParseContext;
 import lang.c.CParseRule;
 import lang.c.CToken;
@@ -27,28 +28,43 @@ public class StatementAssign extends CParseRule{
 		CTokenizer ct = pcx.getTokenizer();
 		CToken tk = ct.getCurrentToken(pcx);
 
+		try {
 			primary = new Primary(pcx);
 			primary.parse(pcx);
 			// primaryの解析後,現在の字句を読む
 			tk = ct.getCurrentToken(pcx);
-			if(tk.getType() != CToken.TK_ASSIGN){
-				pcx.fatalError(tk + "statementAssign: parse(): =がありません");
+			if(tk.getType() == CToken.TK_ASSIGN){
+				tk = ct.getNextToken(pcx); // =を読み飛ばす
+			}else{
+				if(Expression.isFirst(tk)){
+					pcx.warning(tk + "statementAssign: = を補いました");
+				}else{
+					//pcx.fatalError(tk + "statementAssign: parse(): =がありません");
+					pcx.recoverableError(tk + "statementAssign: =がありません");
+				}
 			}
 
-			tk = ct.getNextToken(pcx);
 			if(Expression.isFirst(tk)){
 				expression = new Expression(pcx);
 				expression.parse(pcx);
 				// expressionの解析後,現在の字句を読む
 				tk = ct.getCurrentToken(pcx);
 				if(tk.getType() != CToken.TK_SEMI){
-					pcx.fatalError(tk + "statementAssign: parse(): ;がありません");
+					//pcx.fatalError(tk + "statementAssign: parse(): ;がありません");
+					pcx.warning(tk + "statementAssign: ; を補いました");
 				}
 			}else{
-				pcx.fatalError(tk + "statementAssign: parse(): =の後ろはexpressionです");
+				//pcx.fatalError(tk + "statementAssign: parse(): =の後ろはexpressionです");
+				pcx.recoverableError(tk + "statementAssign: =の後ろはexpressionです");
 			}
 			
 			tk = ct.getNextToken(pcx);
+
+		} catch (RecoverableErrorException e) {
+			// ; まで飛ばす(primary内部/expression内部/isFirstのどこで回復エラーが出た場合もここに来る)
+			ct.skipTo(pcx, CToken.TK_SEMI);
+			tk = ct.getNextToken(pcx);
+		}
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {

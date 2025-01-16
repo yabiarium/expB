@@ -1,6 +1,7 @@
 package lang.c.parse;
 
 import lang.FatalErrorException;
+import lang.RecoverableErrorException;
 import lang.c.CParseContext;
 import lang.c.CParseRule;
 import lang.c.CToken;
@@ -28,19 +29,29 @@ public class StatementInput extends CParseRule{
 		CToken tk = ct.getCurrentToken(pcx);
 
 		// input の次の字句を読む
-		tk = ct.getNextToken(pcx);
-		if(Primary.isFirst(tk)){
-			primary = new Primary(pcx);
-			primary.parse(pcx);
-			// primary の解析後,現在の字句を読む
-			tk = ct.getCurrentToken(pcx);
-			if(tk.getType() != CToken.TK_SEMI){
-				pcx.fatalError(tk + "statementInput: parse(): ;がありません");
-			}
+		try {
 			tk = ct.getNextToken(pcx);
-		}else{
-			pcx.fatalError(tk + "statementInput: parse(): inputの後ろはprimaryです");
+			if(Primary.isFirst(tk)){
+				primary = new Primary(pcx);
+				primary.parse(pcx);
+				// primary の解析後,現在の字句を読む
+				tk = ct.getCurrentToken(pcx);
+				if(tk.getType() != CToken.TK_SEMI){
+					//pcx.fatalError(tk + "statementInput: parse(): ;がありません");
+					pcx.warning(tk + "statementInput: ; を補いました");
+				}
+				tk = ct.getNextToken(pcx);
+			}else{
+				//pcx.fatalError(tk + "statementInput: parse(): inputの後ろはprimaryです");
+				pcx.recoverableError(tk + "statementInput: inputの後ろはprimaryです");
+			}
+
+		} catch (RecoverableErrorException e) {
+			// ; まで飛ばす(primary内部/isFirstのどちらで回復エラーが出た場合もここに来る)
+			ct.skipTo(pcx, CToken.TK_SEMI);
+			tk = ct.getNextToken(pcx);
 		}
+		
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
