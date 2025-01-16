@@ -27,7 +27,7 @@ public class StatementIf extends CParseRule {
                 conditionBlock.parse(pcx);
             }else{
                 //pcx.fatalError(tk + "statementIf: parse(): ifの後ろはconditionBlockです");
-                pcx.recoverableError(tk + "statementIf: ifの後ろは(です");
+                pcx.recoverableError(tk + " statementIf: ifの後ろは(です");
             }
             
         } catch (RecoverableErrorException e) {
@@ -47,7 +47,7 @@ public class StatementIf extends CParseRule {
                 statement1.parse(pcx);
             }else{
                 //pcx.fatalError(tk + "statementIf: parse(): conditionBlockの後ろはstatementです");
-                pcx.recoverableError(tk + "statementIf: conditionBlockの後ろはstatementです");
+                pcx.recoverableError(tk + " statementIf: conditionBlockの後ろはstatementです");
             }
 
             // else がある場合
@@ -59,7 +59,7 @@ public class StatementIf extends CParseRule {
                     statement2.parse(pcx);
                 }else{
                     //pcx.fatalError(tk + "statementIf: parse(): elseの後ろはstatementです");
-                    pcx.recoverableError(tk + "statementIf: elseの後ろはstatementです");
+                    pcx.recoverableError(tk + " statementIf: elseの後ろはstatementです");
                 }
             }
         } catch (RecoverableErrorException e) {

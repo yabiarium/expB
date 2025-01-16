@@ -6,7 +6,6 @@ import lang.c.CParseContext;
 import lang.c.CParseRule;
 import lang.c.CToken;
 import lang.c.CTokenizer;
-import lang.c.CType;
 //import lang.c.CType;
 import lang.c.CodeGenCommon;
 
@@ -44,7 +43,7 @@ public class StatementOutput extends CParseRule{
 				}
 			}else{
 				//pcx.fatalError(tk + "statementOutput: parse(): outputの後ろはexpressionです");
-				pcx.recoverableError(tk + "statementOutput: outputの後ろはexpressionです");
+				pcx.recoverableError(tk + " statementOutput: outputの後ろはexpressionです");
 			}
 		} catch (RecoverableErrorException e) {
 			// ; まで飛ばす(expression内部/isFirstのどちらで回復エラーが出た場合もここに来る)

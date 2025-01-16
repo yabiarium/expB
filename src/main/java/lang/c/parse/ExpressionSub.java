@@ -38,7 +38,7 @@ public class ExpressionSub extends CParseRule {
 				right.parse(pcx);
 			} else {
 				//pcx.fatalError(tk + "expressionSub: parse(): -の後ろはtermです");
-				pcx.recoverableError(tk + "expressionSub: -の後ろはtermです");
+				pcx.recoverableError(tk + " expressionSub: -の後ろはtermです");
 			}
 
 		} catch (RecoverableErrorException e) {
@@ -49,10 +49,10 @@ public class ExpressionSub extends CParseRule {
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
 		// 引き算の型計算規則
 		final int s[][] = {
-				// T_err T_int T_pint T_int[] T_pint[]
+				// T_err       T_int        T_pint       T_int[]      T_pint[]
 				{ CType.T_err, CType.T_err, CType.T_err, CType.T_err, CType.T_err}, // T_err
 				{ CType.T_err, CType.T_int, CType.T_err, CType.T_err, CType.T_err}, // T_int
-				{ CType.T_err, CType.T_pint, CType.T_int, CType.T_err, CType.T_err}, // T_pint
+				{ CType.T_err, CType.T_pint,CType.T_int, CType.T_err, CType.T_err}, // T_pint
 				{ CType.T_err, CType.T_err, CType.T_err, CType.T_err, CType.T_err}, // T_int[]
 				{ CType.T_err, CType.T_err, CType.T_err, CType.T_err, CType.T_err}, // T_pint[]
 		};
@@ -64,8 +64,12 @@ public class ExpressionSub extends CParseRule {
 			int nt = s[lt][rt]; // 規則による型計算
 			String lts = left.getCType().toString();
 			String rts = right.getCType().toString();
-			if (nt == CType.T_err) {
-				pcx.fatalError(op + ": expressionSub: semanticCheck(): 左辺の型[" + lts + "]から右辺の型[" + rts + "]は引けません");
+			try {
+				if (nt == CType.T_err) {
+					//pcx.fatalError(op + ": expressionSub: semanticCheck(): 左辺の型[" + lts + "]から右辺の型[" + rts + "]は引けません");
+					pcx.recoverableError(op + " expressionSub: semanticCheck(): 左辺の型[" + lts + "]から右辺の型[" + rts + "]は引けません");
+				}
+			} catch (RecoverableErrorException e) {
 			}
 			this.setCType(CType.getCType(nt));
 			this.setConstant(left.isConstant() && right.isConstant()); // -の左右両方が定数のときだけ定数

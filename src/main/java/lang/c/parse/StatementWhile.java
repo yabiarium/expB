@@ -27,7 +27,7 @@ public class StatementWhile extends CParseRule {
                 conditionBlock.parse(pcx);
             }else{
                 //pcx.fatalError(tk + "statementWhile: parse(): whileの後ろはconditionBlockです");
-                pcx.recoverableError(tk + "statementWhile: whileの後ろは(です");
+                pcx.recoverableError(tk + " statementWhile: whileの後ろは(です");
             }
 
         } catch (RecoverableErrorException e) {
@@ -47,7 +47,7 @@ public class StatementWhile extends CParseRule {
                 statement.parse(pcx);
             }else{
                 //pcx.fatalError(tk + "statementWhile: parse(): conditionBlockの後ろはstatementです");
-                pcx.recoverableError(tk + "statementWhile: conditionBlockの後ろはstatementです");
+                pcx.recoverableError(tk + " statementWhile: conditionBlockの後ろはstatementです");
             }
 
         } catch (RecoverableErrorException e) {

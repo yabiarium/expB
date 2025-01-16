@@ -38,7 +38,7 @@ public class TermDiv extends CParseRule {
 				right.parse(pcx);
 			} else {
 				//pcx.fatalError(tk + "termDiv: parse(): /の後ろはfactorです");
-				pcx.recoverableError(tk + "termDiv: /の後ろはfactorです");
+				pcx.recoverableError(tk + " termDiv: /の後ろはfactorです");
 			}
 
 		} catch (RecoverableErrorException e) {
@@ -49,7 +49,7 @@ public class TermDiv extends CParseRule {
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
 		// 割り算の型計算規則
 		final int s[][] = {
-				// T_err T_int T_pint
+				// T_err       T_int        T_pint
 				{ CType.T_err, CType.T_err, CType.T_err }, // T_err
 				{ CType.T_err, CType.T_int, CType.T_err }, // T_int
 				{ CType.T_err, CType.T_err, CType.T_err }, // T_pint
@@ -62,8 +62,12 @@ public class TermDiv extends CParseRule {
 			int nt = s[lt][rt]; // 規則による型計算
 			String lts = left.getCType().toString();
 			String rts = right.getCType().toString();
-			if (nt == CType.T_err) {
-				pcx.fatalError(op + "termDiv: semanticCheck(): 左辺の型[" + lts + "]は右辺の型[" + rts + "]で割れません");
+			try {
+				if (nt == CType.T_err) {
+					//pcx.fatalError(op + "termDiv: semanticCheck(): 左辺の型[" + lts + "]は右辺の型[" + rts + "]で割れません");
+					pcx.recoverableError(op + " termDiv: 左辺の型[" + lts + "]は右辺の型[" + rts + "]で割れません");
+				}
+			} catch (RecoverableErrorException e) {
 			}
 			this.setCType(CType.getCType(nt));
 			this.setConstant(left.isConstant() && right.isConstant()); // +の左右両方が定数のときだけ定数
@@ -76,8 +80,8 @@ public class TermDiv extends CParseRule {
 			cgc.printStartComment(getBNF(getId()));
 			left.codeGen(pcx); // 左部分木のコード生成を頼む Number.javaのcodeGen()が動作する
 			right.codeGen(pcx); // 右部分木のコード生成を頼む
-			String lt = left.getCType().toString();
-			String rt = right.getCType().toString();
+			//String lt = left.getCType().toString();
+			//String rt = right.getCType().toString();
 			String t = getCType().toString();
 
 			cgc.printInstCodeGen("", "JSR DIV", "サブルーチン呼び出し(返り値はR0に)");

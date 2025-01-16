@@ -13,6 +13,7 @@ public class FactorAmp extends CParseRule {
 	// 新しく非終端記号に対応するクラスを作成する際は，必ず拡張BNF をコメントでつけること
 	// また，更新する際は，拡張BNFの「履歴」を残すこと（例えば，実験３まで：．．．． と 実験４から：．．． のように）
 	CParseRule number, primary;
+	CToken sem; //意味解析でエラー場所を表示する用
 
 	public FactorAmp(CParseContext pcx) {
 		super("FactorAmp");
@@ -27,7 +28,9 @@ public class FactorAmp extends CParseRule {
 	public void parse(CParseContext pcx) throws FatalErrorException {
 		// ここにやってくるときは、必ずisFirst()が満たされている
 		CTokenizer ct = pcx.getTokenizer();
-		CToken tk;
+		CToken tk = ct.getCurrentToken(pcx);
+		sem = tk;
+
 		// &の次の字句を読む
 		try {
 			tk = ct.getNextToken(pcx);
@@ -37,13 +40,13 @@ public class FactorAmp extends CParseRule {
 			} else if(Primary.isFirst(tk)) {
 				if(PrimaryMult.isFirst(tk)){
 					//pcx.fatalError(tk + "factorAmp: parse(): &の後ろに*は置けません");
-					pcx.recoverableError(tk + "factorAmp: &の後ろに*は置けません");
+					pcx.recoverableError(tk + " factorAmp: &の後ろに*は置けません");
 				}
 				primary = new Primary(pcx);
 				primary.parse(pcx);
 			} else {
 				//pcx.fatalError(tk + "factorAmp: parse(): &の後ろはnumberまたはprimaryです");
-				pcx.recoverableError(tk + "factorAmp: &の後ろはnumberまたはprimary(variableのみ)です");
+				pcx.recoverableError(tk + " factorAmp: &の後ろはnumberまたはprimary(variableのみ)です");
 			}
 
 		} catch (RecoverableErrorException e) {
@@ -59,8 +62,12 @@ public class FactorAmp extends CParseRule {
 		} else if (primary != null){
 			primary.semanticCheck(pcx);
 			String ts = primary.getCType().toString();
-			if(primary.getCType().getType() != CType.T_int){
-				pcx.fatalError("factorAmp: semanticCheck(): &の後ろはT_intです["+ts+"]");
+			try {
+				if(primary.getCType().getType() != CType.T_int){
+					//pcx.fatalError("factorAmp: semanticCheck(): &の後ろはT_intです["+ts+"]");
+					pcx.recoverableError(sem + " factorAmp: &の後ろはT_intです["+ts+"]");
+				}
+			} catch (RecoverableErrorException e) {
 			}
 			this.setCType(CType.getCType(CType.T_pint));
 			this.setConstant(isConstant());

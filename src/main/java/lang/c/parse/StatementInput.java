@@ -7,12 +7,12 @@ import lang.c.CParseRule;
 import lang.c.CToken;
 import lang.c.CTokenizer;
 import lang.c.CType;
-//import lang.c.CType;
 import lang.c.CodeGenCommon;
 
 public class StatementInput extends CParseRule{
 
     CParseRule primary;
+	CToken sem; //意味解析でエラー場所を表示する用
 
 	public StatementInput(CParseContext pcx) {
 		super("StatementInput");
@@ -27,6 +27,7 @@ public class StatementInput extends CParseRule{
 		// ここにやってくるときは、必ずisFirst()が満たされている
 		CTokenizer ct = pcx.getTokenizer();
 		CToken tk = ct.getCurrentToken(pcx);
+		sem = tk;
 
 		// input の次の字句を読む
 		try {
@@ -44,7 +45,7 @@ public class StatementInput extends CParseRule{
 				}
 			}else{
 				//pcx.fatalError(tk + "statementInput: parse(): inputの後ろはprimaryです");
-				pcx.recoverableError(tk + "statementInput: inputの後ろはprimaryです");
+				pcx.recoverableError(tk + " statementInput: inputの後ろはprimaryです");
 			}
 
 		} catch (RecoverableErrorException e) {
@@ -59,8 +60,12 @@ public class StatementInput extends CParseRule{
 		if (primary != null) {
 			primary.semanticCheck(pcx);
 			
-			if(primary.isConstant()){
-				pcx.fatalError("statementInput: semanticCheck(): 定数には代入できません");
+			try {
+				if(primary.isConstant()){
+					//pcx.fatalError("statementInput: semanticCheck(): 定数には代入できません");
+					pcx.recoverableError(sem + " statementInput: 定数には代入できません");
+				}
+			} catch (RecoverableErrorException e) {
 			}
 			this.setCType(CType.getCType(primary.getCType().getType()));
 			this.setConstant(primary.isConstant());

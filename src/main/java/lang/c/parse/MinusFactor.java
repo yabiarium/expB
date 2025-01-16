@@ -31,7 +31,7 @@ public class MinusFactor extends CParseRule {
 				right.parse(pcx);
 			} else {
 				//pcx.fatalError(tk + "minusFactor: parse(): -の後ろはunsignedFactorです");
-				pcx.recoverableError(tk + "minusFactor: -の後ろはunsignedFactorです");
+				pcx.recoverableError(tk + " minusFactor: -の後ろはunsignedFactorです");
 			}
 
 		} catch (RecoverableErrorException e) {
@@ -44,8 +44,12 @@ public class MinusFactor extends CParseRule {
 			right.semanticCheck(pcx);
 			int rt = right.getCType().getType(); // -の右辺の型
 			String rts = right.getCType().toString();
-			if (rt != CType.T_int) {
-				pcx.fatalError(op + ": minusFactor: semanticCheck(): -の後ろはT_intです[" + rts + "]");
+			try {
+				if (rt != CType.T_int) {
+					//pcx.fatalError(op + ": minusFactor: semanticCheck(): -の後ろはT_intです[" + rts + "]");
+					pcx.recoverableError(op + " minusFactor: -の後ろはT_intです[" + rts + "]");
+				}
+			} catch (RecoverableErrorException e) {
 			}
 			this.setCType(CType.getCType(rt));
 			this.setConstant(right.isConstant());

@@ -31,7 +31,7 @@ public class ConditionUnsignedFactor extends CParseRule {
 					conditionExpression.parse(pcx);
 				}else{
 					//pcx.fatalError(tk + "conditionUnsignedFactor: parse(): [の後ろはconditionExpressionです");
-					pcx.recoverableError(tk + "conditionUnsignedFactor: [の後ろはconditionExpressionです");
+					pcx.recoverableError(tk + " conditionUnsignedFactor: [の後ろはconditionExpressionです");
 				}
 		
 				// conditionExpression の次のトークンを読む

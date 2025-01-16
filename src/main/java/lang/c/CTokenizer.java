@@ -286,9 +286,9 @@ public class CTokenizer extends Tokenizer<CToken, CParseContext> {
 						state = ST_COM;
 					} else if (ch == '*') {// /*を読んだ
 						state = ST_BLOCKCOM;
-					} else if (ch == ' '){ // "2 / 3"など、/の後にスペースがあって数式が続く場合
+					} else if (ch == ' '){ // "2 / 3","i_a / i_a"など、/の後にスペースがあって数式が続く場合
 						ch = readChar(); //更にもう1文字読む
-						if(ch == '+' || ch == '-' || ch == '(' || Character.isDigit(ch)){
+						if(ch == '+' || ch == '-' || ch == '(' || Character.isDigit(ch) || Character.isAlphabetic(ch)){
 							backChar(ch);// トークン発効前に2文字分戻る
 							backChar(ch);
 							startCol = colNo - 2;
@@ -302,13 +302,13 @@ public class CTokenizer extends Tokenizer<CToken, CParseContext> {
 							startCol = colNo - 2;
 							state = ST_ILL;
 						}
-					}else if(ch == '+' || ch == '-' || ch == '(' || Character.isDigit(ch)){
+					}else if(ch == '+' || ch == '-' || ch == '(' || Character.isDigit(ch) || Character.isAlphabetic(ch)){
 						backChar(ch);
 						startCol = colNo - 1;
 						text.append('/');
 						tk = new CToken(CToken.TK_DIV, lineNo, startCol, "/");
 						accept = true;
-					} else { // /の後が「/」「*」、「数字」以外ならST_ILLに遷移
+					} else { // /の後が「/」「*」「数字」「a~z,A~Z(変数)」以外ならST_ILLに遷移
 						backChar(ch);
 						text.append('/');
 						startCol = colNo - 1;

@@ -6,7 +6,7 @@ import lang.c.CParseContext;
 import lang.c.CParseRule;
 import lang.c.CToken;
 import lang.c.CTokenizer;
-import lang.c.CType;
+//import lang.c.CType;
 import lang.c.CodeGenCommon;
 
 public class Array extends CParseRule{
@@ -37,7 +37,7 @@ public class Array extends CParseRule{
 				expression.parse(pcx);
 			} else {
 				//pcx.fatalError(tk + "array: parse(): [の後ろはexpressionです");
-				pcx.recoverableError(tk + "array: [の後ろはexpressionです"); //→エラーへ
+				pcx.recoverableError(tk + " array: [の後ろはexpressionです"); //→エラーへ
 			}
 			
 			// expressionの解析後,現在の字句を読む
