@@ -20,7 +20,7 @@ public class CTokenizer extends Tokenizer<CToken, CParseContext> {
 	private final int ST_PLUS = 4;
 	//CV01
 	private final int ST_MINUS = 5;
-	private final int ST_SLASH = 6;
+	private final int ST_SLASH = 6; // /
 	private final int ST_COM = 7; //COM=COMMENT
 	private final int ST_BLOCKCOM = 8;
 	private final int ST_BLOCKCOMASTA = 9; //ASTA=*
