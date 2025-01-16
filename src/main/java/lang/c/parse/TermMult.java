@@ -1,6 +1,7 @@
 package lang.c.parse;
 
 import lang.FatalErrorException;
+import lang.RecoverableErrorException;
 import lang.c.CParseContext;
 import lang.c.CParseRule;
 import lang.c.CToken;
@@ -28,13 +29,20 @@ public class TermMult extends CParseRule {
 		// ここにやってくるときは、必ずisFirst()が満たされている
 		CTokenizer ct = pcx.getTokenizer();
 		op = ct.getCurrentToken(pcx);
+
 		// *の次の字句を読む
 		CToken tk = ct.getNextToken(pcx);
-		if (Factor.isFirst(tk)) {
-			right = new Factor(pcx);
-			right.parse(pcx);
-		} else {
-			pcx.fatalError(tk + "termMult: parse(): *の後ろはfactorです");
+		try {
+			if (Factor.isFirst(tk)) {
+				right = new Factor(pcx);
+				right.parse(pcx);
+			} else {
+				//pcx.fatalError(tk + "termMult: parse(): *の後ろはfactorです");
+				pcx.recoverableError(tk + "termMult: *の後ろはfactorです");
+			}
+
+		} catch (RecoverableErrorException e) {
+			// 回復エラーだけ出して処理はStatementXXに任せる
 		}
 	}
 

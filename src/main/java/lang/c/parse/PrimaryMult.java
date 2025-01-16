@@ -1,6 +1,7 @@
 package lang.c.parse;
 
 import lang.FatalErrorException;
+import lang.RecoverableErrorException;
 import lang.c.CParseContext;
 import lang.c.CParseRule;
 import lang.c.CToken;
@@ -27,14 +28,19 @@ public class PrimaryMult extends CParseRule{
 		CToken tk = ct.getCurrentToken(pcx);
 
 		// *の次の字句を読む
-		tk = ct.getNextToken(pcx);
-		if (Variable.isFirst(tk)) {
-			variable = new Variable(pcx);
-			variable.parse(pcx);
-		} else {
-			pcx.fatalError(tk + "primaryMult: parse(): *の後ろはvariableです");
+		try {
+			tk = ct.getNextToken(pcx);
+			if (Variable.isFirst(tk)) {
+				variable = new Variable(pcx);
+				variable.parse(pcx);
+			} else {
+				//pcx.fatalError(tk + "primaryMult: parse(): *の後ろはvariableです");
+				pcx.recoverableError(tk + "primaryMult: *の後ろはvariableです");
+			}
+
+		} catch (RecoverableErrorException e) {
+			// 回復エラーだけ出して処理はstatementXXに任せる
 		}
-		
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {

@@ -22,13 +22,19 @@ public class PlusFactor extends CParseRule {
         // ここにやってくるときは、必ずisFirst()が満たされている
 		CTokenizer ct = pcx.getTokenizer();
 		op = ct.getCurrentToken(pcx);
+
 		// +の次の字句を読む
 		CToken tk = ct.getNextToken(pcx);
-		if (UnsignedFactor.isFirst(tk)) {
-			right = new UnsignedFactor(pcx);
-			right.parse(pcx);
-		} else {
-			pcx.fatalError(tk + "plusFactor: parse(): +の後ろはunsignedFactorです");
+		try {
+			if (UnsignedFactor.isFirst(tk)) {
+				right = new UnsignedFactor(pcx);
+				right.parse(pcx);
+			} else {
+				//pcx.fatalError(tk + "plusFactor: parse(): +の後ろはunsignedFactorです");
+				pcx.recoverableError(tk + "plusFactor: +の後ろはunsignedFactorです");
+			}
+		} catch (RecoverableErrorException e) {
+			// 回復エラーだけ出して処理はStatementXXに任せる
 		}
 	}
 

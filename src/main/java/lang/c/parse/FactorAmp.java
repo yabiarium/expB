@@ -1,6 +1,7 @@
 package lang.c.parse;
 
 import lang.FatalErrorException;
+import lang.RecoverableErrorException;
 import lang.c.CParseContext;
 import lang.c.CParseRule;
 import lang.c.CToken;
@@ -26,19 +27,27 @@ public class FactorAmp extends CParseRule {
 	public void parse(CParseContext pcx) throws FatalErrorException {
 		// ここにやってくるときは、必ずisFirst()が満たされている
 		CTokenizer ct = pcx.getTokenizer();
+		CToken tk;
 		// &の次の字句を読む
-		CToken tk = ct.getNextToken(pcx);
-		if (Number.isFirst(tk)) {
-			number = new Number(pcx);
-			number.parse(pcx);
-		} else if(Primary.isFirst(tk)) {
-			if(PrimaryMult.isFirst(tk)){
-				pcx.fatalError(tk + "factorAmp: parse(): &の後ろに*は置けません");
+		try {
+			tk = ct.getNextToken(pcx);
+			if (Number.isFirst(tk)) {
+				number = new Number(pcx);
+				number.parse(pcx);
+			} else if(Primary.isFirst(tk)) {
+				if(PrimaryMult.isFirst(tk)){
+					//pcx.fatalError(tk + "factorAmp: parse(): &の後ろに*は置けません");
+					pcx.recoverableError(tk + "factorAmp: &の後ろに*は置けません");
+				}
+				primary = new Primary(pcx);
+				primary.parse(pcx);
+			} else {
+				//pcx.fatalError(tk + "factorAmp: parse(): &の後ろはnumberまたはprimaryです");
+				pcx.recoverableError(tk + "factorAmp: &の後ろはnumberまたはprimary(variableのみ)です");
 			}
-			primary = new Primary(pcx);
-			primary.parse(pcx);
-		} else {
-			pcx.fatalError(tk + "factorAmp: parse(): &の後ろはnumberまたはprimaryです");
+
+		} catch (RecoverableErrorException e) {
+			// 回復エラーだけ出して処理はstatementXXに任せる
 		}
 	}
 

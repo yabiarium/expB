@@ -1,6 +1,7 @@
 package lang.c.parse;
 
 import lang.FatalErrorException;
+import lang.RecoverableErrorException;
 import lang.c.CParseContext;
 import lang.c.CParseRule;
 import lang.c.CToken;
@@ -29,14 +30,22 @@ public class ExpressionAdd extends CParseRule {
 		// ここにやってくるときは、必ずisFirst()が満たされている
 		CTokenizer ct = pcx.getTokenizer();
 		op = ct.getCurrentToken(pcx);
+
 		// +の次の字句を読む
 		CToken tk = ct.getNextToken(pcx);
-		if (Term.isFirst(tk)) {
-			right = new Term(pcx);
-			right.parse(pcx);
-		} else {
-			pcx.fatalError(tk + "expressionAdd: parse(): +の後ろはtermです");
+		try {
+			if (Term.isFirst(tk)) {
+				right = new Term(pcx);
+				right.parse(pcx);
+			} else {
+				//pcx.fatalError(tk + "expressionAdd: parse(): +の後ろはtermです");
+				pcx.recoverableError(tk + "expressionAdd: +の後ろはtermです");
+			}
+
+		} catch (RecoverableErrorException e) {
+			// 回復エラーだけ出して処理はStatementXXに任せる
 		}
+		
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
