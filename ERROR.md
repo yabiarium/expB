@@ -126,16 +126,19 @@ o conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA //条件
  - [x] 🍀 parse(): *の後ろはfactorです  
         → 回復エラーだけ出して処理はstatementAssign/Input/Output/Blockに任せる  
         ` i_a = 7 * ; `
- - [ ] 🍀 semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]は掛けられません  
-        → 実行できてしまって想定通りの動作をしなかった場合のデバッグが面倒になりそうなのでコンパイルしない
+ - [x] 🍀 semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]は掛けられません  
+        → 実行できてしまって想定通りの動作をしなかった場合のデバッグが面倒になりそうなのでコンパイルしない  
+        ` ip_a = i_a * ip_a; `
 
 ### termDiv:
  - [x] 🍀 parse(): /の後ろはfactorです  
         → 回復エラーだけ出して処理はstatementAssign/Input/Output/Blockに任せる  
-        ` i_a = 7 / ; // 単体/の後ろが数式(+,-,(,数字)以外の場合は字句解析で/=ILLとなる `  
-        ↑ なのでこのエラーが出ることはない
- - [ ] 🍀 semanticCheck(): 左辺の型[" + lts + "]は右辺の型[" + rts + "]で割れません  
-        → 実行できてしまって想定通りの動作をしなかった場合のデバッグが面倒になりそうなのでコンパイルしない
+        ` i_a = 7 / ; ` ~~// 単体/の後ろが数式(+,-,(,数字)以外の場合は字句解析で/=ILLとなる~~  
+        ~~↑ なのでこのエラーが出ることはない~~  
+        CTokenizerを"/"の後に変数(a~z,A~Z)を許可するよう変更。
+ - [x] 🍀 semanticCheck(): 左辺の型[" + lts + "]は右辺の型[" + rts + "]で割れません  
+        → 実行できてしまって想定通りの動作をしなかった場合のデバッグが面倒になりそうなのでコンパイルしない  
+        ` i_a = ip_a / i_a; `
 
 ### plusFactor:
  - [x] 🍀 parse(): +の後ろはunsignedFactorです  
