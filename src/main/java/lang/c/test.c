@@ -1,1 +1,2 @@
-i_a = i_a + *i_a;
+int a, *b;
+const int c=4, *p=&4;
