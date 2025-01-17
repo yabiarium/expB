@@ -49,6 +49,8 @@ public class CTokenizer extends Tokenizer<CToken, CParseContext> {
 	private final int ST_RCUR = 26; // }
 	//CV08
 	private final int ST_VL = 27; // | Vertical Line
+	//CV10
+	private final int ST_COMMA = 28; // ,
 
 	private final char __EOF__ = (char)-1;
 
@@ -239,6 +241,10 @@ public class CTokenizer extends Tokenizer<CToken, CParseContext> {
 						startCol = colNo - 1;
 						text.append(ch);
 						state = ST_VL;
+					} else if (ch == ','){
+						startCol = colNo - 1;
+						text.append(ch);
+						state = ST_COMMA;
 					} else { // この時点で受理できない文字を読んだので，ST_ILL に遷移
 						startCol = colNo - 1;
 						text.append(ch);
@@ -501,6 +507,10 @@ public class CTokenizer extends Tokenizer<CToken, CParseContext> {
 						tk = new CToken(CToken.TK_OR, lineNo, startCol, "||");
 						accept = true;
 					}
+					break;
+				case ST_COMMA: // ,を読んだ
+					tk = new CToken(CToken.TK_COMMA, lineNo, startCol, ",");
+					accept = true;
 					break;
 					
 			}

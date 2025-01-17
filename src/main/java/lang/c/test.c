@@ -1,2 +1,2 @@
-int a, *b;
-const int c=4, *p=&4;
+int a,b,c,d;
+const int *a=&45;

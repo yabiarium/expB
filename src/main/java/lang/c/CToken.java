@@ -73,6 +73,7 @@ public class CToken extends SimpleToken {
     // add chapter10
     public static final int TK_INT = 32; // int
     public static final int TK_CONST = 33; // const
+    public static final int TK_COMMA = 34; // ,
 
 
     public CToken(int type, int lineNo, int colNo, String s) {
@@ -139,6 +140,7 @@ public class CToken extends SimpleToken {
             // add chapter10
             put(TK_INT, "TK_INT");
             put(TK_CONST, "TK_CONST");
+            put(TK_COMMA, "TK_COMMA");
 }
     };
 
