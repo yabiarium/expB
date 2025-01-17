@@ -50,7 +50,7 @@ conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA //条件�
 ```
 
 <details>
-<summary>CV08について</summary>
+<summary>CV08以降について</summary>
 
 ### CV08のBNFの参考元  
 ```

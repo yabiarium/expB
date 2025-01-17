@@ -72,7 +72,7 @@ o conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA //条件
  > Conditionが無い → Assign, Input, Output, Block（すべてStatementと他のトークンの組み合わせ）  
  > Conditionが有る → If, While（ConditionBlockの後にStatementがある）
  > - 構文木はstatement以下と、condition以下に続くもので2分される。
- > - よって、🍀があった場合、**処理（どのトークンまで読み飛ばすか）**はStatementXXで行い、それ以下に続く節点では🍀の発行のみ行い、処理は構文木上の上の節点にあたるStatementXXに託す造りとした。
+ > - よって、🍀があった場合、 <b>処理（どのトークンまで読み飛ばすか）</b> はStatementXXで行い、それ以下に続く節点では🍀の発行のみ行い、処理は構文木上の上の節点にあたるStatementXXに託す造りとした。
  > </details>  
  > <br>
  >
