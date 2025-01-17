@@ -47,6 +47,14 @@ termAnd         ::= AND conditionFactor
 conditionFactor ::= notFactor | conditionUnsignedFactor
 notFactor       ::= NOT conditionUnsignedFactor
 conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA //条件式の優先度を示す括弧として[]を用いる
+
+# CV10
+program         ::= { declaration } { statement } EOF //変更
+declaration     ::= intDecl | constDecl
+intDecl         ::= INT declItem { COMMA declItem } SEMI
+constDecl       ::= CONST INT constItem { COMMA constItem } SEMI
+constItem       ::= [ MULT ] IDENT ASSIGN [ AMP ] NUM
+declItem        ::= [ MULT ] IDENT [ LBRA NUM RBRA ]
 ```
 
 <details>
