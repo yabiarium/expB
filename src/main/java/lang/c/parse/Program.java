@@ -15,7 +15,8 @@ public class Program extends CParseRule {
 	public Program(CParseContext pcx) {
 		super("Program");
 		//setBNF("Program ::= Expression EOF");
-		setBNF("program ::= { statement } EOF"); //CV05~
+		//setBNF("program ::= { statement } EOF"); //CV05~
+		setBNF("program ::= { declaration } { statement } EOF"); //CV10~
 	}
 
 	public static boolean isFirst(CToken tk) {
