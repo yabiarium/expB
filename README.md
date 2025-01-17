@@ -33,7 +33,6 @@ conditionGT     ::= GT expression
 conditionGE     ::= GE expression  
 conditionEQ     ::= EQ expression  
 conditionNE     ::= NE expression  
-statement       ::= statementAssign | statementInput | statementOutput | statementIf | statementWhile | statementBlock  
 statementIf     ::= IF conditionBlock statement [ ELSE statement ]  
 statementWhile  ::= WHILE conditionBlock statement  
 statementBlock  ::= LCUR { statement } RCUR  
