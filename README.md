@@ -50,7 +50,7 @@ conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA //条件�
 ```
 
 <details>
-<summary>CV08以降について</summary>
+<summary>CV08について</summary>
 
 ### CV08のBNFの参考元  
 ```
@@ -98,6 +98,8 @@ term ::= factor { (PLUS | MINUS) factor }
 
 ## CTokenizer.java による字句解析のテスト
 自動テストのコードは minicv00/test/java/lang/c/T00_21CTokenizerTest.java に記述してある
+ > [!NOTE]
+ > プログラムの任意の行にブレークポイントを設置し、デバッグ実行することでプログラムの処理を一行ずつ追うことができる。
 
 ## 字句解析以降の処理のテスト
 ### 構文解析その 1: isFirst() メソッドのテスト

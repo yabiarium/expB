@@ -62,7 +62,32 @@ o conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA //条件
 ❌ fatalerror       → 0個の可能性もある。自分が致命的と思ったら使ってもいい    
   
 すべての行で;が抜けていたり、(){}, 予約語のミスなど、ユーザのミスがかなり多い場合はコンパイラはどうにもできない。全行;が無くてコンパイルすっ飛ばす可能性も全然ある。  
-エラーの分類基準が一貫していればよい。こだわりだすとずっとこだわれる部分なので、実装のやりやすい範囲で作ればよい  
+エラーの分類基準が一貫していればよい。こだわりだすとずっとこだわれる部分なので、実装のやりやすい範囲で作ればよい。  
+
+ > [!NOTE]
+ > <details>
+ > <summary>全体の方針</summary>  
+ >
+ > - StatementXX 以下に他のほとんどの節点が続く。  
+ > Conditionが無い → Assign, Input, Output, Block（すべてStatementと他のトークンの組み合わせ）  
+ > Conditionが有る → If, While（ConditionBlockの後にStatementがある）
+ > - 構文木はstatement以下と、condition以下に続くもので2分される。
+ > - よって、🍀があった場合、**処理（どのトークンまで読み飛ばすか）**はStatementXXで行い、それ以下に続く節点では🍀の発行のみ行い、処理は構文木上の上の節点にあたるStatementXXに託す造りとした。
+ > </details>  
+ > <br>
+ >
+ > <details>
+ > <summary>意味チェックのエラーを🍀とした根拠について（<ins>デバッグが面倒になりそう</ins>の詳細）</summary>
+ >
+ > - OSやSEP3のハード保護により、書き込んではいけないメモリ領域に書き込むことは起きない。
+ > - 構文解析が正しく終了しているなら、BNFが正しければ変なコード(実行できないコード)が生成されることはない。  
+ >   → この2点より、❌にする必要はない <br>
+ > <br>
+ > - 意味チェックでのエラーは型が合っていない場合である。SEP3ではポインタも整数型も同じ"数値"として扱い、違いが無い。  
+ > → コンパイラの次点で型判定しないと、SEP3での実行の際には区別されないので問題なく実行できてしまう。
+ > - 想定していない型同士での演算（pint*intなど）~~や比較~~により、ユーザが自身で作成したスタックやリストなどの領域を意図せず書き換えてしまう可能性がある。（比較は左右にbool型以外来ることがない造りになっているので除外）  
+ > → 実行時、エラーは出ないが想定外の動作をする、といった場合が考え得る。（<ins>デバッグが面倒</ins>）なので、変に実行できないようにコード生成されないようにしたかった。🍀を使用しているが、ニュアンスとしては"コード生成しない💫"である。
+ > </details>
 
 ### program:
  - [x] 💫 parse(): プログラムの最後にゴミがあります  
@@ -111,7 +136,7 @@ o conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA //条件
         ` i_a = 7 + ; ` 
  - [x] 🍀 semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]は足せません  
         → ~~演算は結果をスタックに積むだけでメモリの変更ないのでコード生成してもよさそう~~  
-        → 実行できてしまって想定通りの動作をしなかった場合のデバッグが面倒になりそうなのでコンパイルしない  
+        → 実行できてしまって想定通りの動作をしなかった場合の<ins>**デバッグが面倒になりそう**</ins>なのでコンパイルしない（詳細は冒頭のNoteに記述）  
         ` ip_a = ip_a + ip_a; `
 
 ### expressionSub:
@@ -259,7 +284,8 @@ o conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA //条件
         → )まで飛ばす →{からstatement →なければ次の;まで飛ばす  
         ` if i_a>0){ i_a=0; } `  
         ` if i_a>0{ i_a=0; } `  
-        ` if i_a>0 i_a=0; } //;までconditionBlock判定になる `    
+        ` if i_a>0 i_a=0; } `   
+        ↑ 3つ目程トークン抜けがあると、「(」ない→;まで飛ばす、「{」(statementの開始)がない→;まで飛ばす。で2重で;まで飛ばす処理が入るので、次の行の構文解析が飛ばされることになるが、許容。  
  - [x] 🍀 parse(): conditionBlockの後ろはstatementです  
         → 次の;まで飛ばす  
         ` if(i_a>0); `  
@@ -271,7 +297,8 @@ o conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA //条件
 ### statementWhile:
  - [x] 🍀 parse(): whileの後ろはconditionBlockです  
         → )まで飛ばす →{からstatement →なければ次の;まで飛ばす  
-        ` while i_a>0){ i_a=0; } `
+        ` while i_a>0){ i_a=0; } `  
+        StatementIfと同じなので省略  
  - [x] 🍀 parse(): conditionBlockの後ろはstatementです  
         → 次の;まで飛ばす  
         ` while(i_a>0); `
