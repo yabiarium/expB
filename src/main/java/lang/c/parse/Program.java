@@ -20,7 +20,7 @@ public class Program extends CParseRule {
 	}
 
 	public static boolean isFirst(CToken tk) {
-		return Statement.isFirst(tk) || tk.getType() == CToken.TK_EOF;
+		return Declaration.isFirst(tk) || Statement.isFirst(tk) || tk.getType() == CToken.TK_EOF;
 	}
 
 	public void parse(CParseContext pcx) throws FatalErrorException {

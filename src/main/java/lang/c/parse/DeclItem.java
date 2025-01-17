@@ -11,7 +11,7 @@ public class DeclItem extends CParseRule {
 	}
 
 	public static boolean isFirst(CToken tk) {
-		return Statement.isFirst(tk) || tk.getType() == CToken.TK_EOF;
+		return tk.getType() == CToken.TK_MULT || tk.getType() == CToken.TK_IDENT;
 	}
 
 	public void parse(CParseContext pcx) throws FatalErrorException {

@@ -11,7 +11,7 @@ public class Declaration extends CParseRule {
 	}
 
 	public static boolean isFirst(CToken tk) {
-		return Statement.isFirst(tk) || tk.getType() == CToken.TK_EOF;
+		return IntDecl.isFirst(tk) || ConstDecl.isFirst(tk);
 	}
 
 	public void parse(CParseContext pcx) throws FatalErrorException {
