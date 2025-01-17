@@ -1,6 +1,7 @@
 package lang.c.parse;
 
 import lang.FatalErrorException;
+import lang.RecoverableErrorException;
 import lang.c.CParseContext;
 import lang.c.CParseRule;
 import lang.c.CToken;
@@ -18,7 +19,7 @@ public class ExpressionAdd extends CParseRule {
 	public ExpressionAdd(CParseContext pcx, CParseRule left) {
 		super("ExpressionAdd");
 		this.left = left;
-		setBNF("ExpressionAdd ::= TK_PLUS Term");
+		setBNF("expressionAdd ::= TK_PLUS term");
 	}
 
 	public static boolean isFirst(CToken tk) {
@@ -29,20 +30,28 @@ public class ExpressionAdd extends CParseRule {
 		// ここにやってくるときは、必ずisFirst()が満たされている
 		CTokenizer ct = pcx.getTokenizer();
 		op = ct.getCurrentToken(pcx);
+
 		// +の次の字句を読む
 		CToken tk = ct.getNextToken(pcx);
-		if (Term.isFirst(tk)) {
-			right = new Term(pcx);
-			right.parse(pcx);
-		} else {
-			pcx.fatalError(tk + "ExpressionAdd: parse(): +の後ろはtermです");
+		try {
+			if (Term.isFirst(tk)) {
+				right = new Term(pcx);
+				right.parse(pcx);
+			} else {
+				//pcx.fatalError(tk + "expressionAdd: parse(): +の後ろはtermです");
+				pcx.recoverableError(tk + " expressionAdd: +の後ろはtermです");
+			}
+
+		} catch (RecoverableErrorException e) {
+			// 回復エラーだけ出して処理はStatementXXに任せる
 		}
+		
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
 		// 足し算の型計算規則
 		final int s[][] = {
-				// T_err T_int T_pint T_int[] T_pint[]
+				// T_err       T_int        T_pint       T_int[]       T_pint[]
 				{ CType.T_err, CType.T_err, CType.T_err, CType.T_err, CType.T_err}, // T_err
 				{ CType.T_err, CType.T_int, CType.T_pint, CType.T_err, CType.T_err}, // T_int
 				{ CType.T_err, CType.T_pint, CType.T_err, CType.T_err, CType.T_err}, // T_pint
@@ -57,8 +66,12 @@ public class ExpressionAdd extends CParseRule {
 			int nt = s[lt][rt]; // 規則による型計算
 			String lts = left.getCType().toString();
 			String rts = right.getCType().toString();
-			if (nt == CType.T_err) {
-				pcx.fatalError(op + ": ExpressionAdd: semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]は足せません");
+			try {
+				if (nt == CType.T_err) {
+					//pcx.fatalError(op + ": expressionAdd: semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]は足せません");
+					pcx.recoverableError(op + " expressionAdd: 左辺の型[" + lts + "]と右辺の型[" + rts + "]は足せません");
+				}
+			} catch (Exception e) {
 			}
 			this.setCType(CType.getCType(nt));
 			this.setConstant(left.isConstant() && right.isConstant()); // +の左右両方が定数のときだけ定数

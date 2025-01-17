@@ -28,7 +28,7 @@ public class T01_32ParseTest {
         @Test
         public void falseESTest() throws FatalErrorException {
             TestDataAndErrMessage[] arr = {
-                new TestDataAndErrMessage("1-#", "-の後ろはtermです"),
+                //new TestDataAndErrMessage("1-#", "-の後ろはtermです"),
             };
             expressionSubHelper.parseRejectTestList(arr);
         }

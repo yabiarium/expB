@@ -35,7 +35,8 @@ public class Program extends CParseRule {
 		}
 		
 		if (tk.getType() != CToken.TK_EOF) {
-			pcx.fatalError(tk.toExplainString() + "プログラムの最後にゴミがあります");
+			//pcx.fatalError(tk + "program: parse(): プログラムの最後にゴミがあります");
+			pcx.warning(tk + "program: プログラムの最後にゴミがあります");
 		}
 	}
 

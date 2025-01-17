@@ -30,31 +30,39 @@ public class UnsignedFactor extends CParseRule {
 		// ここにやってくるときは、必ずisFirst()が満たされている
 		CTokenizer ct = pcx.getTokenizer();
 		CToken tk = ct.getCurrentToken(pcx);
-
-		if(FactorAmp.isFirst(tk)){
-			factorAmp = new FactorAmp(pcx);
-			factorAmp.parse(pcx);
-		}else if(tk.getType() == CToken.TK_LPAR){
-			// ( の次の字句を読む
-			tk = ct.getNextToken(pcx);
-			if(Expression.isFirst(tk)){
-				expression = new Expression(pcx);
-				expression.parse(pcx);
-				// expressionの解析後,現在の字句を読む
-				tk = ct.getCurrentToken(pcx);
-				if(tk.getType() != CToken.TK_RPAR){
-					pcx.fatalError(tk + ")がありません");
-				}
+		
+		try {
+			if(FactorAmp.isFirst(tk)){
+				factorAmp = new FactorAmp(pcx);
+				factorAmp.parse(pcx);
+			}else if(tk.getType() == CToken.TK_LPAR){
+				// ( の次の字句を読む
 				tk = ct.getNextToken(pcx);
+				if(Expression.isFirst(tk)){
+					expression = new Expression(pcx);
+					expression.parse(pcx);
+					// expressionの解析後,現在の字句を読む
+					tk = ct.getCurrentToken(pcx);
+					if(tk.getType() == CToken.TK_RPAR){
+						tk = ct.getNextToken(pcx); //正常終了
+					}else{
+						//pcx.fatalError(tk + "unsignedFactor: parse(): )がありません");
+						pcx.warning(tk + "unsignedFactor: ) を補いました");
+					}
+				}else{
+					//pcx.fatalError(tk + "unsignedFactor: parse(): (の後ろはexpressionです");
+					pcx.recoverableError(tk + " unsignedFactor: (の後ろはexpressionです");
+				}
+			}else if(Number.isFirst(tk)){
+				number = new Number(pcx);
+				number.parse(pcx);
 			}else{
-				pcx.fatalError(tk + "(の後ろはexpressionです");
+				addressToValue = new AddressToValue(pcx);
+				addressToValue.parse(pcx);
 			}
-		}else if(Number.isFirst(tk)){
-			number = new Number(pcx);
-			number.parse(pcx);
-		}else{
-			addressToValue = new AddressToValue(pcx);
-			addressToValue.parse(pcx);
+
+		} catch (RecoverableErrorException e) {
+			// 回復エラーだけ出して処理はStatementXXに任せる
 		}
 	}
 

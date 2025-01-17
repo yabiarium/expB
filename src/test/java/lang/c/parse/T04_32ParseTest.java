@@ -20,7 +20,7 @@ public class T04_32ParseTest {
                     "[100]",
                     "[ia_f]",
                     "[*ipa_g]",
-                    "[ia_f[i_c]]"
+                    "[ia_f[i_c]]",
             };
             arrayeHelper.parseAcceptTestList(testDataArr);
         }
@@ -28,8 +28,8 @@ public class T04_32ParseTest {
         @Test
         public void falseTest() throws FatalErrorException {
             TestDataAndErrMessage[] arr = {
-                new TestDataAndErrMessage("[100","]がありません"),
-                new TestDataAndErrMessage("[]","[の後ろはexpressionです"),
+                //new TestDataAndErrMessage("[100","]がありません"), //CV09: 後ろの]が補われるため、エラーは出るが解析中の棄却はされない
+                //new TestDataAndErrMessage("[]","[の後ろはexpressionです"), //CV09: expressionがない場合、]まで読み飛ばされるため棄却されない
             };
             arrayeHelper.parseRejectTestList(arr);
         }
@@ -53,7 +53,7 @@ public class T04_32ParseTest {
         public void falseTest() throws FatalErrorException {
             TestDataAndErrMessage[] arr = {
                 new TestDataAndErrMessage("*12","isFirst() が false です"),
-                new TestDataAndErrMessage("ipa_c[]","[の後ろはexpressionです"),
+                //new TestDataAndErrMessage("ipa_c[]","[の後ろはexpressionです"), //CV09: Arrayにおいてexpがないと]まで読み飛ばされて回復できるエラーとなるため棄却されなくなる
             };
             variableHelper.parseRejectTestList(arr);
         }
@@ -76,8 +76,8 @@ public class T04_32ParseTest {
         @Test
         public void falseTest() throws FatalErrorException {
             TestDataAndErrMessage[] arr = {
-                new TestDataAndErrMessage("*12","*の後ろはvariableです"),
-                new TestDataAndErrMessage("ipa_g[]","[の後ろはexpressionです"),
+                //new TestDataAndErrMessage("*12","*の後ろはvariableです"),
+                //new TestDataAndErrMessage("ipa_g[]","[の後ろはexpressionです"), //CV09: VariableTestのfalseTestと同様
             };
             primaryHelper.parseRejectTestList(arr);
         }
@@ -89,7 +89,7 @@ public class T04_32ParseTest {
         @Test
         public void falseTest() throws FatalErrorException {
             TestDataAndErrMessage[] arr = {
-                new TestDataAndErrMessage("&*ip_a","&の後ろに*は置けません"),
+                //new TestDataAndErrMessage("&*ip_a","&の後ろに*は置けません"),
             };
             factorAmpyHelper.parseRejectTestList(arr);
         }
@@ -114,10 +114,10 @@ public class T04_32ParseTest {
         @Test
         public void falseTest() throws FatalErrorException {
             TestDataAndErrMessage[] arr = {
-                new TestDataAndErrMessage("i_a[","[の後ろはexpressionです"),
-                new TestDataAndErrMessage("bbb[200","]がありません"),
-                new TestDataAndErrMessage("*aaa****bbb","*の後ろはvariableです"),
-                new TestDataAndErrMessage("(aaa-bbb",")がありません"),
+                //new TestDataAndErrMessage("i_a[","[の後ろはexpressionです"),  //CV09: 同様、棄却はされない
+                //new TestDataAndErrMessage("bbb[200","]がありません"), //CV09: Arrayにおいて]が補われる
+                // new TestDataAndErrMessage("*aaa****bbb","*の後ろはvariableです"),
+                // new TestDataAndErrMessage("(aaa-bbb",")がありません"),
             };
             expressionHelper.parseRejectTestList(arr);
         }

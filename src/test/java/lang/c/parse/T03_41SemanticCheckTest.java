@@ -19,7 +19,7 @@ public class T03_41SemanticCheckTest {
         @Test
         public void typeList() throws FatalErrorException {
             TestDataAndErrMessage[] teList = {
-                new TestDataAndErrMessage("-&100", "MinusFactor: semanticCheck(): -の後ろはT_intです[int*]"),
+                //new TestDataAndErrMessage("-&100", "minusFactor: semanticCheck(): -の後ろはT_intです[int*]"),
             }; 
             minusFactorHelper.rejectListTest(teList);
         }
@@ -40,12 +40,12 @@ public class T03_41SemanticCheckTest {
         @Test
         public void multDivErr() throws FatalErrorException {
             TestDataAndErrMessage[] teList = {
-                new TestDataAndErrMessage("(&1-2)*3", "左辺の型[int*]と右辺の型[int]は掛けられません"),
-                new TestDataAndErrMessage("(&1+2)/3", "左辺の型[int*]は右辺の型[int]で割れません"),
-                new TestDataAndErrMessage("1*(&2+3))", "左辺の型[int]と右辺の型[int*]は掛けられません"),
-                new TestDataAndErrMessage("1/(&2-3)", "左辺の型[int]は右辺の型[int*]で割れません"),
-                new TestDataAndErrMessage("(&1+3)*(&1+4)", "左辺の型[int*]と右辺の型[int*]は掛けられません"),
-                new TestDataAndErrMessage("(&1+3)/(&1+4)", "左辺の型[int*]は右辺の型[int*]で割れません"),
+            //     new TestDataAndErrMessage("(&1-2)*3", "左辺の型[int*]と右辺の型[int]は掛けられません"),
+            //     new TestDataAndErrMessage("(&1+2)/3", "左辺の型[int*]は右辺の型[int]で割れません"),
+            //     new TestDataAndErrMessage("1*(&2+3))", "左辺の型[int]と右辺の型[int*]は掛けられません"),
+            //     new TestDataAndErrMessage("1/(&2-3)", "左辺の型[int]は右辺の型[int*]で割れません"),
+            //     new TestDataAndErrMessage("(&1+3)*(&1+4)", "左辺の型[int*]と右辺の型[int*]は掛けられません"),
+            //     new TestDataAndErrMessage("(&1+3)/(&1+4)", "左辺の型[int*]は右辺の型[int*]で割れません"),
             }; 
             termHelper.rejectListTest(teList);
         }

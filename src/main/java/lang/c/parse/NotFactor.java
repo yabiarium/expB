@@ -20,12 +20,18 @@ public class NotFactor extends CParseRule {
 		CTokenizer ct = pcx.getTokenizer();
 		op = ct.getCurrentToken(pcx);
 		// ! の次の字句を読む
-		CToken tk = ct.getNextToken(pcx);
-		if (ConditionUnsignedFactor.isFirst(tk)) {
-			conditionUnsignedFactor = new ConditionUnsignedFactor(pcx);
-			conditionUnsignedFactor.parse(pcx);
-		} else {
-			pcx.fatalError(tk + "NotFactor: parse(): !の後ろはConditionUnsignedFactorです");
+		try {
+			CToken tk = ct.getNextToken(pcx);
+			if (ConditionUnsignedFactor.isFirst(tk)) {
+				conditionUnsignedFactor = new ConditionUnsignedFactor(pcx);
+				conditionUnsignedFactor.parse(pcx);
+			} else {
+				//pcx.fatalError(tk + "notFactor: parse(): !の後ろはConditionUnsignedFactorです");
+				pcx.recoverableError(tk + " notFactor: !の後ろはConditionUnsignedFactorです");
+			}
+
+		} catch (RecoverableErrorException e) {
+			// ; ) まで読み飛ばす処理はconditionBlockに継ぐ
 		}
 	}
 
@@ -35,8 +41,13 @@ public class NotFactor extends CParseRule {
 			//parse()の時点で後ろに付くものが制限されてbool型以外は来ないのでここでの型チェックは必要ないが一応確認
 			int rt = conditionUnsignedFactor.getCType().getType(); // !の右辺の型
 			String rts = conditionUnsignedFactor.getCType().toString();
-			if (rt != CType.T_bool) {
-				pcx.fatalError(op + ": NotFactor: semanticCheck(): !の後ろはT_boolです[" + rts + "]");
+
+			try {
+				if (rt != CType.T_bool) {
+					//pcx.fatalError(op + " notFactor: semanticCheck(): !の後ろはT_boolです[" + rts + "]");
+					pcx.recoverableError(op + " notFactor: !の後ろはT_boolです[" + rts + "]");
+				}
+			} catch (RecoverableErrorException e) {
 			}
 			this.setCType(conditionUnsignedFactor.getCType());
 			this.setConstant(conditionUnsignedFactor.isConstant());

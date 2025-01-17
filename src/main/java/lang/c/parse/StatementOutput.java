@@ -1,11 +1,11 @@
 package lang.c.parse;
 
 import lang.FatalErrorException;
+import lang.RecoverableErrorException;
 import lang.c.CParseContext;
 import lang.c.CParseRule;
 import lang.c.CToken;
 import lang.c.CTokenizer;
-import lang.c.CType;
 //import lang.c.CType;
 import lang.c.CodeGenCommon;
 
@@ -28,18 +28,27 @@ public class StatementOutput extends CParseRule{
 		CToken tk = ct.getCurrentToken(pcx);
 
 		// output の次の字句を読む
-		tk = ct.getNextToken(pcx);
-		if(Expression.isFirst(tk)){
-			expression = new Expression(pcx);
-			expression.parse(pcx);
-			// expression の解析後,現在の字句を読む
-			tk = ct.getCurrentToken(pcx);
-			if(tk.getType() != CToken.TK_SEMI){
-				pcx.fatalError(tk + "StatementOutput: ;がありません");
-			}
+		try {
 			tk = ct.getNextToken(pcx);
-		}else{
-			pcx.fatalError(tk + "StatementOutput: outputの後ろはexpressionです");
+			if(Expression.isFirst(tk)){
+				expression = new Expression(pcx);
+				expression.parse(pcx);
+				// expression の解析後,現在の字句を読む
+				tk = ct.getCurrentToken(pcx);
+				if(tk.getType() == CToken.TK_SEMI){
+					tk = ct.getNextToken(pcx); //正常終了
+				}else{
+					//pcx.fatalError(tk + "statementOutput: parse(): ;がありません");
+					pcx.warning(tk + "statementOutput: ; を補いました");
+				}
+			}else{
+				//pcx.fatalError(tk + "statementOutput: parse(): outputの後ろはexpressionです");
+				pcx.recoverableError(tk + " statementOutput: outputの後ろはexpressionです");
+			}
+		} catch (RecoverableErrorException e) {
+			// ; まで飛ばす(expression内部/isFirstのどちらで回復エラーが出た場合もここに来る)
+			ct.skipTo(pcx, CToken.TK_SEMI);
+			tk = ct.getNextToken(pcx);
 		}
 	}
 

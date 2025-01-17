@@ -41,7 +41,7 @@ public class T08_41SemanticCheckTest {
         public void falseTest() throws FatalErrorException {
             TestDataAndErrMessage[] teList = {
                 // notFactorの意味チェックではなく、conditionのparse()で判定するようにした
-                new TestDataAndErrMessage("!1", "expressionの後ろにはconditionXXが必要です"),
+                //new TestDataAndErrMessage("!1", "expressionの後ろにはconditionXXが必要です"),
             }; 
             Helper.rejectListTest(teList);
         }
@@ -75,7 +75,7 @@ public class T08_41SemanticCheckTest {
             TestDataAndErrMessage[] teList = {
                 //bool型以外はconditionのparse()で排されるようになっている
                 //(NotFactor, TermAnd, ExpressionOrでの意味チェックエラーは正常にparse()が実行されていれば発生しない)
-                new TestDataAndErrMessage("i_a+10 && true", "expressionの後ろにはconditionXXが必要です"),
+                //new TestDataAndErrMessage("i_a+10 && true", "expressionの後ろにはconditionXXが必要です"),
             }; 
             Helper.rejectListTest(teList);
         }

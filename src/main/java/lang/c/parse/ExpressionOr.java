@@ -1,6 +1,7 @@
 package lang.c.parse;
 
 import lang.FatalErrorException;
+import lang.RecoverableErrorException;
 import lang.c.CParseContext;
 import lang.c.CParseRule;
 import lang.c.CToken;
@@ -26,12 +27,18 @@ public class ExpressionOr extends CParseRule {
 		CTokenizer ct = pcx.getTokenizer();
 		op = ct.getCurrentToken(pcx);
 		// ||の次の字句を読む
-		CToken tk = ct.getNextToken(pcx);
-		if (ConditionTerm.isFirst(tk)) {
-			conditionTerm = new ConditionTerm(pcx);
-			conditionTerm.parse(pcx);
-		} else {
-			pcx.fatalError(tk + "ExpressionOr: parse(): ||の後ろはconditionTermです");
+		try {
+			CToken tk = ct.getNextToken(pcx);
+			if(ConditionTerm.isFirst(tk)){
+				conditionTerm = new ConditionTerm(pcx);
+				conditionTerm.parse(pcx);
+			}else{
+				//pcx.fatalError(tk + "expressionOr: parse(): ||の後ろはconditionTermです");
+				pcx.recoverableError(tk + " expressionOr: ||の後ろはconditionTermです");
+			}
+
+		} catch (RecoverableErrorException e) {
+			// ; ) まで読み飛ばす処理はconditionBlockに継ぐ
 		}
 	}
 
@@ -45,10 +52,14 @@ public class ExpressionOr extends CParseRule {
 			int lt = left.getCType().getType(); // ||の左辺の型
 			int rt = conditionTerm.getCType().getType(); // ||の右辺の型
 			
-			if (lt != CType.T_bool || rt != CType.T_bool) {
-				String lts = left.getCType().toString();
-				String rts = conditionTerm.getCType().toString();
-				pcx.fatalError(op + ": 左辺の型[" + lts + "]と右辺の型[" + rts + "]はT_boolである必要があります");
+			try {
+				if (lt != CType.T_bool || rt != CType.T_bool) {
+					String lts = left.getCType().toString();
+					String rts = conditionTerm.getCType().toString();
+					//pcx.fatalError(op + " expressionOr: semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]はT_boolである必要があります");
+					pcx.recoverableError(op + " expressionOr: 左辺の型[" + lts + "]と右辺の型[" + rts + "]はT_boolである必要があります");
+				}
+			} catch (RecoverableErrorException e) {
 			}
 			this.setCType(CType.getCType(CType.T_bool));
 			this.setConstant(true);

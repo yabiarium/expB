@@ -23,13 +23,18 @@ public class ConditionGE  extends CParseRule {
 		CToken tk = ct.getCurrentToken(pcx);
 		op = ct.getCurrentToken(pcx);
 
-		// LT >= の次の字句を読む
-		tk = ct.getNextToken(pcx);
-		if(Expression.isFirst(tk)){
-			expression = new Expression(pcx);
-			expression.parse(pcx);
-		}else{
-			pcx.fatalError(tk + "ConditionGE: >=の後ろはexpressionです");
+		// GE >= の次の字句を読む
+		try {
+			tk = ct.getNextToken(pcx);
+			if(Expression.isFirst(tk)){
+				expression = new Expression(pcx);
+				expression.parse(pcx);
+			}else{
+				//pcx.fatalError(tk + "conditionGE: parse(): >=の後ろはexpressionです");
+				pcx.recoverableError(tk + " conditionGE: >=の後ろはexpressionです");
+			}
+		} catch (RecoverableErrorException e) {
+			// ; ) まで読み飛ばす処理はconditionBlockに継ぐ
 		}
 	}
 
@@ -43,8 +48,12 @@ public class ConditionGE  extends CParseRule {
 			String lts = left.getCType().toString();
 			String rts = expression.getCType().toString();
 
-			if (lt != rt){
-				pcx.fatalError(op+":左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません");
+			try {
+				if (lt != rt){
+					//pcx.fatalError(op + " conditionGE: semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません");
+					pcx.recoverableError(op + " conditionGE: 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません");
+				}
+			} catch (RecoverableErrorException e) {
 			}
 			this.setCType(CType.getCType(CType.T_bool));
 			this.setConstant(true);

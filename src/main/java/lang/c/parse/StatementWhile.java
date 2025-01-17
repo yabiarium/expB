@@ -20,22 +20,42 @@ public class StatementWhile extends CParseRule {
 		CToken tk = ct.getCurrentToken(pcx);
 
         // while の次のトークンを読む
-        tk = ct.getNextToken(pcx);
-		if(ConditionBlock.isFirst(tk)){
-			conditionBlock = new ConditionBlock(pcx);
-            conditionBlock.parse(pcx);
-		}else{
-            pcx.fatalError(tk + "StatementWhile: parse(): whileの後ろはconditionBlockです");
-        }
+        try {
+            tk = ct.getNextToken(pcx);
+            if(ConditionBlock.isFirst(tk)){
+                conditionBlock = new ConditionBlock(pcx);
+                conditionBlock.parse(pcx);
+            }else{
+                //pcx.fatalError(tk + "statementWhile: parse(): whileの後ろはconditionBlockです");
+                pcx.recoverableError(tk + " statementWhile: whileの後ろは(です");
+            }
 
-        // conditionBlock の次のトークンを読む
-        tk = ct.getNextToken(pcx);
-        if(Statement.isFirst(tk)){
-            statement = new Statement(pcx);
-            statement.parse(pcx);
-        }else{
-            pcx.fatalError(tk + "StatementWhile: parse(): conditionBlockの後ろはstatementです");
+        } catch (RecoverableErrorException e) {
+            // ) { ; まで飛ばす
+            ct.skipTo(pcx, CToken.TK_RPAR, CToken.TK_LCUR, CToken.TK_SEMI);
+            if(ct.getCurrentToken(pcx).getType() != CToken.TK_LCUR){ // 現在のトークンが{ならStatement→StatementBlockのisFirstのためにNextTokenしない
+                tk = ct.getNextToken(pcx);
+            }
         }
+        
+
+        try {
+            // conditionBlock の次のトークンを読む
+            tk = ct.getCurrentToken(pcx);
+            if(Statement.isFirst(tk)){
+                statement = new Statement(pcx);
+                statement.parse(pcx);
+            }else{
+                //pcx.fatalError(tk + "statementWhile: parse(): conditionBlockの後ろはstatementです");
+                pcx.recoverableError(tk + " statementWhile: conditionBlockの後ろはstatementです");
+            }
+
+        } catch (RecoverableErrorException e) {
+            // ; まで飛ばす
+            ct.skipTo(pcx, CToken.TK_SEMI);
+            tk = ct.getNextToken(pcx);
+        }
+        
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {

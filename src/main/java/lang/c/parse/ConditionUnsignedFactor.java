@@ -24,20 +24,29 @@ public class ConditionUnsignedFactor extends CParseRule {
 		CToken tk = ct.getCurrentToken(pcx);
 
 		if(tk.getType() == CToken.TK_LBRA){ // [
-			tk = ct.getNextToken(pcx); // [ の次のトークンを読む
-			if(ConditionExpression.isFirst(tk)){
-				conditionExpression = new ConditionExpression(pcx);
-				conditionExpression.parse(pcx);
-			}else{
-				pcx.fatalError(tk + "ConditionUnsignedFactor: parse(): [の後ろはconditionExpressionです");
-			}
-	
-			// conditionExpression の次のトークンを読む
-			tk = ct.getCurrentToken(pcx);
-			if(tk.getType() == CToken.TK_RBRA){
+			try {
+				tk = ct.getNextToken(pcx); // [ の次のトークンを読む
+				if(ConditionExpression.isFirst(tk)){
+					conditionExpression = new ConditionExpression(pcx);
+					conditionExpression.parse(pcx);
+				}else{
+					//pcx.fatalError(tk + "conditionUnsignedFactor: parse(): [の後ろはconditionExpressionです");
+					pcx.recoverableError(tk + " conditionUnsignedFactor: [の後ろはconditionExpressionです");
+				}
+		
+				// conditionExpression の次のトークンを読む
+				tk = ct.getCurrentToken(pcx);
+				if(tk.getType() == CToken.TK_RBRA){
+					tk = ct.getNextToken(pcx); //正常終了
+				}else{
+					//pcx.fatalError(tk + "conditionUnsignedFactor: parse(): ]がありません");
+					pcx.warning(tk + "conditionUnsignedFactor: ]を補いました");
+				}
+
+			} catch (Exception e) {
+				// ] ; ) まで読み飛ばす
+				ct.skipTo(pcx, CToken.TK_RBRA, CToken.TK_SEMI, CToken.TK_RPAR); //currentTokenが指定したトークンになっている
 				tk = ct.getNextToken(pcx);
-			}else{
-				pcx.fatalError(tk + "ConditionUnsignedFactor: parse(): ]がありません");
 			}
 
 		}else{

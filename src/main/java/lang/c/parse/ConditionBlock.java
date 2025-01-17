@@ -21,18 +21,31 @@ public class ConditionBlock  extends CParseRule {
 
         // ( の次のトークンを読む
         tk = ct.getNextToken(pcx);
-		if(ConditionExpression.isFirst(tk)){
-			conditionExpression = new ConditionExpression(pcx);
-            conditionExpression.parse(pcx);
-		}else{
-            pcx.fatalError(tk + "ConditionBlock: parse(): (の後ろはconditionExpressionです");
-        }
+		try {
+			if(ConditionExpression.isFirst(tk)){
+				conditionExpression = new ConditionExpression(pcx);
+				conditionExpression.parse(pcx);
+			}else{
+				//pcx.fatalError(tk + "conditionBlock: parse(): (の後ろはconditionExpressionです");
+				pcx.recoverableError(tk + " conditionBlock: (の後ろはconditionExpressionです");
+			}
 
-        // conditionExpression の次のトークンを読む
-        tk = ct.getCurrentToken(pcx);
-		if(tk.getType() != CToken.TK_RPAR){
-            pcx.fatalError(tk + "ConditionBlock: parse(): )がありません");
-        }
+			// conditionExpression の次のトークンを読む
+			tk = ct.getCurrentToken(pcx);
+			if(tk.getType() == CToken.TK_RPAR){
+				tk = ct.getNextToken(pcx); //正常終了
+			}else{
+				//pcx.fatalError(tk + "conditionBlock: parse(): )がありません");
+				pcx.warning(tk + "conditionBlock: )を補いました");
+			}
+
+		} catch (RecoverableErrorException e) {
+			// ; ) まで読み飛ばす
+			ct.skipTo(pcx, CToken.TK_SEMI, CToken.TK_RPAR); //currentTokenが指定したトークンになっている
+			tk = ct.getNextToken(pcx);
+		}
+		
+        
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {

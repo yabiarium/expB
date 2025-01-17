@@ -24,13 +24,19 @@ public class ConditionLT  extends CParseRule {
 		op = ct.getCurrentToken(pcx);
 
 		// LT < の次の字句を読む
-		tk = ct.getNextToken(pcx);
-		if(Expression.isFirst(tk)){
-			expression = new Expression(pcx);
-			expression.parse(pcx);
-		}else{
-			pcx.fatalError(tk + "ConditionLT: <の後ろはexpressionです");
+		try {
+			tk = ct.getNextToken(pcx);
+			if(Expression.isFirst(tk)){
+				expression = new Expression(pcx);
+				expression.parse(pcx);
+			}else{
+				//pcx.fatalError(tk + "conditionLT: parse(): <の後ろはexpressionです");
+				pcx.recoverableError(tk + " conditionLT: <の後ろはexpressionです");
+			}
+		} catch (RecoverableErrorException e) {
+			// ; ) まで読み飛ばす処理はconditionBlockに継ぐ
 		}
+		
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
@@ -43,8 +49,12 @@ public class ConditionLT  extends CParseRule {
 			String lts = left.getCType().toString();
 			String rts = expression.getCType().toString();
 
-			if (lt != rt){
-				pcx.fatalError(op+":左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません");
+			try {
+				if (lt != rt){
+					//pcx.fatalError(op + " conditionLT: semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません");
+					pcx.recoverableError(op + " conditionLT: 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません");
+				}
+			} catch (RecoverableErrorException e) {
 			}
 			this.setCType(CType.getCType(CType.T_bool));
 			this.setConstant(true);

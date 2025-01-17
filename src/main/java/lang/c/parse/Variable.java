@@ -1,6 +1,7 @@
 package lang.c.parse;
 
 import lang.FatalErrorException;
+import lang.RecoverableErrorException;
 import lang.c.CParseContext;
 import lang.c.CParseRule;
 import lang.c.CToken;
@@ -10,6 +11,7 @@ import lang.c.CodeGenCommon;
 
 public class Variable extends CParseRule{
     CParseRule ident, array;
+	CToken sem; //意味解析でエラー場所を表示する用
 
 	public Variable(CParseContext pcx) {
 		super("Variable");
@@ -25,6 +27,7 @@ public class Variable extends CParseRule{
 		// ここにやってくるときは、必ずisFirst()が満たされている
 		CTokenizer ct = pcx.getTokenizer();
 		CToken tk = ct.getCurrentToken(pcx);
+		sem = tk;
 		
 		ident = new Ident(pcx);
 		ident.parse(pcx);
@@ -44,17 +47,27 @@ public class Variable extends CParseRule{
 			
 			// 後ろに[]が存在しているのにidentがint,pintなのはおかしい
 			if(array != null){
-				if(rt == CType.T_int || rt == CType.T_pint){
-					pcx.fatalError("配列変数は T_int_array か T_pint_array です");
+				try {
+					if(rt == CType.T_int || rt == CType.T_pint){
+						//pcx.fatalError("variable: semanticCheck(): 配列変数は T_int_array か T_pint_array です");
+						pcx.recoverableError(sem + " variable: 配列変数は ia_x(T_int_array) か ipa_x(T_pint_array) です");
+					}
+				} catch (RecoverableErrorException e) {
 				}
+				
 				array.semanticCheck(pcx); //arrayの型によってvariableの型が変わることはない
 			}
 
 			// 配列型なのに後ろに[]が無いのはおかしい
 			if(rt == CType.T_int_array || rt == CType.T_pint_array){
-				if(array == null){
-					pcx.fatalError("配列型の後ろに[]がありません");
+				try {
+					if(array == null){
+						//pcx.fatalError("variable: semanticCheck(): 配列型の後ろに[]がありません");
+						pcx.recoverableError(sem + " variable: 配列型の後ろに[]がありません");
+					}
+				} catch (Exception e) {
 				}
+				
 				// variableより上の階層では配列型は存在しない
 				if (rt == CType.T_int_array) {
 					rt = CType.T_int;

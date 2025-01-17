@@ -22,13 +22,19 @@ public class PlusFactor extends CParseRule {
         // ここにやってくるときは、必ずisFirst()が満たされている
 		CTokenizer ct = pcx.getTokenizer();
 		op = ct.getCurrentToken(pcx);
+
 		// +の次の字句を読む
 		CToken tk = ct.getNextToken(pcx);
-		if (UnsignedFactor.isFirst(tk)) {
-			right = new UnsignedFactor(pcx);
-			right.parse(pcx);
-		} else {
-			pcx.fatalError(tk + "PlusFactor: parse(): +の後ろはuFactorです");
+		try {
+			if (UnsignedFactor.isFirst(tk)) {
+				right = new UnsignedFactor(pcx);
+				right.parse(pcx);
+			} else {
+				//pcx.fatalError(tk + "plusFactor: parse(): +の後ろはunsignedFactorです");
+				pcx.recoverableError(tk + " plusFactor: +の後ろはunsignedFactorです");
+			}
+		} catch (RecoverableErrorException e) {
+			// 回復エラーだけ出して処理はStatementXXに任せる
 		}
 	}
 
@@ -37,8 +43,12 @@ public class PlusFactor extends CParseRule {
 			right.semanticCheck(pcx);
 			int rt = right.getCType().getType(); // +の右辺の型
 			String rts = right.getCType().toString();
-			if (rt != CType.T_int) {
-				pcx.fatalError(op + ": PlusFactor: semanticCheck(): +の後ろはT_intです[" + rts + "]");
+			try {
+				if (rt != CType.T_int) {
+					//pcx.fatalError(op + "plusFactor: semanticCheck(): +の後ろはT_intです[" + rts + "]");
+					pcx.recoverableError(op + " plusFactor: +の後ろはT_intです[" + rts + "]");
+				}
+			} catch (RecoverableErrorException e) {
 			}
 			this.setCType(CType.getCType(rt));
 			this.setConstant(right.isConstant());

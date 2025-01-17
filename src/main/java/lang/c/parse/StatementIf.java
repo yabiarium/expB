@@ -20,34 +20,54 @@ public class StatementIf extends CParseRule {
 		CToken tk = ct.getCurrentToken(pcx);
 
         // if の次のトークンを読む
-        tk = ct.getNextToken(pcx);
-		if(ConditionBlock.isFirst(tk)){
-			conditionBlock = new ConditionBlock(pcx);
-            conditionBlock.parse(pcx);
-		}else{
-            pcx.fatalError(tk + "StatementIf: parse(): ifの後ろはconditionBlockです");
-        }
-
-        // conditionBlock の次のトークンを読む
-        tk = ct.getNextToken(pcx);
-        if(Statement.isFirst(tk)){
-            statement1 = new Statement(pcx);
-            statement1.parse(pcx);
-        }else{
-            pcx.fatalError(tk + "StatementIf: parse(): conditionBlockの後ろはstatementです");
-        }
-
-        // else がある場合
-        tk = ct.getCurrentToken(pcx);
-        if(tk.getType() == CToken.TK_ELSE){
+        try {
             tk = ct.getNextToken(pcx);
-            if(Statement.isFirst(tk)){
-                statement2 = new Statement(pcx);
-                statement2.parse(pcx);
+            if(ConditionBlock.isFirst(tk)){
+                conditionBlock = new ConditionBlock(pcx);
+                conditionBlock.parse(pcx);
             }else{
-                pcx.fatalError(tk + "StatementIf: parse(): elseの後ろはstatementです");
+                //pcx.fatalError(tk + "statementIf: parse(): ifの後ろはconditionBlockです");
+                pcx.recoverableError(tk + " statementIf: ifの後ろは(です");
+            }
+            
+        } catch (RecoverableErrorException e) {
+            // ) { ; まで飛ばす
+            ct.skipTo(pcx, CToken.TK_RPAR, CToken.TK_LCUR, CToken.TK_SEMI);
+            if(ct.getCurrentToken(pcx).getType() != CToken.TK_LCUR){ // 現在のトークンが{ならStatement→StatementBlockのisFirstのためにNextTokenしない
+                tk = ct.getNextToken(pcx);
             }
         }
+		
+
+        try {
+            // conditionBlock の次のトークンを読む
+            tk = ct.getCurrentToken(pcx);
+            if(Statement.isFirst(tk)){
+                statement1 = new Statement(pcx);
+                statement1.parse(pcx);
+            }else{
+                //pcx.fatalError(tk + "statementIf: parse(): conditionBlockの後ろはstatementです");
+                pcx.recoverableError(tk + " statementIf: conditionBlockの後ろはstatementです");
+            }
+
+            // else がある場合
+            tk = ct.getCurrentToken(pcx);
+            if(tk.getType() == CToken.TK_ELSE){
+                tk = ct.getNextToken(pcx);
+                if(Statement.isFirst(tk)){
+                    statement2 = new Statement(pcx);
+                    statement2.parse(pcx);
+                }else{
+                    //pcx.fatalError(tk + "statementIf: parse(): elseの後ろはstatementです");
+                    pcx.recoverableError(tk + " statementIf: elseの後ろはstatementです");
+                }
+            }
+        } catch (RecoverableErrorException e) {
+            // ; まで飛ばす
+            ct.skipTo(pcx, CToken.TK_SEMI);
+            tk = ct.getNextToken(pcx);
+        }
+        
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {

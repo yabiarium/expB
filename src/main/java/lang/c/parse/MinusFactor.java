@@ -22,13 +22,20 @@ public class MinusFactor extends CParseRule {
         // ここにやってくるときは、必ずisFirst()が満たされている
 		CTokenizer ct = pcx.getTokenizer();
 		op = ct.getCurrentToken(pcx);
+
 		// -の次の字句を読む
 		CToken tk = ct.getNextToken(pcx);
-		if (UnsignedFactor.isFirst(tk)) {
-			right = new UnsignedFactor(pcx);
-			right.parse(pcx);
-		} else {
-			pcx.fatalError(tk + "MinusFactor: parse(): -の後ろはuFactorです");
+		try {
+			if (UnsignedFactor.isFirst(tk)) {
+				right = new UnsignedFactor(pcx);
+				right.parse(pcx);
+			} else {
+				//pcx.fatalError(tk + "minusFactor: parse(): -の後ろはunsignedFactorです");
+				pcx.recoverableError(tk + " minusFactor: -の後ろはunsignedFactorです");
+			}
+
+		} catch (RecoverableErrorException e) {
+			// 回復エラーだけ出して処理はStatementXXに任せる
 		}
 	}
 
@@ -37,8 +44,12 @@ public class MinusFactor extends CParseRule {
 			right.semanticCheck(pcx);
 			int rt = right.getCType().getType(); // -の右辺の型
 			String rts = right.getCType().toString();
-			if (rt != CType.T_int) {
-				pcx.fatalError(op + ": MinusFactor: semanticCheck(): -の後ろはT_intです[" + rts + "]");
+			try {
+				if (rt != CType.T_int) {
+					//pcx.fatalError(op + ": minusFactor: semanticCheck(): -の後ろはT_intです[" + rts + "]");
+					pcx.recoverableError(op + " minusFactor: -の後ろはT_intです[" + rts + "]");
+				}
+			} catch (RecoverableErrorException e) {
 			}
 			this.setCType(CType.getCType(rt));
 			this.setConstant(right.isConstant());

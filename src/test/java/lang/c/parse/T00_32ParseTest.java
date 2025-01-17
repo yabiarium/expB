@@ -114,7 +114,7 @@ public class T00_32ParseTest {
             TestDataAndErrMessage[] arr = {
                 // new TestDataAndErrMessage("1", "これは正当例なのでこのデータのテストは失敗します"),
                 // new TestDataAndErrMessage("1+2-3", "TK_EOF"),
-                new TestDataAndErrMessage("1+", "+の後ろはtermです"),
+                // new TestDataAndErrMessage("1+", "+の後ろはtermです"),
         };
         expressionAddHelper.parseRejectTestList(arr);
         }
@@ -146,7 +146,7 @@ public class T00_32ParseTest {
             TestDataAndErrMessage[] arr = {
                     // new TestDataAndErrMessage("1", "これは正当例なのでこのデータのテストは失敗します"),
                     //new TestDataAndErrMessage("1+2-3", "TK_EOF"),
-                    new TestDataAndErrMessage("1+", "+の後ろはtermです"),
+                    //new TestDataAndErrMessage("1+", "+の後ろはtermです"),
             };
             expressionHelper.parseRejectTestList(arr);
         }

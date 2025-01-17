@@ -7,7 +7,7 @@ import java.util.List;
 
 public class StatementBlock extends CParseRule {
 	CParseRule statement;
-	List<CParseRule> statements = new ArrayList<>();
+	List<CParseRule> statementList = new ArrayList<>();
 
 	public StatementBlock(CParseContext pcx) {
 		super("StatementBlock");
@@ -24,23 +24,34 @@ public class StatementBlock extends CParseRule {
 
         // { の次のトークンを読む
         tk = ct.getNextToken(pcx);
-		while(Statement.isFirst(tk)){
-			statement = new Statement(pcx);
-            statement.parse(pcx);
-			statements.add(statement);
-            tk = ct.getCurrentToken(pcx);
-		}
-        if(tk.getType() != CToken.TK_RCUR){
-            pcx.fatalError(tk + "StatementBlock: parse(): }がありません");
-        }
 		
-		tk = ct.getNextToken(pcx);
+		while(Statement.isFirst(tk)){
+			try {
+				//文の途中で構文エラーになるかもしれないので...
+				statement = new Statement(pcx);
+				statement.parse(pcx);
+				statementList.add(statement);
+
+			} catch (RecoverableErrorException e) {
+				//そのときにはここで例外を捕まえて，’;’か’}’が出るまで読み飛ばして回復する（立ち直る）
+				ct.skipTo(pcx, CToken.TK_SEMI, CToken.TK_RCUR);
+				tk = ct.getNextToken(pcx);
+			}
+			tk=ct.getCurrentToken(pcx);
+		}
+
+        if(tk.getType() == CToken.TK_RCUR){
+            tk = ct.getNextToken(pcx); //正常終了
+        }else{
+			//pcx.fatalError(tk + "statementBlock: parse(): }がありません");
+			pcx.warning(tk + "statementBlock: } を補いました");
+		}
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
-        if (statements != null) {
-			for(int i=0; i < statements.size(); i++){
-				statement = statements.get(i);
+        if (statementList != null) {
+			for(int i=0; i < statementList.size(); i++){
+				statement = statementList.get(i);
 				statement.semanticCheck(pcx);
 			}
 		}
@@ -49,8 +60,8 @@ public class StatementBlock extends CParseRule {
 	public void codeGen(CParseContext pcx) throws FatalErrorException {
         CodeGenCommon cgc = pcx.getCodeGenCommon();
 		cgc.printStartComment(getBNF(getId()));
-		for(int i=0; i < statements.size(); i++){
-			statement = statements.get(i);
+		for(int i=0; i < statementList.size(); i++){
+			statement = statementList.get(i);
 			statement.codeGen(pcx);
 		}
 		cgc.printCompleteComment(getBNF(getId()));

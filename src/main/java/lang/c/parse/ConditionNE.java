@@ -24,12 +24,17 @@ public class ConditionNE  extends CParseRule {
 		op = ct.getCurrentToken(pcx);
 
 		// NE != の次の字句を読む
-		tk = ct.getNextToken(pcx);
-		if(Expression.isFirst(tk)){
-			expression = new Expression(pcx);
-			expression.parse(pcx);
-		}else{
-			pcx.fatalError(tk + "ConditionNE: !=の後ろはexpressionです");
+		try {
+			tk = ct.getNextToken(pcx);
+			if(Expression.isFirst(tk)){
+				expression = new Expression(pcx);
+				expression.parse(pcx);
+			}else{
+				//pcx.fatalError(tk + "conditionNE: parse(): !=の後ろはexpressionです");
+				pcx.recoverableError(tk + " conditionNE: !=の後ろはexpressionです");
+			}
+		} catch (RecoverableErrorException e) {
+			// ; ) まで読み飛ばす処理はconditionBlockに継ぐ
 		}
 	}
 
@@ -43,8 +48,12 @@ public class ConditionNE  extends CParseRule {
 			String lts = left.getCType().toString();
 			String rts = expression.getCType().toString();
 
-			if (lt != rt){
-				pcx.fatalError(op+":左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません");
+			try {
+				if (lt != rt){
+					//pcx.fatalError(op + " conditionNE: semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません");
+					pcx.recoverableError(op + " conditionNE: 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません");
+				}
+			} catch (RecoverableErrorException e) {
 			}
 			this.setCType(CType.getCType(CType.T_bool));
 			this.setConstant(true);
