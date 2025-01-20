@@ -351,3 +351,21 @@ o conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA //条件
         → ]を補う  
         ` if([i_a < 0 ) i_a=0; `
 
+
+
+## CV10の節点
+
+```
+program         ::= { declaration } { statement } EOF //変更
+declaration     ::= intDecl | constDecl
+intDecl         ::= INT declItem { COMMA declItem } SEMI
+constDecl       ::= CONST INT constItem { COMMA constItem } SEMI
+constItem       ::= [ MULT ] IDENT ASSIGN [ AMP ] NUM
+declItem        ::= [ MULT ] IDENT [ LBRA NUM RBRA ]
+```
+
+### declaration:
+
+
+int/constDecl以下での🍀は、エラーだけ出して処理はこの2つの節点に託す
+### intDecl:
