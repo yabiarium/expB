@@ -9,8 +9,9 @@ public class Program extends CParseRule {
 	// 新しく非終端記号に対応するクラスを作成する際は，必ず拡張BNF をコメントでつけること
 	// また，更新する際は，拡張BNFの「履歴」を残すこと（例えば，実験３まで：．．．． と 実験４から：．．． のように）
 	// program ::= expression EOF
-	CParseRule statement;
+	CParseRule statement, declaration;
 	List<CParseRule> statements = new ArrayList<>();
+	List<CParseRule> declarations = new ArrayList<>();
 
 	public Program(CParseContext pcx) {
 		super("Program");
@@ -27,6 +28,13 @@ public class Program extends CParseRule {
 		// ここにやってくるときは、必ずisFirst()が満たされている
 		CTokenizer ct = pcx.getTokenizer();
 		CToken tk = ct.getCurrentToken(pcx);
+
+		while (Declaration.isFirst(tk)) {
+			declaration = new Declaration(pcx);
+			declaration.parse(pcx);
+			declarations.add(declaration);
+			tk = ct.getCurrentToken(pcx);	
+		}
 
 		while(Statement.isFirst(tk)){
 			statement = new Statement(pcx);
