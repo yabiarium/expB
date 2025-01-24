@@ -356,16 +356,52 @@ o conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA //条件
 ## CV10の節点
 
 ```
-program         ::= { declaration } { statement } EOF //変更
-declaration     ::= intDecl | constDecl
-intDecl         ::= INT declItem { COMMA declItem } SEMI
-constDecl       ::= CONST INT constItem { COMMA constItem } SEMI
-constItem       ::= [ MULT ] IDENT ASSIGN [ AMP ] NUM
-declItem        ::= [ MULT ] IDENT [ LBRA NUM RBRA ]
+x program         ::= { declaration } { statement } EOF //変更
+x declaration     ::= intDecl | constDecl
+o intDecl         ::= INT declItem { COMMA declItem } SEMI
+o constDecl       ::= CONST INT constItem { COMMA constItem } SEMI
+o constItem       ::= [ MULT ] IDENT ASSIGN [ AMP ] NUM
+o declItem        ::= [ MULT ] IDENT [ LBRA NUM RBRA ]
 ```
-
-### declaration:
-
-
-int/constDecl以下での🍀は、エラーだけ出して処理はこの2つの節点に託す
+int/constDecl以下での🍀は、エラーだけ出して処理はこの2つの節点に託す  
+ 
 ### intDecl:
+ - [x] 🍀 parse(): IDENTがありません  
+       → ; まで読み飛ばす  
+       ` int a, *b, c[10] *d[10]; // ,が抜けてる `  
+       ↑ `int ..., c[10]; *d[10]=xx;` と見分けがつかないため、「,がありません」の💫を実装できない。  
+       ` int 10; // 識別子無し `
+ - [x] 💫 parse(): intDecl: ; を補いました  
+       ` int *d[10] // ;がない `   
+       ` int e=3; // constがない（＝のところに,か;がないエラー…と出るはず） `  
+       ↑ 初期値の代入ができるのは定数constのみ。逆にconstは初期値がないとエラー。
+
+### constDecl:
+ - [x] 💫 parse(): INT を補いました  
+       ` const a=0; `
+ - [x] 🍀 parse(): INTがありません (型指定がない)  
+       → ; まで読み飛ばす  
+       `const =0;`
+ - [x] 🍀 parse(): IDENTがありません  
+       → ; まで読み飛ばす  
+       `const int =0;`
+ - [x] 💫 parse(): ; を補いました  
+       ` const int e=3 //;がない `
+
+### constItem:
+ - [x] 🍀 parse(): *の後ろは IDENT です  
+       `const int *=0;`
+ - [x] 🍀 parse(): =がありません  
+       ` const int e; // 初期値がない `
+ - [x] 💫 parse(): =を補いました  
+       ` const int e 3; // ＝がない `
+ - [x] 🍀 parse(): 定数の初期化がありません  
+       `const int a=;`
+
+### declItem:
+ - [x] 🍀 parse(): *の後ろは IDENT です  
+       `int *=0;`
+ - [x] 🍀 parse(): 配列の要素数がありません  
+       `int a[]=0;`
+ - [x] 💫 parse(): ] を補いました  
+       ` int c[10; // ]が閉じてない `
