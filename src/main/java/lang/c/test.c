@@ -1,2 +1,3 @@
-int a,b,c,d;
-const int *a=&45;
+int a[0], b[1];
+int b;
+const int a=0;

@@ -9,13 +9,18 @@ import lang.*;
 public class CParseContext extends ParseContext {
 	CodeGenCommon cgc;
 	HashMap<String,Integer> seqHashMap = new HashMap<String,Integer>();
+	private CSymbolTable symbolTable;
+
 	public CParseContext(IOContext ioCtx,  CTokenizer tknz) {
 		super(ioCtx, tknz);
 		this.cgc = new CodeGenCommon(ioCtx.getOutStream());
+		symbolTable = new CSymbolTable();
 	}
 
 	@Override
-	public CTokenizer getTokenizer()		{ return (CTokenizer) super.getTokenizer(); }
+	public CTokenizer getTokenizer(){
+		return (CTokenizer) super.getTokenizer();
+	}
 
 	public int getSeqId(String name) {
 		int seq = 1;
@@ -25,7 +30,12 @@ public class CParseContext extends ParseContext {
 		seqHashMap.put(name, seq);
 		return seq; 
 	}
+	
 	public CodeGenCommon getCodeGenCommon() {
 		return cgc;
+	}
+	
+	public CSymbolTable getSymbolTable(){
+		return symbolTable;
 	}
 }
