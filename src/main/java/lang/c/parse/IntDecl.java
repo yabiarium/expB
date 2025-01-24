@@ -68,6 +68,15 @@ public class IntDecl extends CParseRule {
 	}
 
 	public void codeGen(CParseContext pcx) throws FatalErrorException {
-		//CodeGenCommon cgc = pcx.getCodeGenCommon();
+		CodeGenCommon cgc = pcx.getCodeGenCommon();
+
+		cgc.printStartComment(getBNF());
+		if(declItemList != null){
+			for(CParseRule item : declItemList){
+				item.codeGen(pcx);
+			}
+		}
+		cgc.printCompleteComment(getBNF());
+
     }
 }

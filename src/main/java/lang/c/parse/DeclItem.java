@@ -9,7 +9,7 @@ public class DeclItem extends CParseRule {
 	String identName;
 	boolean isExistMult = false; // *があるか
 	boolean isArray = false; // 配列か
-	boolean isGlobal;
+	boolean isGlobal = true;
 
 	public DeclItem(CParseContext pcx) {
 		super("DeclItem");
@@ -78,11 +78,8 @@ public class DeclItem extends CParseRule {
 			}
 		}
 
-		try {
-			if ( !pcx.getSymbolTable().registerLocal(identName, entry) ) {
-				pcx.recoverableError(col + " declItem: 既に宣言されています"); //コード生成をしないwarningとして扱う
-			}
-		} catch (RecoverableErrorException e) {
+		if ( !pcx.getSymbolTable().registerLocal(identName, entry) ) {
+			pcx.warning(col + " declItem: 既に宣言されています"); //コード生成しないwarningとして扱う
 		}
 	}
 
@@ -90,6 +87,16 @@ public class DeclItem extends CParseRule {
 	}
 
 	public void codeGen(CParseContext pcx) throws FatalErrorException {
-		//CodeGenCommon cgc = pcx.getCodeGenCommon();
+		CodeGenCommon cgc = pcx.getCodeGenCommon();
+
+		cgc.printStartComment(getBNF());
+
+		if (isArray) {
+			cgc.printLabel(identName + ":	.blkw " + size, ""); //配列の場合は要素数分確保
+		}else{
+			cgc.printLabel(identName + ":	.word 0", ""); //変数の場合は0で初期化
+		}
+
+		cgc.printCompleteComment(getBNF());
     }
 }

@@ -1,5 +1,7 @@
 package lang.c.parse;
 
+import java.io.PrintStream;
+
 import lang.*;
 import lang.c.*;
 
@@ -35,13 +37,22 @@ public class Declaration extends CParseRule {
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
 		if (intDecl != null) {
 			intDecl.semanticCheck(pcx);
-			
+
 		} else if (constDecl != null) {
 			constDecl.semanticCheck(pcx);
 		}
 	}
 
 	public void codeGen(CParseContext pcx) throws FatalErrorException {
-		//CodeGenCommon cgc = pcx.getCodeGenCommon();
+		CodeGenCommon cgc = pcx.getCodeGenCommon();
+		
+		cgc.printStartComment(getBNF(getId()));
+		if (intDecl != null) {
+			intDecl.codeGen(pcx);
+		}
+		if (constDecl != null) {
+			constDecl.codeGen(pcx);
+		}
+		cgc.printCompleteComment(getBNF(getId()));
     }
 }

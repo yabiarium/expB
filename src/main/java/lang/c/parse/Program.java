@@ -88,7 +88,6 @@ public class Program extends CParseRule {
 			}
 			
 			// program 最後コード
-			cgc.printPopCodeGen("", "R0", "Program: 計算結果をR0に取り出す(計算結果確認用)");
 			cgc.printInstCodeGen("", "HLT\t", "Program:");
 			cgc.printInstCodeGen("", ".end\t", "Program:");
 			cgc.printCompleteComment(getBNF(getId()));

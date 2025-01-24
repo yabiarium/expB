@@ -78,6 +78,16 @@ public class ConstDecl extends CParseRule {
 	}
 
 	public void codeGen(CParseContext pcx) throws FatalErrorException {
-		//CodeGenCommon cgc = pcx.getCodeGenCommon();
+		CodeGenCommon cgc = pcx.getCodeGenCommon();
+		
+		cgc.printStartComment(getBNF());
+
+		if(constItemList != null){
+			for(CParseRule item : constItemList){
+				item.codeGen(pcx);
+			}
+		}
+
+		cgc.printCompleteComment(getBNF());
     }
 }

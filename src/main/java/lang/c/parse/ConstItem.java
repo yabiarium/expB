@@ -5,11 +5,9 @@ import lang.c.*;
 
 public class ConstItem extends CParseRule {
 
-	int size;
-	String identName;
+	String identName, num;
 	boolean isExistMult = false; // *があるか
 	boolean isExistAmp = false; // &があるか
-	boolean isArray = false; // 配列か
 	boolean isGlobal;
 
 	public ConstItem(CParseContext pcx) {
@@ -39,7 +37,6 @@ public class ConstItem extends CParseRule {
 			tk = ct.getNextToken(pcx); // IDENTを読み飛ばす
 
 			if(tk.getType() == CToken.TK_ASSIGN){
-				isArray = true;
 				tk = ct.getNextToken(pcx); // =を読み飛ばす
 			}else{
 				if(tk.getType() == CToken.TK_AMP || tk.getType() == CToken.TK_NUM){
@@ -64,7 +61,7 @@ public class ConstItem extends CParseRule {
 			}
 			
 			if(tk.getType() == CToken.TK_NUM){
-				size = Integer.valueOf(tk.getText());
+				num = tk.getText();
 			}else{
 				pcx.recoverableError(tk + " constItem: 定数の初期化がありません");	
 			}
@@ -78,25 +75,29 @@ public class ConstItem extends CParseRule {
 		// 変数登録
 		CSymbolTableEntry entry;
 		final boolean isConst = true;
-		size = 1;
 		if (isExistMult) {
-			entry = new CSymbolTableEntry(CType.getCType(CType.T_pint), size, isConst);
+			entry = new CSymbolTableEntry(CType.getCType(CType.T_pint), 1, isConst);
 		} else {
-			entry = new CSymbolTableEntry(CType.getCType(CType.T_int), size, isConst);
+			entry = new CSymbolTableEntry(CType.getCType(CType.T_int), 1, isConst);
 		}
 
-		try {
-			if ( !pcx.getSymbolTable().registerLocal(identName, entry) ) {
-				pcx.recoverableError(col + " constItem: 既に宣言されています"); //コード生成をしないwarningとして扱う
-			}
-		} catch (RecoverableErrorException e) {
+
+		if ( !pcx.getSymbolTable().registerLocal(identName, entry) ) {
+			pcx.warning(col + " constItem: 既に宣言されています"); //コード生成しないwarningとして扱う
 		}
+
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
 	}
 
 	public void codeGen(CParseContext pcx) throws FatalErrorException {
-		//CodeGenCommon cgc = pcx.getCodeGenCommon();
+		CodeGenCommon cgc = pcx.getCodeGenCommon();
+
+		cgc.printStartComment(getBNF());
+
+		cgc.printLabel(identName + ":	.word " + num, "");
+
+		cgc.printCompleteComment(getBNF());
     }
 }
