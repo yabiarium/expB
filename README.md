@@ -55,6 +55,10 @@ intDecl         ::= INT declItem { COMMA declItem } SEMI
 constDecl       ::= CONST INT constItem { COMMA constItem } SEMI
 constItem       ::= [ MULT ] IDENT ASSIGN [ AMP ] NUM
 declItem        ::= [ MULT ] IDENT [ LBRA NUM RBRA ]
+
+# CV11
+program         ::= { declaraion } { declblock } EOF　//変更
+declblock       ::= LCUR { declaration } { statement } RCUR
 ```
 
 <details>
@@ -71,7 +75,7 @@ plusFactor      ::= PLUS unsignedFactor
 unsignedFactor  ::= number | LPAR expression RPAR 
 ```
 
-### CV09のエラー仕様書
+### CV09~のエラー仕様書
 [ERROR.md](./ERROR.md)
 
 </details>
