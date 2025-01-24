@@ -85,8 +85,11 @@ public class ConstItem extends CParseRule {
 			entry = new CSymbolTableEntry(CType.getCType(CType.T_int), size, isConst);
 		}
 
-		if ( !pcx.getSymbolTable().registerLocal(identName, entry) ) {
-			pcx.recoverableError(col + " 既に宣言されている変数です"); //コード生成をしないwarningとして扱う
+		try {
+			if ( !pcx.getSymbolTable().registerLocal(identName, entry) ) {
+				pcx.recoverableError(col + " constItem: 既に宣言されています"); //コード生成をしないwarningとして扱う
+			}
+		} catch (RecoverableErrorException e) {
 		}
 	}
 

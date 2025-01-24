@@ -33,6 +33,12 @@ public class Declaration extends CParseRule {
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
+		if (intDecl != null) {
+			intDecl.semanticCheck(pcx);
+			
+		} else if (constDecl != null) {
+			constDecl.semanticCheck(pcx);
+		}
 	}
 
 	public void codeGen(CParseContext pcx) throws FatalErrorException {

@@ -78,10 +78,12 @@ public class DeclItem extends CParseRule {
 			}
 		}
 
-		if ( !pcx.getSymbolTable().registerLocal(identName, entry) ) {
-			pcx.recoverableError(col + " 既に宣言されている変数です");
+		try {
+			if ( !pcx.getSymbolTable().registerLocal(identName, entry) ) {
+				pcx.recoverableError(col + " declItem: 既に宣言されています"); //コード生成をしないwarningとして扱う
+			}
+		} catch (RecoverableErrorException e) {
 		}
-		
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {

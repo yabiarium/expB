@@ -70,6 +70,11 @@ public class ConstDecl extends CParseRule {
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
+		if(constItemList != null){
+			for(CParseRule item : constItemList){
+				item.semanticCheck(pcx);
+			}
+		}
 	}
 
 	public void codeGen(CParseContext pcx) throws FatalErrorException {

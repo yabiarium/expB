@@ -61,9 +61,9 @@ public class IntDecl extends CParseRule {
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
 		if(declItemList != null){
-			// for(CParseRule item : declItemList){
-			// 	item.semanticCheck(pcx);
-			// }
+			for(CParseRule item : declItemList){
+				item.semanticCheck(pcx);
+			}
 		}
 	}
 
