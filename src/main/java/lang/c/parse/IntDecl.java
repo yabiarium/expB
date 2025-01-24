@@ -24,20 +24,20 @@ public class IntDecl extends CParseRule {
 		CToken tk = ct.getCurrentToken(pcx);
 
 		try {
-			tk = ct.getNextToken(pcx); // INTを読む
+			tk = ct.getNextToken(pcx); // INTを読み飛ばす
 			if(DeclItem.isFirst(tk)){
 				declItem = new DeclItem(pcx);
 				declItem.parse(pcx);
 				declItemList.add(declItem);
 
-				tk = ct.getCurrentToken(pcx);
+				tk = ct.getCurrentToken(pcx); // ,か;を読む
 				while(tk.getType() == CToken.TK_COMMA){
-					tk = ct.getNextToken(pcx); // ,を読む
+					tk = ct.getNextToken(pcx); // ,を読み飛ばす
 					if(DeclItem.isFirst(tk)){
 						declItem = new DeclItem(pcx);
 						declItem.parse(pcx);
 						declItemList.add(declItem);
-						tk = ct.getCurrentToken(pcx);
+						tk = ct.getCurrentToken(pcx); // ,か;を読む
 					}else{
 						pcx.recoverableError(tk + " intDecl: IDENTがありません");
 					}
@@ -60,6 +60,11 @@ public class IntDecl extends CParseRule {
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
+		if(declItemList != null){
+			// for(CParseRule item : declItemList){
+			// 	item.semanticCheck(pcx);
+			// }
+		}
 	}
 
 	public void codeGen(CParseContext pcx) throws FatalErrorException {

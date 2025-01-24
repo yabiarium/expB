@@ -10,7 +10,7 @@ public class Program extends CParseRule {
 	// また，更新する際は，拡張BNFの「履歴」を残すこと（例えば，実験３まで：．．．． と 実験４から：．．． のように）
 	// program ::= expression EOF
 	CParseRule statement, declaration;
-	List<CParseRule> statements = new ArrayList<>();
+	List<CParseRule> statementList = new ArrayList<>();
 	List<CParseRule> declarations = new ArrayList<>();
 
 	public Program(CParseContext pcx) {
@@ -39,7 +39,7 @@ public class Program extends CParseRule {
 		while(Statement.isFirst(tk)){
 			statement = new Statement(pcx);
 			statement.parse(pcx);
-			statements.add(statement);
+			statementList.add(statement);
 			tk = ct.getCurrentToken(pcx);
 		}
 		
@@ -50,10 +50,9 @@ public class Program extends CParseRule {
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
-		if (statements != null) {
-			for(int i=0; i < statements.size(); i++){
-				statement = statements.get(i);
-				statement.semanticCheck(pcx);
+		if (statementList != null) {
+			for(CParseRule item : statementList){
+				item.semanticCheck(pcx);
 			}
 		}
 	}
@@ -61,7 +60,7 @@ public class Program extends CParseRule {
 	public void codeGen(CParseContext pcx) throws FatalErrorException {
 		CodeGenCommon cgc = pcx.getCodeGenCommon();
 
-		if (statements != null) {
+		if (statementList != null) {
 			cgc.printStartComment(getBNF(getId()));
 			cgc.printInstCodeGen("", ".= 0x0100", "Program: 開始番地");
 			cgc.printInstCodeGen("", "JMP __START", "Program: __STARTに飛ぶ");
@@ -80,9 +79,9 @@ public class Program extends CParseRule {
 			cgc.printLabel("__START:", "Program: ここから開始");
 			cgc.printInstCodeGen("", "MOV #0x1000, R6", "Program: SP初期化");
 
-			for(int i=0; i < statements.size(); i++){
+			for(int i=0; i < statementList.size(); i++){
 				// program コード本体
-				statement = statements.get(i);
+				statement = statementList.get(i);
 				statement.codeGen(pcx);
 			}
 			

@@ -24,9 +24,9 @@ public class ConstDecl extends CParseRule {
 		CToken tk = ct.getCurrentToken(pcx);
 
 		try {
-			tk = ct.getNextToken(pcx); // CONSTを読む
+			tk = ct.getNextToken(pcx); // CONSTを読み飛ばす
 			if(tk.getType() == CToken.TK_INT){
-				tk = ct.getNextToken(pcx); // INTを読む
+				tk = ct.getNextToken(pcx); // INTを読み飛ばす
 			}else{
 				if(ConstItem.isFirst(tk)){
 					pcx.warning(tk + "constDecl: INT を補いました"); //他の型を作るなら、型不明で回復エラーにする
@@ -40,14 +40,14 @@ public class ConstDecl extends CParseRule {
 				constItem.parse(pcx);
 				constItemList.add(constItem);
 
-				tk = ct.getCurrentToken(pcx);
+				tk = ct.getCurrentToken(pcx); // ,か;を読む
 				while(tk.getType() == CToken.TK_COMMA){
-					tk = ct.getNextToken(pcx); // ,を読む
+					tk = ct.getNextToken(pcx); // ,を読み飛ばす
 					if(ConstItem.isFirst(tk)){
 						constItem = new ConstItem(pcx);
 						constItem.parse(pcx);
 						constItemList.add(constItem);
-						tk = ct.getCurrentToken(pcx);
+						tk = ct.getCurrentToken(pcx); // ,か;を読む
 					}else{
 						pcx.recoverableError(tk + " constDecl: IDENTがありません");
 					}
@@ -57,7 +57,7 @@ public class ConstDecl extends CParseRule {
 			}
 
 			if(tk.getType() == CToken.TK_SEMI){
-				tk = ct.getNextToken(pcx); // ;を読む, 正常終了
+				tk = ct.getNextToken(pcx); // ;を読み飛ばす, 正常終了
 			}else{
 				pcx.warning(tk + " constDecl: ; を補いました");
 			}
