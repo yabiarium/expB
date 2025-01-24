@@ -59,6 +59,18 @@ declItem        ::= [ MULT ] IDENT [ LBRA NUM RBRA ]
 # CV11 {と}で囲まれた範囲の中でのみ有効な変数群を用意する
 program         ::= { declaration } { declBlock } EOF　//変更
 declBlock       ::= LCUR { declaration } { statement } RCUR //局所変数用のSymbolTableはここで作成と削除を行う
+
+# CV12
+program         ::= { declaraion } { function } EOF //変更
+declaration     ::= intDecl | constDecl | voidDecl //変更
+voidDecl        ::= VOID IDENT LPAR RPAR { COMMA IDENT LPAR RPAR } SEMI
+declItem        ::= [ MULT ] IDENT [ LBRA NUMBER RBRA | LPAR RPAR ] //変更
+function        ::= FUNC ( INT [ MULT ] | VOID ) IDENT LPAR RPAR declblock
+statement       ::= （長いので省略） | statementCall | statementReturn //変更
+statementCall   ::= CALL ident LPAR RPAR SEMI
+statementReturn ::= RETURN [ expression ] SEMI
+variable        ::= ident [ array | call ]　 //変更
+call            ::= LPAR RPAR
 ```
 
 <details>
