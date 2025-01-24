@@ -353,15 +353,20 @@ o conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA //条件
 
 
 
-## CV10の節点
+## CV10~の節点
 
 ```
+# CV10
 x program         ::= { declaration } { statement } EOF //変更
 x declaration     ::= intDecl | constDecl
 o intDecl         ::= INT declItem { COMMA declItem } SEMI
 o constDecl       ::= CONST INT constItem { COMMA constItem } SEMI
 o constItem       ::= [ MULT ] IDENT ASSIGN [ AMP ] NUM
 o declItem        ::= [ MULT ] IDENT [ LBRA NUM RBRA ]
+
+# CV11
+x program         ::= { declaration } { declBlock } EOF　//変更
+o declBlock       ::= LCUR { declaration } { statement } RCUR
 ```
 int/constDecl以下での🍀は、エラーだけ出して処理はこの2つの節点に託す  
  
@@ -405,3 +410,13 @@ int/constDecl以下での🍀は、エラーだけ出して処理はこの2つ�
        `int a[]=0;`
  - [x] 💫 parse(): ] を補いました  
        ` int c[10; // ]が閉じてない `
+
+
+### declBlock:
+ - [x] 💫 parse(): } を補いました  
+ - global 変数と同じ名前の local 変数が使えること（かつ，参照時に正しく local の方を参照できることの確認  
+       ` int a;{int *a; a=1;} `
+ - local 変数の2重登録チェック  
+       ` int a;{int *a; int a; a=1;} `
+ - const local 変数への代入文チェック  
+       ` {const int a=0; a=1;} `

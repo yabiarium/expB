@@ -1,7 +1,5 @@
 package lang.c.parse;
 
-//import javax.lang.model.type.NullType;
-
 import lang.FatalErrorException;
 import lang.c.CParseContext;
 import lang.c.CParseRule;
@@ -14,9 +12,10 @@ import lang.c.CodeGenCommon;
 public class Ident extends CParseRule{
 
     CToken ident;
-	private String identName;
+	private String identName, declBlockLabel;
 	CSymbolTableEntry entry;
-	boolean isFunction = false;
+	boolean isDeclBlock = false;
+	private int seqId;
 
 	public Ident(CParseContext pcx) {
 		super("Ident");
@@ -43,6 +42,15 @@ public class Ident extends CParseRule{
 			pcx.warning(tk + " ident: 宣言されていません");
 		}
 
+		if (entry != null) {
+			isDeclBlock = entry.isDeclBlock();
+		}
+		if (isDeclBlock) {
+			seqId = pcx.getSeqId(identName);
+			declBlockLabel = identName + seqId;
+			pcx.getSymbolTable().registerLocal(declBlockLabel, entry); // 関数を局所変数として登録
+		}
+
 		tk = ct.getNextToken(pcx);
 	}
 
@@ -63,11 +71,17 @@ public class Ident extends CParseRule{
 	public void codeGen(CParseContext pcx) throws FatalErrorException {
 		CodeGenCommon cgc =pcx.getCodeGenCommon();
 		cgc.printStartComment(getBNF(getId()));
-		if(ident != null){
-			if(entry != null){
-				cgc.printPushCodeGen("","#"+ident.getText(),"Ident: 変数の格納番地を積む");
+
+		if (ident != null && entry != null) {
+			if (entry.isGlobal()) {
+				cgc.printPushCodeGen("","#"+identName,"Ident: 変数の格納番地を積む " + ident.toExplainString());
+			} else {
+				cgc.printInstCodeGen("", "MOV #" + entry.getAddress() + ", R0", "Ident: 局所変数のフレームポインタからの相対位置を取得 " + ident.toExplainString());
+				cgc.printInstCodeGen("", "ADD R4, R0", "Ident: 局所変数の格納番地を計算する " + ident.toExplainString());
+				cgc.printPushCodeGen("", "R0", "Ident: 格納番地を積む " + ident.toExplainString());
 			}
 		}
+
 		cgc.printCompleteComment(getBNF(getId()));
 	}
 }

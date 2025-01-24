@@ -10,14 +10,14 @@ public class CSymbolTableEntry extends SymbolTableEntry {
     //CV11~で使用
     private boolean isGlobal; // 大域変数か？
     private int address; // 割り当て番地
+    private boolean isDeclBlock; // 関数か？
 
-    public CSymbolTableEntry(CType type, int size, boolean constp, boolean isGlobal, int addr) {
-        this.type = type;
-        this.size = size;
-        this.constp = constp;
-        this.isGlobal = isGlobal;
-        this.address = addr;
-    }
+    public CSymbolTableEntry(CType type, int size, boolean constp, boolean isDeclBlock) {
+		this.type = type;
+		this.size = size;
+		this.constp = constp;
+		this.isDeclBlock = isDeclBlock;
+	}
 
     public CSymbolTableEntry(CType type, int size, boolean constp) {
 		this.type = type;
@@ -32,5 +32,17 @@ public class CSymbolTableEntry extends SymbolTableEntry {
     public CType GetCType() { return type; }
 	public int getSize() { return size; }
 	public boolean isConstant() { return constp; }
-    public boolean isGlobal() { return isGlobal; }
+	public boolean isGlobal() { return isGlobal; }
+	public void setAddress(int addr) { address = addr; }
+	public void setIsGlobal(boolean isGlobal) { this.isGlobal = isGlobal; }
+	public int getAddress() { return address; }
+	public boolean isDeclBlock() { return isDeclBlock; }
+	public boolean verificateFunction(CSymbolTableEntry e) {
+		// すでに登録された関数と同じかどうかを確認する
+		if (e.isDeclBlock() && e.GetCType().equals(e.GetCType())) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 }

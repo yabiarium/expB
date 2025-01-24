@@ -9,7 +9,7 @@ public class DeclItem extends CParseRule {
 	String identName;
 	boolean isExistMult = false; // *があるか
 	boolean isArray = false; // 配列か
-	boolean isGlobal = true;
+	boolean isGlobal;
 
 	public DeclItem(CParseContext pcx) {
 		super("DeclItem");
@@ -78,9 +78,17 @@ public class DeclItem extends CParseRule {
 			}
 		}
 
-		if ( !pcx.getSymbolTable().registerLocal(identName, entry) ) {
-			pcx.warning(col + " declItem: 既に宣言されています"); //コード生成しないwarningとして扱う
+		isGlobal = pcx.getSymbolTable().isGlobalMode();
+		if (isGlobal) {
+			if ( !pcx.getSymbolTable().registerGlobal(identName, entry) ) {
+				pcx.warning(col + " declItem: 既に宣言されています");
+			}
+		}else{
+			if ( !pcx.getSymbolTable().registerLocal(identName, entry) ) {
+				pcx.warning(col + " declItem: 既に宣言されています");
+			}
 		}
+		
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
