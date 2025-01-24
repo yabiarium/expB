@@ -6,6 +6,7 @@ import lang.FatalErrorException;
 import lang.RecoverableErrorException;
 import lang.c.CParseContext;
 import lang.c.CParseRule;
+import lang.c.CSymbolTableEntry;
 import lang.c.CToken;
 import lang.c.CTokenizer;
 import lang.c.CType;
@@ -14,6 +15,10 @@ import lang.c.CodeGenCommon;
 public class Ident extends CParseRule{
 
     CToken ident;
+	private String identName, functionLabel;
+	CSymbolTableEntry entry;
+	boolean isFunction = false;
+	private int seqId;
 
 	public Ident(CParseContext pcx) {
 		super("Ident");
@@ -27,7 +32,19 @@ public class Ident extends CParseRule{
 	public void parse(CParseContext pcx) throws FatalErrorException {
 		CTokenizer ct = pcx.getTokenizer();
 		CToken tk = ct.getCurrentToken(pcx);
+		identName = tk.getText();
 		ident = tk;
+
+		if (pcx.getSymbolTable().searchLocal(identName) != null) {
+			entry = pcx.getSymbolTable().searchLocal(identName);
+
+		} else if (pcx.getSymbolTable().searchGlobal(identName) != null) {
+			entry = pcx.getSymbolTable().searchGlobal(identName);
+
+		} else {
+			pcx.warning(tk + " " + identName + "は宣言されていません");
+		}
+
 		tk = ct.getNextToken(pcx);
 	}
 
