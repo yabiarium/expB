@@ -70,6 +70,11 @@ public class CToken extends SimpleToken {
     public static final int TK_AND = 30;    // &&
     public static final int TK_NOT = 31;    // !
 
+    // add chapter10
+    public static final int TK_INT = 32; // int
+    public static final int TK_CONST = 33; // const
+    public static final int TK_COMMA = 34; // ,
+
 
     public CToken(int type, int lineNo, int colNo, String s) {
         super(type, lineNo, colNo, s);
@@ -131,6 +136,11 @@ public class CToken extends SimpleToken {
             put(TK_OR,"TK_OR");
             put(TK_AND,"TK_AND");
             put(TK_NOT,"TK_NOT");
+
+            // add chapter10
+            put(TK_INT, "TK_INT");
+            put(TK_CONST, "TK_CONST");
+            put(TK_COMMA, "TK_COMMA");
 }
     };
 

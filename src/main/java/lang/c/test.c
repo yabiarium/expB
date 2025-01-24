@@ -1,1 +1,3 @@
-i_a = i_a + *i_a;
+int a[0], b[1];
+int b;
+const int a=0;

@@ -50,9 +50,8 @@ public class StatementBlock extends CParseRule {
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
         if (statementList != null) {
-			for(int i=0; i < statementList.size(); i++){
-				statement = statementList.get(i);
-				statement.semanticCheck(pcx);
+			for(CParseRule item : statementList){
+				item.semanticCheck(pcx);
 			}
 		}
 	}
