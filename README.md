@@ -56,9 +56,9 @@ constDecl       ::= CONST INT constItem { COMMA constItem } SEMI
 constItem       ::= [ MULT ] IDENT ASSIGN [ AMP ] NUM
 declItem        ::= [ MULT ] IDENT [ LBRA NUM RBRA ]
 
-# CV11
-program         ::= { declaraion } { declblock } EOF　//変更
-declblock       ::= LCUR { declaration } { statement } RCUR
+# CV11 {と}で囲まれた範囲の中でのみ有効な変数群を用意する
+program         ::= { declaration } { declBlock } EOF　//変更
+declBlock       ::= LCUR { declaration } { statement } RCUR
 ```
 
 <details>

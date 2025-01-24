@@ -3,7 +3,6 @@ package lang.c.parse;
 import lang.*;
 import lang.c.*;
 
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +18,8 @@ public class Program extends CParseRule {
 		super("Program");
 		//setBNF("Program ::= Expression EOF");
 		//setBNF("program ::= { statement } EOF"); //CV05~
-		setBNF("program ::= { declaration } { statement } EOF"); //CV10~
+		//setBNF("program ::= { declaration } { statement } EOF"); //CV10~
+		setBNF("program ::= { declaration } { declblock } EOF"); //CV11~
 	}
 
 	public static boolean isFirst(CToken tk) {
