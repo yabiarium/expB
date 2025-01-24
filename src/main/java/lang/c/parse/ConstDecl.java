@@ -49,17 +49,17 @@ public class ConstDecl extends CParseRule {
 						constItemList.add(constItem);
 						tk = ct.getCurrentToken(pcx);
 					}else{
-						pcx.recoverableError(tk + "constDecl: IDENTがありません");
+						pcx.recoverableError(tk + " constDecl: IDENTがありません");
 					}
 				}
 			}else{
-				pcx.recoverableError(tk + "constDecl: IDENTがありません");
+				pcx.recoverableError(tk + " constDecl: IDENTがありません");
 			}
 
 			if(tk.getType() == CToken.TK_SEMI){
 				tk = ct.getNextToken(pcx); // ;を読む, 正常終了
 			}else{
-				pcx.warning(tk + "constDecl: ; を補いました");
+				pcx.warning(tk + " constDecl: ; を補いました");
 			}
 			
 		} catch (RecoverableErrorException e) {

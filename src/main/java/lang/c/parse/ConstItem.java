@@ -24,7 +24,7 @@ public class ConstItem extends CParseRule {
 			}
 			
 			if(tk.getType() != CToken.TK_IDENT){
-				pcx.recoverableError(tk + "constItem: *の後ろは IDENT です"); //先頭がIDENTならisFirstでチェックしているのでここには来ないため、このエラーメッセージでよい
+				pcx.recoverableError(tk + " constItem: *の後ろは IDENT です"); //先頭がIDENTならisFirstでチェックしているのでここには来ないため、このエラーメッセージでよい
 			}
 	
 			tk = ct.getNextToken(pcx); // IDENTを読む
@@ -32,9 +32,9 @@ public class ConstItem extends CParseRule {
 				tk = ct.getNextToken(pcx); // =を読む
 			}else{
 				if(tk.getType() == CToken.TK_AMP || tk.getType() == CToken.TK_NUM){
-					pcx.warning(tk + "constItem: =を補いました");
+					pcx.warning(tk + " constItem: =を補いました");
 				}else{
-					pcx.recoverableError(tk + "constItem: =がありません");
+					pcx.recoverableError(tk + " constItem: =がありません");
 				}
 			}
 

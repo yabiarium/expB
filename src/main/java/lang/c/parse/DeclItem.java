@@ -24,20 +24,20 @@ public class DeclItem extends CParseRule {
 			}
 			
 			if(tk.getType() != CToken.TK_IDENT){
-				pcx.recoverableError(tk + "declItem: *の後ろは IDENT です"); //先頭がIDENTならisFirstでチェックしているのでここには来ないため、このエラーメッセージでよい
+				pcx.recoverableError(tk + " declItem: *の後ろは IDENT です"); //先頭がIDENTならisFirstでチェックしているのでここには来ないため、このエラーメッセージでよい
 			}
 	
 			tk = ct.getNextToken(pcx); // IDENTを読む
 			if(tk.getType() == CToken.TK_LBRA){
 				tk = ct.getNextToken(pcx); // [を読む
 				if(tk.getType() != CToken.TK_NUM){
-					pcx.recoverableError(tk + "declItem: 配列の要素数がありません");
+					pcx.recoverableError(tk + " declItem: 配列の要素数がありません");
 				}
 				tk = ct.getNextToken(pcx); // NUMを読む
 				if(tk.getType() == CToken.TK_RBRA){
 					tk = ct.getNextToken(pcx); // ]を読む, 正常終了
 				}else{
-					pcx.warning(tk + "declItem: ] を補いました");
+					pcx.warning(tk + " declItem: ] を補いました");
 				}
 			}
 

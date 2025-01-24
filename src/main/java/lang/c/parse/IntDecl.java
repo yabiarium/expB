@@ -39,17 +39,17 @@ public class IntDecl extends CParseRule {
 						declItemList.add(declItem);
 						tk = ct.getCurrentToken(pcx);
 					}else{
-						pcx.recoverableError(tk + "intDecl: IDENTがありません");
+						pcx.recoverableError(tk + " intDecl: IDENTがありません");
 					}
 				}
 			}else{
-				pcx.recoverableError(tk + "intDecl: IDENTがありません");
+				pcx.recoverableError(tk + " intDecl: IDENTがありません");
 			}
 
 			if(tk.getType() == CToken.TK_SEMI){
 				tk = ct.getNextToken(pcx); // ;を読む, 正常終了
 			}else{
-				pcx.warning(tk + "intDecl: ; を補いました");
+				pcx.warning(tk + " intDecl: ; を補いました");
 			}
 			
 		} catch (RecoverableErrorException e) {
