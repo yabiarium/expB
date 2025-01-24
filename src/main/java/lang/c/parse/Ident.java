@@ -14,9 +14,10 @@ import lang.c.CodeGenCommon;
 public class Ident extends CParseRule{
 
     CToken ident;
-	private String identName;
+	private String identName, declBlockLabel;
 	CSymbolTableEntry entry;
-	boolean isFunction = false;
+	boolean isDeclBlock = false;
+	private int seqId;
 
 	public Ident(CParseContext pcx) {
 		super("Ident");
@@ -41,6 +42,15 @@ public class Ident extends CParseRule{
 
 		} else {
 			pcx.warning(tk + " ident: 宣言されていません");
+		}
+
+		if (entry != null) {
+			isDeclBlock = entry.isDeclBlock();
+		}
+		if (isDeclBlock) {
+			seqId = pcx.getSeqId(identName);
+			declBlockLabel = identName + seqId;
+			pcx.getSymbolTable().registerLocal(declBlockLabel, entry); // 関数を局所変数として登録
 		}
 
 		tk = ct.getNextToken(pcx);

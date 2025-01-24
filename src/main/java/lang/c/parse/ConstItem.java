@@ -81,11 +81,17 @@ public class ConstItem extends CParseRule {
 			entry = new CSymbolTableEntry(CType.getCType(CType.T_int), 1, isConst);
 		}
 
-
-		if ( !pcx.getSymbolTable().registerLocal(identName, entry) ) {
-			pcx.warning(col + " constItem: 既に宣言されています"); //コード生成しないwarningとして扱う
+		isGlobal = pcx.getSymbolTable().isGlobalMode();
+		if (isGlobal) {
+			if ( !pcx.getSymbolTable().registerGlobal(identName, entry) ) {
+				pcx.warning(col + " constItem: 既に宣言されています");
+			}
+		} else{
+			if ( !pcx.getSymbolTable().registerLocal(identName, entry) ) {
+				pcx.warning(col + " constItem: 既に宣言されています");
+			}
 		}
-
+		
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {

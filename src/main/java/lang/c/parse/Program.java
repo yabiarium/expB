@@ -10,8 +10,8 @@ public class Program extends CParseRule {
 	// 新しく非終端記号に対応するクラスを作成する際は，必ず拡張BNF をコメントでつけること
 	// また，更新する際は，拡張BNFの「履歴」を残すこと（例えば，実験３まで：．．．． と 実験４から：．．． のように）
 	// program ::= expression EOF
-	CParseRule statement, declaration;
-	List<CParseRule> statementList = new ArrayList<>();
+	CParseRule declaration, declBlock;
+	List<CParseRule> declBlockList = new ArrayList<>();
 	List<CParseRule> declarationList = new ArrayList<>();
 
 	public Program(CParseContext pcx) {
@@ -19,7 +19,7 @@ public class Program extends CParseRule {
 		//setBNF("Program ::= Expression EOF");
 		//setBNF("program ::= { statement } EOF"); //CV05~
 		//setBNF("program ::= { declaration } { statement } EOF"); //CV10~
-		setBNF("program ::= { declaration } { declblock } EOF"); //CV11~
+		setBNF("program ::= { declaration } { declBlock } EOF"); //CV11~
 	}
 
 	public static boolean isFirst(CToken tk) {
@@ -38,10 +38,10 @@ public class Program extends CParseRule {
 			tk = ct.getCurrentToken(pcx);	
 		}
 
-		while(Statement.isFirst(tk)){
-			statement = new Statement(pcx);
-			statement.parse(pcx);
-			statementList.add(statement);
+		while(DeclBlock.isFirst(tk)){
+			declBlock = new DeclBlock(pcx);
+			declBlock.parse(pcx);
+			declBlockList.add(declBlock);
 			tk = ct.getCurrentToken(pcx);
 		}
 		
@@ -58,8 +58,8 @@ public class Program extends CParseRule {
 			}
 		}
 
-		if (statementList != null) {
-			for(CParseRule item : statementList){
+		if (declBlockList != null) {
+			for(CParseRule item : declBlockList){
 				item.semanticCheck(pcx);
 			}
 		}
@@ -68,7 +68,7 @@ public class Program extends CParseRule {
 	public void codeGen(CParseContext pcx) throws FatalErrorException {
 		CodeGenCommon cgc = pcx.getCodeGenCommon();
 
-		if (declarationList != null || statementList != null) {
+		if (declarationList != null || declBlockList != null) {
 			cgc.printStartComment(getBNF(getId()));
 			cgc.printInstCodeGen("", ".= 0x0100", "Program: 開始番地");
 			cgc.printInstCodeGen("", "JMP __START", "Program: __STARTに飛ぶ");
@@ -82,7 +82,7 @@ public class Program extends CParseRule {
 			cgc.printLabel("__START:", "Program: ここから開始");
 			cgc.printInstCodeGen("", "MOV #0x1000, R6", "Program: SP初期化");
 
-			for(CParseRule item: statementList){
+			for(CParseRule item: declBlockList){
 				// program コード本体
 				item.codeGen(pcx);
 			}
