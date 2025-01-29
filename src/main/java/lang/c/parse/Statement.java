@@ -16,19 +16,14 @@ public class Statement extends CParseRule {
 	}
 
 	public static boolean isFirst(CToken tk) {
-		if(tk.getType() == CToken.TK_INPUT){ // input
-			return StatementInput.isFirst(tk);
-		}else if(tk.getType() == CToken.TK_OUTPUT){ // output
-			return StatementOutput.isFirst(tk);
-		}else if(tk.getType() == CToken.TK_IF){ //if
-			return StatementIf.isFirst(tk);
-		}else if(tk.getType() == CToken.TK_WHILE){ //while
-			return StatementWhile.isFirst(tk);
-		}else if(tk.getType() == CToken.TK_LCUR){ //{
-			return StatementBlock.isFirst(tk);
-		}else{ //上記以外
-			return StatementAssign.isFirst(tk);
-		}
+		return StatementInput.isFirst(tk) 		//input
+				|| StatementOutput.isFirst(tk) 	//output
+				|| StatementIf.isFirst(tk) 		//if
+				|| StatementWhile.isFirst(tk) 	//while
+				|| StatementBlock.isFirst(tk) 	// {
+				|| StatementCall.isFirst(tk) 	//call
+				|| StatementReturn.isFirst(tk)	//return
+				|| StatementAssign.isFirst(tk) ; //上記以外
 	}
 
 	public void parse(CParseContext pcx) throws FatalErrorException {

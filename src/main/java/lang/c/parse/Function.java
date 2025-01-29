@@ -11,7 +11,7 @@ public class Function extends CParseRule {
     }
 
     public static boolean isFirst(CToken tk) {
-        return false;
+        return tk.getType() == CToken.TK_FUNC;
 	}
 
     public void parse(CParseContext pcx) throws FatalErrorException {

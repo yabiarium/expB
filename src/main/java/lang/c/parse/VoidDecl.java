@@ -11,7 +11,7 @@ public class VoidDecl extends CParseRule {
     }
 
     public static boolean isFirst(CToken tk) {
-        return false;
+        return tk.getType() == CToken.TK_VOID;
 	}
 
     public void parse(CParseContext pcx) throws FatalErrorException {

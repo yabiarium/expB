@@ -20,11 +20,11 @@ public class Program extends CParseRule {
 		//setBNF("program ::= { statement } EOF"); //CV05~
 		//setBNF("program ::= { declaration } { statement } EOF"); //CV10~
 		//setBNF("program ::= { declaration } { declBlock } EOF"); //CV11~
-		setBNF("program ::= { declaraion } { function } EOF EOF"); //CV12~
+		setBNF("program ::= { declaraion } { function } EOF"); //CV12~
 	}
 
 	public static boolean isFirst(CToken tk) {
-		return Declaration.isFirst(tk) || Statement.isFirst(tk) || tk.getType() == CToken.TK_EOF;
+		return Declaration.isFirst(tk) || Function.isFirst(tk) || tk.getType() == CToken.TK_EOF;
 	}
 
 	public void parse(CParseContext pcx) throws FatalErrorException {

@@ -11,7 +11,7 @@ public class StatementReturn extends CParseRule {
     }
 
     public static boolean isFirst(CToken tk) {
-        return false;
+        return tk.getType() == CToken.TK_RETURN;
 	}
 
     public void parse(CParseContext pcx) throws FatalErrorException {
