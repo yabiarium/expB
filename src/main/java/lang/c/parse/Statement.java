@@ -11,7 +11,8 @@ public class Statement extends CParseRule {
 	public Statement(CParseContext pcx) {
 		super("Statement");
 		//setBNF("statement ::= statementAssign | statementInput | statementOutput"); //CV05~
-		setBNF("statement ::= statementAssign | statementInput | statementOutput | statementIf | statementWhile | statementBlock"); //CV07~
+		//setBNF("statement ::= statementAssign | statementInput | statementOutput | statementIf | statementWhile | statementBlock"); //CV07~
+		setBNF("statement ::= statementAssign | statementInput | statementOutput | statementIf | statementWhile | statementBlock | statementCall | statementReturn"); //CV12~
 	}
 
 	public static boolean isFirst(CToken tk) {

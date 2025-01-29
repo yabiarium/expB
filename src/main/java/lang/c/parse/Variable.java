@@ -16,7 +16,8 @@ public class Variable extends CParseRule{
 	public Variable(CParseContext pcx) {
 		super("Variable");
 		//変数名 配列要素 の格納番地を積めば良い
-		setBNF("variable ::= ident [ array ]"); //CV04~ []は0か1回
+		//setBNF("variable ::= ident [ array ]"); //CV04~ []は0か1回
+		setBNF("variable ::= ident [ array | call ]"); //CV12~
 	}
 
     public static boolean isFirst(CToken tk) {

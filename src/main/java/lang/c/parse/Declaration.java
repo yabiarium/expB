@@ -9,7 +9,8 @@ public class Declaration extends CParseRule {
 
 	public Declaration(CParseContext pcx) {
 		super("Declaration");
-		setBNF("declaration ::= intDecl | constDecl"); //CV10~
+		//setBNF("declaration ::= intDecl | constDecl"); //CV10~
+		setBNF("declaration ::= intDecl | constDecl | voidDecl"); //CV12~
 	}
 
 	public static boolean isFirst(CToken tk) {

@@ -19,7 +19,8 @@ public class Program extends CParseRule {
 		//setBNF("Program ::= Expression EOF");
 		//setBNF("program ::= { statement } EOF"); //CV05~
 		//setBNF("program ::= { declaration } { statement } EOF"); //CV10~
-		setBNF("program ::= { declaration } { declBlock } EOF"); //CV11~
+		//setBNF("program ::= { declaration } { declBlock } EOF"); //CV11~
+		setBNF("program ::= { declaraion } { function } EOF EOF"); //CV12~
 	}
 
 	public static boolean isFirst(CToken tk) {

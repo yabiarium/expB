@@ -13,7 +13,8 @@ public class DeclItem extends CParseRule {
 
 	public DeclItem(CParseContext pcx) {
 		super("DeclItem");
-		setBNF("declItem ::= [ MULT ] IDENT [ LBRA NUM RBRA ]"); //CV10~
+		//setBNF("declItem ::= [ MULT ] IDENT [ LBRA NUM RBRA ]"); //CV10~
+		setBNF("declItem ::= [ MULT ] IDENT [ LBRA NUMBER RBRA | LPAR RPAR ]"); //CV12~
 	}
 
 	public static boolean isFirst(CToken tk) {
