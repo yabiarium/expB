@@ -75,6 +75,12 @@ public class CToken extends SimpleToken {
     public static final int TK_CONST = 33; // const
     public static final int TK_COMMA = 34; // ,
 
+    // CV12
+    public static final int TK_VOID = 35; // void
+    public static final int TK_RETURN = 36; // return
+    public static final int TK_FUNC = 37; // func
+    public static final int TK_CALL = 38; // call
+
 
     public CToken(int type, int lineNo, int colNo, String s) {
         super(type, lineNo, colNo, s);
@@ -141,6 +147,12 @@ public class CToken extends SimpleToken {
             put(TK_INT, "TK_INT");
             put(TK_CONST, "TK_CONST");
             put(TK_COMMA, "TK_COMMA");
+
+            //CV12
+            put(TK_VOID, "TK_VOID");
+            put(TK_RETURN, "TK_RETURN");
+            put(TK_FUNC, "TK_FUNC");
+            put(TK_CALL, "TK_CALL");
 }
     };
 
