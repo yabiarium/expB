@@ -353,7 +353,7 @@ o conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA //条件
 
 
 
-## CV10~の節点
+## CV10,11の節点
 
 ```
 # CV10
@@ -419,4 +419,70 @@ int/constDecl以下での🍀は、エラーだけ出して処理はこの2つ�
  - local 変数の2重登録チェック  
        ` int a;{int *a; int a; a=1;} `
  - const local 変数への代入文チェック  
-       ` {const int a=0; a=1;} `
+       ` {const int a=0; a=1;} `  
+
+
+
+## CV12の節点
+
+```
+# CV12
+x program         ::= { declaraion } { function } EOF //変更
+x declaration     ::= intDecl | constDecl | voidDecl //変更
+o voidDecl        ::= VOID IDENT LPAR RPAR { COMMA IDENT LPAR RPAR } SEMI
+o declItem        ::= [ MULT ] IDENT [ LBRA NUM RBRA | LPAR RPAR ] //変更
+o function        ::= FUNC ( INT [ MULT ] | VOID ) IDENT LPAR RPAR declBlock
+x statement       ::= （長いので省略） | statementCall | statementReturn //変更
+o statementCall   ::= CALL ident LPAR RPAR SEMI
+o statementReturn ::= RETURN [ expression ] SEMI
+x variable        ::= ident [ array | call ]　 //変更
+o call            ::= LPAR RPAR
+```
+
+### function:
+ - [x] 💫 parse(): 返り値の型を指定してください  
+       `func { a;}`
+ - [x] 🍀 parse(): 識別子(ident)がありません  
+       → (, ), { まで読み飛ばしてdeclBlockの判定へ  
+       `func { a;}`
+ - [x] 💫 parse(): ( を補いました  
+       `func { a;}`
+ - [x] 💫 parse(): ) を補いました  
+       `func { a;}`
+ - [x] 🍀 parse():  declBlock( { )がありません
+       → func まで読み飛ばす  
+       `func a() a;} func int () {}`
+
+### declItem(追加):
+ - [x] 💫 parse(): ) を補いました
+       `int a(;`
+
+### voidDecl:
+ - [x] 🍀 parse(): 識別子(ident)がありません
+       → ;まで飛ばす  
+       `void (), b();`
+ - [x] 💫 parse(): ( を補いました
+       `void a), b();`
+ - [x] 💫 parse(): ) を補いました
+       `void a(, b();`
+ - [x] 💫 parse(): ; を補いました
+       `void a(), b()`
+
+### statementCall:
+ - [x] 🍀 parse(): 識別子(ident)がありません
+       → ;まで飛ばす  
+       `func int a(){ call (); b; }`
+ - [x] 💫 parse(): ( を補いました
+       `func int a(){ call a); }`
+ - [x] 💫 parse(): ) を補いました
+       `func int a(){ call a(; }`
+ - [x] 💫 parse(): ; を補いました
+       `func int a(){ call a() }`
+
+### statementReturn:
+ - [x] 💫 parse(): ; を補いました 
+       `func int a(){ return 0 }`
+
+### call:
+ - [x] 💫 parse(): ) を補いました  
+       `func int a(){ input a(; }`
