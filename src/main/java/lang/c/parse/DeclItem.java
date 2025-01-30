@@ -14,7 +14,7 @@ public class DeclItem extends CParseRule {
 	public DeclItem(CParseContext pcx) {
 		super("DeclItem");
 		//setBNF("declItem ::= [ MULT ] IDENT [ LBRA NUM RBRA ]"); //CV10~
-		setBNF("declItem ::= [ MULT ] IDENT [ LBRA NUMBER RBRA | LPAR RPAR ]"); //CV12~
+		setBNF("declItem ::= [ MULT ] IDENT [ LBRA NUM RBRA | LPAR RPAR ]"); //CV12~
 	}
 
 	public static boolean isFirst(CToken tk) {
@@ -53,6 +53,15 @@ public class DeclItem extends CParseRule {
 					tk = ct.getNextToken(pcx); // ]を読む, 正常終了
 				}else{
 					pcx.warning(tk + " declItem: ] を補いました");
+				}
+
+			}else if(tk.getType() == CToken.TK_LPAR){
+				tk = ct.getNextToken(pcx); // (を読み飛ばす
+
+				if(tk.getType() == CToken.TK_RPAR){
+					tk = ct.getNextToken(pcx); // )を読む, 正常終了
+				}else{
+					pcx.warning(tk + " declItem: ) を補いました");
 				}
 			}
 

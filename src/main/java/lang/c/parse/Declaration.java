@@ -5,7 +5,7 @@ import lang.c.*;
 
 public class Declaration extends CParseRule {
 
-	CParseRule intDecl, constDecl;
+	CParseRule intDecl, constDecl, voidDecl;
 
 	public Declaration(CParseContext pcx) {
 		super("Declaration");
@@ -28,9 +28,13 @@ public class Declaration extends CParseRule {
 		} else if(ConstDecl.isFirst(tk)){
 			constDecl = new ConstDecl(pcx);
 			constDecl.parse(pcx);
+
+		} else if(VoidDecl.isFirst(tk)){
+			voidDecl = new VoidDecl(pcx);
+			voidDecl.parse(pcx);
 		}
 
-		// 回復エラーはintDecl/constDecl内で処理されるので、この節点以上では考えなくてよい
+		// 回復エラーはintDecl/constDecl/voidDecl内で処理されるので、この節点以上では考えなくてよい
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {

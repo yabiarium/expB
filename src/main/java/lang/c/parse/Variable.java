@@ -10,7 +10,7 @@ import lang.c.CType;
 import lang.c.CodeGenCommon;
 
 public class Variable extends CParseRule{
-    CParseRule ident, array;
+    CParseRule ident, array, call;
 	CToken sem; //意味解析でエラー場所を表示する用
 
 	public Variable(CParseContext pcx) {
@@ -38,6 +38,10 @@ public class Variable extends CParseRule{
 		if(Array.isFirst(tk)){
 			array = new Array(pcx);
 			array.parse(pcx);
+			
+		}else if(Call.isFirst(tk)){
+			call = new Call(pcx);
+			call.parse(pcx);
 		}
 	}
 

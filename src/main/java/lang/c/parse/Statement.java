@@ -45,6 +45,12 @@ public class Statement extends CParseRule {
 
 		}else if(tk.getType() == CToken.TK_LCUR){ // {
 			statementXX = new StatementBlock(pcx);
+		
+		}else if(StatementCall.isFirst(tk)){ //call
+			statementXX = new StatementCall(pcx);
+		
+		}else if(StatementReturn.isFirst(tk)){ //return
+			statementXX = new StatementReturn(pcx);
 			
 		}else{
 			statementXX = new StatementAssign(pcx);
