@@ -58,7 +58,7 @@ declItem        ::= [ MULT ] IDENT [ LBRA NUM RBRA ]
 
 # CV11 {と}で囲まれた範囲の中でのみ有効な変数群を用意する
 program         ::= { declaration } { declBlock } EOF　//変更
-declBlock       ::= LCUR { declaration } { statement } RCUR
+declBlock       ::= LCUR { declaration } { statement } RCUR //局所変数用のSymbolTableはここで作成と削除を行う
 ```
 
 <details>

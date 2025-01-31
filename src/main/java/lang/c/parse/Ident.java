@@ -32,6 +32,8 @@ public class Ident extends CParseRule{
 		identName = tk.getText();
 		ident = tk;
 
+		//declaration側では終端記号のIDENTしか扱わないので、この節点IdentにはStatementからしか到達しない。
+		//つまり、ここの解析をするときには変数が全て登録された状態となっている
 		if (pcx.getSymbolTable().searchLocal(identName) != null) {
 			entry = pcx.getSymbolTable().searchLocal(identName);
 

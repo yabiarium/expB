@@ -6,9 +6,11 @@ import lang.c.*;
 public class ConstItem extends CParseRule {
 
 	String identName, num;
+	CToken ident;
 	boolean isExistMult = false; // *があるか
 	boolean isExistAmp = false; // &があるか
 	boolean isGlobal;
+	CSymbolTableEntry entry;
 
 	public ConstItem(CParseContext pcx) {
 		super("ConstItem");
@@ -33,6 +35,7 @@ public class ConstItem extends CParseRule {
 			if(tk.getType() != CToken.TK_IDENT){
 				pcx.recoverableError(tk + " constItem: *の後ろは IDENT です"); //先頭がIDENTならisFirstでチェックしているのでここには来ないため、このエラーメッセージでよい
 			}
+			ident = tk;
 			identName = tk.getText();
 			tk = ct.getNextToken(pcx); // IDENTを読み飛ばす
 
@@ -73,7 +76,6 @@ public class ConstItem extends CParseRule {
 
 
 		// 変数登録
-		CSymbolTableEntry entry;
 		final boolean isConst = true;
 		if (isExistMult) {
 			entry = new CSymbolTableEntry(CType.getCType(CType.T_pint), 1, isConst);
@@ -101,9 +103,14 @@ public class ConstItem extends CParseRule {
 		CodeGenCommon cgc = pcx.getCodeGenCommon();
 
 		cgc.printStartComment(getBNF());
-
-		cgc.printLabel(identName + ":	.word " + num, "");
-
+		if(isGlobal){
+			cgc.printLabel(identName + ":	.word " + num, "constItem: 初期値を入れる");
+		}else{
+			cgc.printInstCodeGen("", "MOV #" + entry.getAddress() + ", R0", "constItem: 局所変数のフレームポインタからの相対位置を取得 " + ident);
+			cgc.printInstCodeGen("", "ADD R4, R0", "Ident: 局所変数の格納番地を計算する " + ident);
+			cgc.printPushCodeGen("", "R0", "Ident: 格納番地を積む " + ident);
+		}
+		
 		cgc.printCompleteComment(getBNF());
     }
 }
