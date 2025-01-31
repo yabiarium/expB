@@ -5,7 +5,7 @@ import lang.c.*;
 
 public class Declaration extends CParseRule {
 
-	CParseRule intDecl, constDecl, voidDecl;
+	CParseRule XXDecl;
 
 	public Declaration(CParseContext pcx) {
 		super("Declaration");
@@ -22,27 +22,20 @@ public class Declaration extends CParseRule {
 		CToken tk = ct.getCurrentToken(pcx);
 		
 		if (IntDecl.isFirst(tk)) {
-			intDecl = new IntDecl(pcx);
-			intDecl.parse(pcx);
-
+			XXDecl = new IntDecl(pcx);
 		} else if(ConstDecl.isFirst(tk)){
-			constDecl = new ConstDecl(pcx);
-			constDecl.parse(pcx);
-
+			XXDecl = new ConstDecl(pcx);
 		} else if(VoidDecl.isFirst(tk)){
-			voidDecl = new VoidDecl(pcx);
-			voidDecl.parse(pcx);
+			XXDecl = new VoidDecl(pcx);
 		}
 
+		XXDecl.parse(pcx);
 		// 回復エラーはintDecl/constDecl/voidDecl内で処理されるので、この節点以上では考えなくてよい
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
-		if (intDecl != null) {
-			intDecl.semanticCheck(pcx);
-
-		} else if (constDecl != null) {
-			constDecl.semanticCheck(pcx);
+		if (XXDecl != null) {
+			XXDecl.semanticCheck(pcx);
 		}
 	}
 
@@ -50,11 +43,8 @@ public class Declaration extends CParseRule {
 		CodeGenCommon cgc = pcx.getCodeGenCommon();
 		
 		cgc.printStartComment(getBNF(getId()));
-		if (intDecl != null) {
-			intDecl.codeGen(pcx);
-		}
-		if (constDecl != null) {
-			constDecl.codeGen(pcx);
+		if (XXDecl != null) {
+			XXDecl.codeGen(pcx);
 		}
 		cgc.printCompleteComment(getBNF(getId()));
     }
