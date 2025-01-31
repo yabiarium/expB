@@ -80,7 +80,11 @@ unsignedFactor  ::= number | LPAR expression RPAR
 
 </details>
 
-
+### CV11実験チェックメモ
+ - 構文解析以降全てのテストケースがない
+ - declitem: グローバル変数のコード生成
+ - Identのコード生成: isGlobalに分岐していない
+ - 意味チェックにwarningがあるので回復エラーに統一する
 
 ## memo
 term ::= factor { (PLUS | MINUS) factor }  
