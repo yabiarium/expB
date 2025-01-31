@@ -71,6 +71,7 @@ statementCall   ::= CALL ident LPAR RPAR SEMI
 statementReturn ::= RETURN [ expression ] SEMI
 variable        ::= ident [ array | call ]　 //変更
 call            ::= LPAR RPAR
+unsignedFactor  ::= factorAmp | number | LPAR expression RPAR | addressToValue | CALL ident LPAR RPAR //変更
 ```
 
 <details>

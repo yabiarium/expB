@@ -437,6 +437,7 @@ o statementCall   ::= CALL ident LPAR RPAR SEMI
 o statementReturn ::= RETURN [ expression ] SEMI
 x variable        ::= ident [ array | call ]　 //変更
 o call            ::= LPAR RPAR
+o unsignedFactor ::= factorAmp | number | LPAR expression RPAR | addressToValue | CALL ident LPAR RPA //変更
 ```
 
 ### function:
@@ -444,7 +445,10 @@ o call            ::= LPAR RPAR
        `func { a;}`
  - [x] 🍀 parse(): 識別子(ident)がありません  
        → (, ), { まで読み飛ばしてdeclBlockの判定へ  
-       `func { a;}`
+       `func { a;}`  
+ - [x] 🍀 parse(): 同じ識別子の関数があります  
+       → (, ), { まで読み飛ばしてdeclBlockの判定へ  
+       ` `
  - [x] 💫 parse(): ( を補いました  
        `func { a;}`
  - [x] 💫 parse(): ) を補いました  
@@ -452,37 +456,108 @@ o call            ::= LPAR RPAR
  - [x] 🍀 parse():  declBlock( { )がありません
        → func まで読み飛ばす  
        `func a() a;} func int () {}`
+ - [x] 🍀 semanticCheck(): この識別子は関数として宣言されていません  
+       `const int funcA = 0; func int funcA(){}`
 
-### declItem(追加):
- - [x] 💫 parse(): ) を補いました
+### declItem:
+ - [x] 💫 parse(): ) を補いました  
        `int a(;`
 
 ### voidDecl:
- - [x] 🍀 parse(): 識別子(ident)がありません
+ - [x] 🍀 parse(): 識別子(ident)がありません  
        → ;まで飛ばす  
        `void (), b();`
- - [x] 💫 parse(): ( を補いました
+ - [x] 💫 parse(): ( を補いました  
        `void a), b();`
- - [x] 💫 parse(): ) を補いました
+ - [x] 💫 parse(): ) を補いました  
        `void a(, b();`
- - [x] 💫 parse(): ; を補いました
-       `void a(), b()`
+ - [x] 💫 parse(): ; を補いました  
+       `void a(), b()`  
+ - [x] 🍀 semanticCheck(): 既に宣言されています  
+       `void funcA(), funcA();`
 
 ### statementCall:
- - [x] 🍀 parse(): 識別子(ident)がありません
+ - [x] 🍀 parse(): 識別子(ident)がありません  
        → ;まで飛ばす  
        `func int a(){ call (); b; }`
- - [x] 💫 parse(): ( を補いました
+ - [x] 💫 parse(): ( を補いました  
        `func int a(){ call a); }`
- - [x] 💫 parse(): ) を補いました
+ - [x] 💫 parse(): ) を補いました  
        `func int a(){ call a(; }`
- - [x] 💫 parse(): ; を補いました
+ - [x] 💫 parse(): ; を補いました  
        `func int a(){ call a() }`
 
 ### statementReturn:
- - [x] 💫 parse(): ; を補いました 
+ - [x] 💫 parse(): ; を補いました   
        `func int a(){ return 0 }`
 
 ### call:
- - [x] 💫 parse(): ) を補いました  
+ - [x] 💫 parse(): ) を補いました    
        `func int a(){ input a(; }`
+
+### unsignedFactor:
+ - [x] 💫 parse(): ( を補いました  
+       ```
+       //test1
+       void funcA();
+       int funcB(),a;
+       func void funcA(){
+       a = call funcB) + 1;
+       }
+       func int funcB(){
+       return 1;
+       }
+       ```
+ - [x] 💫 parse(): ) を補いました  
+       `↑(test1)を使用`
+ - [x] 🍀 parse(): callの後ろはidentです  
+       `↑(test1)を使用`
+
+### declBlock:
+ - [x] 🍀 semanticCheck(): 関数の型が必要です  
+       → return文が存在するのにfunctionの型がない(err)場合  
+       `↑(test1)のfuncBの型を消す`  
+ - [x] 🍀 semanticCheck(): 関数がvoid型にもかかわらず、返り値が存在します  
+       → return文と式が存在するのにfunctionがvoidの場合  
+       `↑(test1)のfuncAに return 1; を追記`
+ - [x] 🍀 semanticCheck(): xx型の返り値が必要です  
+       → return文が存在しないのにfunctionの型がある(void/err以外)場合  
+       `↑(test1)のfuncBの return 1; を消す`
+ - [x] 🍀 semanticCheck(): 関数の型["+functinoTypeS+"]と返り値の型["+sts+"]が異なります  
+       → functionの型がvoid/err以外で、return文の型と不一致  
+       `↑(test1)のfuncBを int a[0]; return a[9]; に書き換え`
+
+
+### semanticCheck():
+ - [x] プロトタイプ宣言はちゃんと機能していますか？  
+       ```
+       int a;
+       void funcA();
+       int funcB();
+       func int funcA(){
+       a = call funcB() + 1;
+       return a;
+       }
+       ```
+ - [x] *プロトタイプ宣言がない関数を使おうとしたときにちゃんとエラーを出せますか？  
+       `↑の int funcB(); をコメントアウト`
+ - [x] *プロトタイプ宣言がある関数について，宣言時の型と定義時の型が違うときにエラーが出せますか？  
+       `int funcA(); func int* funcA(){}`
+ - [x] return の処理で，定義時に設定された戻り値の型と同じ型の値を return できているか確認  
+       → DeclBlockよりもfunctionで判定する方がBNF的に綺麗そうだが、functionで判定できるのはDeclBlockの解析を全て行ったあとなので、複数箇所にreturnがある場合、どこのreturnでのエラーなのか特定できない。なので、functionの型をfunctionからDeclBlockに与え、DeclBlock内で判定する。 
+       （DeclBlockで<returnのトークン,その型>のリストをreturn文の分だけ保存しfunctionに返せばできなくなさそうだが、DeclBlockでの処理とfunctionでの処理両方が複雑になるためこの案は棄却）  
+       ```
+       int a;
+       void funcA();
+       int funcB();
+       func void funcA(){
+       a = call funcB() + 1;
+       }
+       func int funcB(){
+       int b;
+       return b;
+       }
+       ```
+ - [x] void型以外の関数で，return がない場合のチェック  
+       `int funcA(); func int funcA(){}`  
+
