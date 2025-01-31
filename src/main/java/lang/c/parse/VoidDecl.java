@@ -19,28 +19,13 @@ public class VoidDecl extends CParseRule {
         CToken tk = ct.getNextToken(pcx); // void を読み飛ばす
 
         try {
-            if(tk.getType() == CToken.TK_IDENT) {
-                tk = ct.getNextToken(pcx); // IDENTを読み飛ばす
-            }else {
-                pcx.recoverableError(tk + " voidDecl: 識別子(IDENT)がありません");
-            }
-
-            if(tk.getType() == CToken.TK_LPAR) {
-                tk = ct.getNextToken(pcx); // ( を読み飛ばす
-            }else {
-                pcx.warning(tk + " voidDecl: ( を補いました");
-            }
-
-            if(tk.getType() == CToken.TK_RPAR) {
-                tk = ct.getNextToken(pcx); // ) を読み飛ばす
-            }else {
-                pcx.warning(tk + " voidDecl: ) を補いました");
-            }
-
-            while(tk.getType() == CToken.TK_COMMA) {
-                tk = ct.getNextToken(pcx); // , を読み飛ばす
+            do{
+                if (tk.getType() == CToken.TK_COMMA) {
+                    tk = ct.getNextToken(pcx); // , を読み飛ばす
+                }
 
                 if(tk.getType() == CToken.TK_IDENT) {
+                    registerName(pcx, tk);
                     tk = ct.getNextToken(pcx); // IDENTを読み飛ばす
                 }else {
                     pcx.recoverableError(tk + " voidDecl: 識別子(IDENT)がありません");
@@ -57,7 +42,7 @@ public class VoidDecl extends CParseRule {
                 }else {
                     pcx.warning(tk + " voidDecl: ) を補いました");
                 }
-            }
+            }while(tk.getType() == CToken.TK_COMMA);
 
             if(tk.getType() == CToken.TK_SEMI) {
                 tk = ct.getNextToken(pcx); // ; を読み飛ばす
@@ -72,6 +57,14 @@ public class VoidDecl extends CParseRule {
             tk = ct.getNextToken(pcx);
         }
     }
+
+    private void registerName(CParseContext pcx, CToken tk) throws RecoverableErrorException {
+		String name = tk.getText();
+		CSymbolTableEntry entry = new CSymbolTableEntry(CType.getCType(CType.T_void), 1, true, true);
+		if ( !pcx.getSymbolTable().registerGlobal(name, entry) ) {
+			pcx.warning(tk + " voidDecl: 既に宣言されています");
+		}
+	}
 
     public void semanticCheck(CParseContext pcx) throws FatalErrorException {
     }

@@ -1,9 +1,9 @@
 package lang.c.parse;
 
 import lang.FatalErrorException;
-import lang.RecoverableErrorException;
 import lang.c.CParseContext;
 import lang.c.CParseRule;
+import lang.c.CSymbolTableEntry;
 import lang.c.CToken;
 import lang.c.CTokenizer;
 import lang.c.CType;
@@ -12,6 +12,7 @@ import lang.c.CodeGenCommon;
 public class Variable extends CParseRule{
     CParseRule ident, array, call;
 	CToken sem; //意味解析でエラー場所を表示する用
+	String identName;
 
 	public Variable(CParseContext pcx) {
 		super("Variable");
@@ -30,6 +31,7 @@ public class Variable extends CParseRule{
 		CToken tk = ct.getCurrentToken(pcx);
 		sem = tk;
 		
+		identName = tk.getText();
 		ident = new Ident(pcx);
 		ident.parse(pcx);
 
@@ -38,7 +40,7 @@ public class Variable extends CParseRule{
 		if(Array.isFirst(tk)){
 			array = new Array(pcx);
 			array.parse(pcx);
-			
+
 		}else if(Call.isFirst(tk)){
 			call = new Call(pcx);
 			call.parse(pcx);
@@ -49,29 +51,39 @@ public class Variable extends CParseRule{
 		if(ident != null){
 			ident.semanticCheck(pcx);
 			int rt = ident.getCType().getType(); // identの型
+
+			//エラーになる場合
+			//identが関数→()がない
+			//identが配列→[]がない
+			//identが↑以外→(),[]がある
 			
-			// 後ろに[]が存在しているのにidentがint,pintなのはおかしい
-			if(array != null){
-				try {
-					if(rt == CType.T_int || rt == CType.T_pint){
-						//pcx.fatalError("variable: semanticCheck(): 配列変数は T_int_array か T_pint_array です");
-						pcx.recoverableError(sem + " variable: この変数は配列型ではありません");
-					}
-				} catch (RecoverableErrorException e) {
+			CSymbolTableEntry function = pcx.getSymbolTable().searchGlobal(identName);
+			boolean isFunction = false;
+			if(function != null){
+				isFunction = function.isFunction();
+			}
+			
+			//identが↑以外→(),[]がある
+			if(array != null){ // 後ろに[]があるのにidentがint,pintでないのはエラー
+				if(rt != CType.T_int_array && rt != CType.T_pint_array){
+					pcx.recoverableError(sem + " variable: 配列型でない識別子に[]はつけられません");
 				}
-				
 				array.semanticCheck(pcx); //arrayの型によってvariableの型が変わることはない
 			}
-
-			// 配列型なのに後ろに[]が無いのはおかしい
-			if(rt == CType.T_int_array || rt == CType.T_pint_array){
-				try {
-					if(array == null){
-						//pcx.fatalError("variable: semanticCheck(): 配列型の後ろに[]がありません");
-						pcx.recoverableError(sem + " variable: 配列型の後ろに[]がありません");
-					}
-				} catch (Exception e) {
+			if(call != null){ // 後ろに()があるのにidentが関数でないのはおかしい
+				if(!isFunction){
+					pcx.recoverableError(sem + " variable: 関数でない識別子に()はつけられません");
 				}
+			}
+
+			//identが関数→()がない
+			if(isFunction && call == null){
+				pcx.recoverableError(sem + " variable: 関数識別子の後ろは()です");
+			}
+
+			// identが配列→[]がない
+			if((rt == CType.T_int_array || rt == CType.T_pint_array) && array == null){
+				pcx.recoverableError(sem + " variable: 配列型の後ろに[]がありません");
 				
 				// variableより上の階層では配列型は存在しない
 				if (rt == CType.T_int_array) {
@@ -80,6 +92,7 @@ public class Variable extends CParseRule{
 					rt = CType.T_pint;
 				}
 			}
+
 			this.setCType(CType.getCType(rt));
 			this.setConstant(ident.isConstant());
 		}

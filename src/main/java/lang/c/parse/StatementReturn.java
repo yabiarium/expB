@@ -35,6 +35,14 @@ public class StatementReturn extends CParseRule {
     }
 
     public void semanticCheck(CParseContext pcx) throws FatalErrorException {
+        if(expression != null) {
+            expression.semanticCheck(pcx);
+            this.setCType(expression.getCType()); // expression の型をそのままコピー
+			this.setConstant(expression.isConstant());
+        }else{ //expression == null
+            this.setCType(CType.getCType(CType.T_void));
+			this.setConstant(false);
+        }
     }
 
     public void codeGen(CParseContext pcx) throws FatalErrorException {
