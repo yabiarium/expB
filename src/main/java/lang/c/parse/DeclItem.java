@@ -99,10 +99,12 @@ public class DeclItem extends CParseRule {
 
 		cgc.printStartComment(getBNF());
 
-		if (isArray) {
-			cgc.printLabel(identName + ":	.blkw " + size, ""); //配列の場合は要素数分確保
-		}else{
-			cgc.printLabel(identName + ":	.word 0", ""); //変数の場合は0で初期化
+		if(isGlobal){ //ローカル変数の時は代入時にスタックに積むのでこのコードは生成しない
+			if (isArray) {
+				cgc.printLabel(identName + ":	.blkw " + size, "declItem: 配列は要素数分確保");
+			}else{
+				cgc.printLabel(identName + ":	.word 0", "declItem: 変数は0で初期化");
+			}
 		}
 
 		cgc.printCompleteComment(getBNF());
