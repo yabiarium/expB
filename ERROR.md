@@ -412,7 +412,7 @@ int/constDecl以下での🍀は、エラーだけ出して処理はこの2つ�
        ` int c[10; // ]が閉じてない `
 
 
-### declBlock:
+### declBlock:(CV11)
  - [x] 💫 parse(): } を補いました  
  - global 変数と同じ名前の local 変数が使えること（かつ，参照時に正しく local の方を参照できることの確認  
        ` int a;{int *a; a=1;} `

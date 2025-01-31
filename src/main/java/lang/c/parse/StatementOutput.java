@@ -39,7 +39,7 @@ public class StatementOutput extends CParseRule{
 					tk = ct.getNextToken(pcx); //正常終了
 				}else{
 					//pcx.fatalError(tk + "statementOutput: parse(): ;がありません");
-					pcx.warning(tk + "statementOutput: ; を補いました");
+					pcx.warning(tk + " statementOutput: ; を補いました");
 				}
 			}else{
 				//pcx.fatalError(tk + "statementOutput: parse(): outputの後ろはexpressionです");
@@ -65,9 +65,9 @@ public class StatementOutput extends CParseRule{
 		if(expression != null){
 			expression.codeGen(pcx);
 
-			cgc.printPopCodeGen("", "R1", "expressionの結果をR0に取り出す");
-			cgc.printInstCodeGen("", "MOV #0xFFE0, R0", "MappedIOをR0に");
-			cgc.printInstCodeGen("", "MOV R1, (R0)", "LEDに出力");
+			cgc.printPopCodeGen("", "R1", "statementOutput: expressionの結果をR0に取り出す");
+			cgc.printInstCodeGen("", "MOV #0xFFE0, R0", "statementOutput: MappedIOをR0に");
+			cgc.printInstCodeGen("", "MOV R1, (R0)", "statementOutput: LEDに出力");
 		}
 		cgc.printCompleteComment(getBNF(getId()));
 	}

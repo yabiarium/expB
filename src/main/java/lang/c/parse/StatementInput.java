@@ -41,7 +41,7 @@ public class StatementInput extends CParseRule{
 					tk = ct.getNextToken(pcx); //正常終了
 				}else{
 					//pcx.fatalError(tk + "statementInput: parse(): ;がありません");
-					pcx.warning(tk + "statementInput: ; を補いました");
+					pcx.warning(tk + " statementInput: ; を補いました");
 				}
 			}else{
 				//pcx.fatalError(tk + "statementInput: parse(): inputの後ろはprimaryです");
@@ -78,9 +78,9 @@ public class StatementInput extends CParseRule{
 		if(primary != null){
 			primary.codeGen(pcx);
 
-			cgc.printInstCodeGen("", "MOV #0xFFE0, R1", "MappedIOをR1に");
-			cgc.printPopCodeGen("", "R0", "primaryの結果をR0に取り出す");
-			cgc.printInstCodeGen("", "MOV (R1), (R0)", "LEDから入力");
+			cgc.printInstCodeGen("", "MOV #0xFFE0, R1", "statementInput: MappedIOをR1に");
+			cgc.printPopCodeGen("", "R0", "statementInput: primaryの結果をR0に取り出す");
+			cgc.printInstCodeGen("", "MOV (R1), (R0)", "statementInput: LEDから入力");
 		}
 		cgc.printCompleteComment(getBNF(getId()));
 	}

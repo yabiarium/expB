@@ -75,17 +75,17 @@ public class ConditionEQ  extends CParseRule {
 			String rt = expression.getCType().toString();
 			String t = getCType().toString();
 
-			cgc.printPopCodeGen("","R0","ConditionEQ:右辺の値を取り出す:["+rt+"]");
-			cgc.printPopCodeGen("","R1","ConditionEQ:左辺の値を取り出す:["+lt+"]");
-			cgc.printInstCodeGen("","MOV #"+CToken.TRUE_NUM+",R2","ConditionEQ:R2にtrue"+CToken.TRUE_NUM+"をセット");
-			cgc.printInstCodeGen("","CMP R0,R1","ConditionEQ:R1==R0 ==>>"+"R1-R0=0(zeroflag)?");
-			cgc.printInstCodeGen("","BRZ "+seqLabel,"ConditionEQ:zeroだったら"+seqLabel+"にジャンプ");
-			cgc.printInstCodeGen("","CLR R2","ConditionEQ:zeroでなかったらfalse"+CToken.FALSE_NUM+"をR2にセット");
+			cgc.printPopCodeGen("","R0","ConditionEQ: 右辺の値を取り出す:["+rt+"]");
+			cgc.printPopCodeGen("","R1","ConditionEQ: 左辺の値を取り出す:["+lt+"]");
+			cgc.printInstCodeGen("","MOV #"+CToken.TRUE_NUM+",R2","ConditionEQ: R2にtrue"+CToken.TRUE_NUM+"をセット");
+			cgc.printInstCodeGen("","CMP R0,R1","ConditionEQ: R1==R0 ==>>"+"R1-R0=0(zeroflag)?");
+			cgc.printInstCodeGen("","BRZ "+seqLabel,"ConditionEQ: zeroだったら"+seqLabel+"にジャンプ");
+			cgc.printInstCodeGen("","CLR R2","ConditionEQ: zeroでなかったらfalse"+CToken.FALSE_NUM+"をR2にセット");
 			//もし，CToken.FALSE_NUMを"0xFFFF"で設定している場合は上の行は↓で書き換えること
 			//"0x0000"の場合も以下のコードでもいいが，CLR R2のほうが1WORDで実現できる（下記コードは2WORD使う)
 			//cgc.printInstCodeGen("","MOV #"+CToken.FALSE_NUM+",R2","ConditionLT:negativeじゃなかったら"+CToken.FALSE_NUM+"をR2にセット");
-			cgc.printLabel(seqLabel+":","ConditionEQ:zeroだったときのジャンプ先");
-			cgc.printPushCodeGen("","R2","ConditionEQ:条件式評価結果R2["+t+"]をスタックに積む");
+			cgc.printLabel(seqLabel+":","ConditionEQ: zeroだったときのジャンプ先");
+			cgc.printPushCodeGen("","R2","ConditionEQ: 条件式評価結果R2["+t+"]をスタックに積む");
 			cgc.printCompleteComment(getBNF(getId()));
 		}
 	}

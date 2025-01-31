@@ -46,7 +46,7 @@ public class DeclBlock extends CParseRule {
         if (tk.getType() == CToken.TK_RCUR) {
             tk = ct.getNextToken(pcx);
         }else{
-            pcx.warning(tk + " DeclBlock: } を補いました");
+            pcx.warning(tk + " declBlock: } を補いました");
         }
         //ct.getNextToken(pcx); // ifは次の字句を読んでしまうのでそれに合わせる
 		

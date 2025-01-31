@@ -76,18 +76,18 @@ public class ConditionLE  extends CParseRule {
 			String rt = expression.getCType().toString();
 			String t = getCType().toString();
 
-			cgc.printPopCodeGen("","R0","ConditionLE:右辺の値を取り出す:["+rt+"]");
-			cgc.printPopCodeGen("","R1","ConditionLE:左辺の値を取り出す:["+lt+"]");
-			cgc.printInstCodeGen("","MOV #"+CToken.TRUE_NUM+",R2","ConditionLE:R2にtrue"+CToken.TRUE_NUM+"をセット");
-			cgc.printInstCodeGen("","CMP R0,R1","ConditionLE:R1<R0 ==>>"+"R1-R0<0(negativeflag)?");
-			cgc.printInstCodeGen("","BRN "+seqLabel,"ConditionLE:negativeだったら"+seqLabel+"にジャンプ");
-			cgc.printInstCodeGen("","BRZ "+seqLabel,"ConditionLE:zeroだったら"+seqLabel+"にジャンプ");
-			cgc.printInstCodeGen("","CLR R2","ConditionLE:negativeでもzeroでもなかったらfalse"+CToken.FALSE_NUM+"をR2にセット");
+			cgc.printPopCodeGen("","R0","ConditionLE: 右辺の値を取り出す:["+rt+"]");
+			cgc.printPopCodeGen("","R1","ConditionLE: 左辺の値を取り出す:["+lt+"]");
+			cgc.printInstCodeGen("","MOV #"+CToken.TRUE_NUM+",R2","ConditionLE: R2にtrue"+CToken.TRUE_NUM+"をセット");
+			cgc.printInstCodeGen("","CMP R0,R1","ConditionLE: R1<R0 ==>>"+"R1-R0<0(negativeflag)?");
+			cgc.printInstCodeGen("","BRN "+seqLabel,"ConditionLE: negativeだったら"+seqLabel+"にジャンプ");
+			cgc.printInstCodeGen("","BRZ "+seqLabel,"ConditionLE: zeroだったら"+seqLabel+"にジャンプ");
+			cgc.printInstCodeGen("","CLR R2","ConditionLE: negativeでもzeroでもなかったらfalse"+CToken.FALSE_NUM+"をR2にセット");
 			//もし，CToken.FALSE_NUMを"0xFFFF"で設定している場合は上の行は↓で書き換えること
 			//"0x0000"の場合も以下のコードでもいいが，CLR R2のほうが1WORDで実現できる（下記コードは2WORD使う)
 			//cgc.printInstCodeGen("","MOV #"+CToken.FALSE_NUM+",R2","ConditionLT:negativeじゃなかったら"+CToken.FALSE_NUM+"をR2にセット");
-			cgc.printLabel(seqLabel+":","ConditionLE:negativeかzeroだったときのジャンプ先");
-			cgc.printPushCodeGen("","R2","ConditionLE:条件式評価結果R2["+t+"]をスタックに積む");
+			cgc.printLabel(seqLabel+":","ConditionLE: negativeかzeroだったときのジャンプ先");
+			cgc.printPushCodeGen("","R2","ConditionLE: 条件式評価結果R2["+t+"]をスタックに積む");
 			cgc.printCompleteComment(getBNF(getId()));
 		}
 	}
