@@ -10,13 +10,13 @@ public class CSymbolTableEntry extends SymbolTableEntry {
     //CV11~で使用
     private boolean isGlobal; // 大域変数か？
     private int address; // 割り当て番地
-    private boolean isDeclBlock; // 関数か？
+    private boolean isFunction; // 関数か？
 
-    public CSymbolTableEntry(CType type, int size, boolean constp, boolean isDeclBlock) {
+    public CSymbolTableEntry(CType type, int size, boolean constp, boolean isFunction) {
 		this.type = type;
 		this.size = size;
 		this.constp = constp;
-		this.isDeclBlock = isDeclBlock;
+		this.isFunction = isFunction;
 	}
 
     public CSymbolTableEntry(CType type, int size, boolean constp) {
@@ -29,7 +29,7 @@ public class CSymbolTableEntry extends SymbolTableEntry {
         return type.toString() + ", " + size + (constp ? "定数" : "変数");
     }
 
-    public CType GetCType() { return type; }
+    public CType getCType() { return type; }
 	public int getSize() { return size; }
 	public boolean isConstant() { return constp; }
 	public boolean isGlobal() { return isGlobal; }
@@ -37,10 +37,10 @@ public class CSymbolTableEntry extends SymbolTableEntry {
 	public void setIsGlobal(boolean isGlobal) { this.isGlobal = isGlobal; }
 	public void setIsDeclBlock(boolean isDeclBlock) { this.isDeclBlock = isDeclBlock; }
 	public int getAddress() { return address; }
-	public boolean isDeclBlock() { return isDeclBlock; }
+	public boolean isFunction() { return isFunction; }
 	public boolean verificateFunction(CSymbolTableEntry e) {
 		// すでに登録された関数と同じかどうかを確認する
-		if (e.isDeclBlock() && e.GetCType().equals(e.GetCType())) {
+		if (e.isFunction() && e.getCType().equals(e.getCType())) {
 			return true;
 		} else {
 			return false;

@@ -48,6 +48,10 @@ public class CSymbolTable {
 		return local.search(name);
 	}
 
+	public void showLocal() {
+		local.show();
+	}
+
 	public void showGlobal() {
 		global.show();
 	}
