@@ -36,7 +36,7 @@ public class ConditionBlock  extends CParseRule {
 				tk = ct.getNextToken(pcx); //正常終了
 			}else{
 				//pcx.fatalError(tk + "conditionBlock: parse(): )がありません");
-				pcx.warning(tk + "conditionBlock: )を補いました");
+				pcx.warning(tk + " conditionBlock: )を補いました");
 			}
 
 		} catch (RecoverableErrorException e) {

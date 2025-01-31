@@ -20,6 +20,7 @@ public class CSymbolTable {
 	}
 
 	public boolean registerGlobal(String name, CSymbolTableEntry e) {
+		e.setIsGlobal(true);
 		if (searchGlobal(name) != null) {
 			return false;
 		}
@@ -28,6 +29,7 @@ public class CSymbolTable {
 
 	public boolean registerLocal(String name, CSymbolTableEntry e) {
 		e.setIsGlobal(false);
+		e.setIsDeclBlock(true);
 		if (searchLocal(name) != null) {
 			return false;
 		}
@@ -51,9 +53,9 @@ public class CSymbolTable {
 	}
 
 	public void setupLocalSymbolTable() {
-		local = new OneSymbolTable();
 		isGlobalMode = false;
 		addressOffset = 0;
+		local = new OneSymbolTable();
 	}
 
 	public void deleteLocalSymbolTable() {

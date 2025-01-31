@@ -46,7 +46,7 @@ public class Array extends CParseRule{
 				tk = ct.getNextToken(pcx); //正常終了 ]の次に移動して引き継ぐ
 			}else{
 				//pcx.fatalError(tk + "array: parse(): ]がありません");
-				pcx.warning(tk + "array: ] を補いました");
+				pcx.warning(tk + " array: ] を補いました");
 			}
 
 		} catch (RecoverableErrorException e) {
@@ -66,9 +66,9 @@ public class Array extends CParseRule{
 		cgc.printStartComment(getBNF(getId()));
 		if(expression != null){
 			expression.codeGen(pcx);
-			cgc.printPopCodeGen("", "R0", "expressionの結果をR0に取り出す");
-			cgc.printPopCodeGen("", "R1", "配列の先頭アドレスをR1に取り出す");
-			cgc.printInstCodeGen("", "ADD R1, R0", "相対アドレスを求める");
+			cgc.printPopCodeGen("", "R0", "array: expressionの結果をR0に取り出す");
+			cgc.printPopCodeGen("", "R1", "array: 配列の先頭アドレスをR1に取り出す");
+			cgc.printInstCodeGen("", "ADD R1, R0", "array: 相対アドレスを求める");
 			cgc.printPushCodeGen("", "R0", "");
 		}
 		cgc.printCompleteComment(getBNF(getId()));

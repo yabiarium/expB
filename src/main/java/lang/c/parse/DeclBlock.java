@@ -46,7 +46,7 @@ public class DeclBlock extends CParseRule {
         if (tk.getType() == CToken.TK_RCUR) {
             tk = ct.getNextToken(pcx);
         }else{
-            pcx.warning(tk + " DeclBlock: } を補いました");
+            pcx.warning(tk + " declBlock: } を補いました");
         }
         //ct.getNextToken(pcx); // ifは次の字句を読んでしまうのでそれに合わせる
 		
@@ -68,7 +68,7 @@ public class DeclBlock extends CParseRule {
 
         cgc.printPushCodeGen("", "R4", "declBlock: 前のフレームポインタをスタックに保存");
         cgc.printInstCodeGen("", "MOV R6, R4", "declBlock: 現在のスタックポインタの位置をフレームポインタに設定");
-        cgc.printInstCodeGen("", "ADD #" + variableSize + ", R6", "declItem: 局所変数の領域を確保する");
+        cgc.printInstCodeGen("", "ADD #" + variableSize + ", R6", "declBlock: 局所変数の領域を確保する");
         
         if (declarationList != null) {
 			for (CParseRule item : declarationList) {
@@ -81,7 +81,7 @@ public class DeclBlock extends CParseRule {
 				item.codeGen(pcx);
 			}
 		}
-        cgc.printInstCodeGen("", "MOV R4, R6", "declItem: スタックポインタを戻す(局所変数のスコープを外す)");
+        cgc.printInstCodeGen("", "MOV R4, R6", "declBlock: スタックポインタを戻す(局所変数のスコープを外す)");
         cgc.printPopCodeGen("", "R4", "declBlock: 前のフレームポインタを復元");
 
         cgc.printCompleteComment(getBNF());

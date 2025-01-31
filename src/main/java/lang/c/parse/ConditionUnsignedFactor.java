@@ -40,7 +40,7 @@ public class ConditionUnsignedFactor extends CParseRule {
 					tk = ct.getNextToken(pcx); //正常終了
 				}else{
 					//pcx.fatalError(tk + "conditionUnsignedFactor: parse(): ]がありません");
-					pcx.warning(tk + "conditionUnsignedFactor: ]を補いました");
+					pcx.warning(tk + " conditionUnsignedFactor: ]を補いました");
 				}
 
 			} catch (Exception e) {

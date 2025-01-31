@@ -47,7 +47,7 @@ public class UnsignedFactor extends CParseRule {
 						tk = ct.getNextToken(pcx); //正常終了
 					}else{
 						//pcx.fatalError(tk + "unsignedFactor: parse(): )がありません");
-						pcx.warning(tk + "unsignedFactor: ) を補いました");
+						pcx.warning(tk + " unsignedFactor: ) を補いました");
 					}
 				}else{
 					//pcx.fatalError(tk + "unsignedFactor: parse(): (の後ろはexpressionです");

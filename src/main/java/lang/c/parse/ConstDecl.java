@@ -29,9 +29,9 @@ public class ConstDecl extends CParseRule {
 				tk = ct.getNextToken(pcx); // INTを読み飛ばす
 			}else{
 				if(ConstItem.isFirst(tk)){
-					pcx.warning(tk + "constDecl: INT を補いました"); //他の型を作るなら、型不明で回復エラーにする
+					pcx.warning(tk + " constDecl: INT を補いました"); //他の型を作るなら、型不明で回復エラーにする
 				}else{
-					pcx.recoverableError(tk + "constDecl: INTがありません");
+					pcx.recoverableError(tk + " constDecl: INTがありません");
 				}
 			}
 			

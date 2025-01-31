@@ -35,6 +35,7 @@ public class CSymbolTableEntry extends SymbolTableEntry {
 	public boolean isGlobal() { return isGlobal; }
 	public void setAddress(int addr) { address = addr; }
 	public void setIsGlobal(boolean isGlobal) { this.isGlobal = isGlobal; }
+	public void setIsDeclBlock(boolean isDeclBlock) { this.isDeclBlock = isDeclBlock; }
 	public int getAddress() { return address; }
 	public boolean isDeclBlock() { return isDeclBlock; }
 	public boolean verificateFunction(CSymbolTableEntry e) {
