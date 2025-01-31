@@ -14,7 +14,7 @@ public class Ident extends CParseRule{
     CToken ident;
 	private String identName, declBlockLabel;
 	CSymbolTableEntry entry;
-	boolean isDeclBlock = false;
+	boolean isFunction = false;
 	private int seqId;
 
 	public Ident(CParseContext pcx) {
@@ -45,9 +45,9 @@ public class Ident extends CParseRule{
 		}
 
 		if (entry != null) {
-			isDeclBlock = entry.isDeclBlock();
+			isFunction = entry.isFunction();
 		}
-		if (isDeclBlock) {
+		if (isFunction) {
 			seqId = pcx.getSeqId(identName);
 			declBlockLabel = identName + seqId;
 			pcx.getSymbolTable().registerLocal(declBlockLabel, entry); // 関数を局所変数として登録
@@ -63,10 +63,8 @@ public class Ident extends CParseRule{
 				return;
 			}
 
-			int setType = entry.GetCType().getType();
-			boolean isConstant = entry.isConstant();
-			this.setCType(CType.getCType(setType));
-			this.setConstant(isConstant);
+			this.setCType(CType.getCType(entry.getCType().getType()));
+			this.setConstant(entry.isConstant());
 		}
 	}
 

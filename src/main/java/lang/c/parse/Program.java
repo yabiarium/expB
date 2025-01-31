@@ -79,15 +79,12 @@ public class Program extends CParseRule {
 					item.codeGen(pcx);
 				}
 			}
-
 			cgc.printLabel("__START:", "Program: ここから開始");
 			cgc.printInstCodeGen("", "MOV #0x1000, R6", "Program: SP初期化");
-
 			for(CParseRule item: functionList){
 				// program コード本体
 				item.codeGen(pcx);
 			}
-			
 			// program 最後コード
 			cgc.printInstCodeGen("", "HLT\t", "Program:");
 			cgc.printInstCodeGen("", ".end\t", "Program:");

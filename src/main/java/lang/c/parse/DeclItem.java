@@ -9,6 +9,7 @@ public class DeclItem extends CParseRule {
 	String identName;
 	boolean isExistMult = false; // *があるか
 	boolean isArray = false; // 配列か
+	boolean isFunction = false;
 	boolean isGlobal;
 
 	public DeclItem(CParseContext pcx) {
@@ -56,6 +57,7 @@ public class DeclItem extends CParseRule {
 				}
 
 			}else if(tk.getType() == CToken.TK_LPAR){
+				isFunction = true;
 				tk = ct.getNextToken(pcx); // (を読み飛ばす
 
 				if(tk.getType() == CToken.TK_RPAR){
@@ -73,21 +75,24 @@ public class DeclItem extends CParseRule {
 		// 変数登録
 		CSymbolTableEntry entry;
 		final boolean isConst = false;
+		int declItemType;
 		if (isArray) {
 			if (isExistMult) {
-				entry = new CSymbolTableEntry(CType.getCType(CType.T_pint_array), size, isConst);
+				declItemType = CType.T_pint_array;
 			} else {
-				entry = new CSymbolTableEntry(CType.getCType(CType.T_int_array), size, isConst);
+				declItemType = CType.T_int_array;
 			}
 		} else {
 			size = 1;
 			if (isExistMult) {
-				entry = new CSymbolTableEntry(CType.getCType(CType.T_pint), size, isConst);
+				declItemType = CType.T_pint;
 			} else {
-				entry = new CSymbolTableEntry(CType.getCType(CType.T_int), size, isConst);
+				declItemType = CType.T_int;
 			}
 		}
+		entry = new CSymbolTableEntry(CType.getCType(declItemType), size, isConst, isFunction);
 
+		
 		isGlobal = pcx.getSymbolTable().isGlobalMode();
 		if (isGlobal) {
 			if ( !pcx.getSymbolTable().registerGlobal(identName, entry) ) {
