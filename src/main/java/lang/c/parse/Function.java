@@ -122,6 +122,24 @@ public class Function extends CParseRule {
     }
 
     public void codeGen(CParseContext pcx) throws FatalErrorException {
+        CodeGenCommon cgc = pcx.getCodeGenCommon();
+		cgc.printStartComment(getBNF(getId()));
 
+        cgc.printLabel(functionName+":", "Function: 関数ラベルを作成");
+        cgc.printPushCodeGen("", "R0", "Function: レジスタを退避させる");
+        cgc.printPushCodeGen("", "R1", "Function: レジスタを退避させる");
+        cgc.printPushCodeGen("", "R2", "Function: レジスタを退避させる");
+        cgc.printPushCodeGen("", "R3", "Function: レジスタを退避させる");
+        if(declBlock != null){
+            declBlock.codeGen(pcx);
+        }
+        cgc.printLabel(returnLabel+":", "Function: 関数の終了処理");
+        cgc.printPopCodeGen("", "R3", "Function: レジスタを復帰させる");
+        cgc.printPopCodeGen("", "R2", "Function: レジスタを復帰させる");
+        cgc.printPopCodeGen("", "R1", "Function: レジスタを復帰させる");
+        cgc.printInstCodeGen("", "SUB #1, R6", "Function: R0には返り値が入っているので書き換えない(退避させた分が1つ残っているのでSPを1戻す)");
+        cgc.printInstCodeGen("", "RET", "Function: 呼び出し元へ");
+
+		cgc.printCompleteComment(getBNF(getId()));
     }
 }

@@ -6,9 +6,11 @@ import lang.c.*;
 public class StatementReturn extends CParseRule {
 
     CParseRule expression;
+    String returnLabel;
 
-    public StatementReturn(CParseContext pcx) {
+    public StatementReturn(CParseContext pcx, String returnLabel) {
         super("StatementReturn");
+        this.returnLabel = returnLabel;
 		setBNF("statementReturn ::= RETURN [ expression ] SEMI"); //CV12~
     }
 
@@ -46,5 +48,15 @@ public class StatementReturn extends CParseRule {
     }
 
     public void codeGen(CParseContext pcx) throws FatalErrorException {
+        CodeGenCommon cgc = pcx.getCodeGenCommon();
+		cgc.printStartComment(getBNF(getId()));
+
+        if(expression != null){
+            expression.codeGen(pcx);
+            cgc.printPopCodeGen("", "R0", "StatementReturn: 返り値をスタックから取り出す");
+        }
+        cgc.printInstCodeGen("", "JMP " + returnLabel, "StatementReturn: 関数の終了処理にジャンプする");
+
+		cgc.printCompleteComment(getBNF(getId()));
     }
 }

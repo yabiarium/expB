@@ -14,7 +14,7 @@ public class DeclBlock extends CParseRule {
     List<StatementInfo> statementList = new ArrayList<>(); //CV12~
     int variableSize = 0;
     boolean isExistReturn = false;
-    String functionName;
+    String functionName, returnLabel;
     CToken functionToken;
 
     private class StatementInfo {
@@ -34,6 +34,7 @@ public class DeclBlock extends CParseRule {
         super("DeclBlock");
         this.functionName = functionName;
         this.functionToken = functionToken;
+        this.returnLabel = "RET_" + functionName + pcx.getSeqId(functionName);
         setBNF("declBlock ::= LCUR { declaration } { statement } RCUR"); //CV11~
     }
 
@@ -60,7 +61,7 @@ public class DeclBlock extends CParseRule {
                 isReturn = true;
                 isExistReturn = true;
             }
-            statement = new Statement(pcx);
+            statement = new Statement(pcx, returnLabel);
             statement.parse(pcx);
             statementList.add(new StatementInfo(statement, isReturn, tk));
 			tk = ct.getCurrentToken(pcx);
