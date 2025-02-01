@@ -12,7 +12,7 @@ public class UnsignedFactor extends CParseRule {
 		super("UnsignedFactor");
 		//setBNF("unsignedFactor ::= factorAmp | number | LPAR expression RPAR"); //CV03
 		//setBNF("unsignedFactor ::= factorAmp | number | LPAR expression RPAR | addressToValue"); //CV04~
-		setBNF("unsignedFactor ::= factorAmp | number | LPAR expression RPAR | addressToValue | CALL ident LPAR RPA "); //CV12~
+		setBNF("unsignedFactor ::= factorAmp | number | LPAR expression RPAR | addressToValue"); //CV12~
 	}
 
 	public static boolean isFirst(CToken tk) {
@@ -22,8 +22,6 @@ public class UnsignedFactor extends CParseRule {
 			return true;
 		}else if(tk.getType() == CToken.TK_NUM){ // 数字
 			return Number.isFirst(tk);
-		}else if(tk.getType() == CToken.TK_CALL){ //call
-			return true;
 		}else{ //上記以外
 			return AddressToValue.isFirst(tk);
 		}
@@ -59,27 +57,6 @@ public class UnsignedFactor extends CParseRule {
 			}else if(Number.isFirst(tk)){
 				number = new Number(pcx);
 				number.parse(pcx);
-			}else if(tk.getType() == CToken.TK_CALL){
-				tk = ct.getNextToken(pcx); //callを読み飛ばす
-				if(Ident.isFirst(tk)){
-					ident = new Ident(pcx);
-					ident.parse(pcx);
-
-					tk = ct.getCurrentToken(pcx);
-					if(tk.getType() == CToken.TK_LPAR){
-						tk = ct.getNextToken(pcx); // ( を読み飛ばす
-					}else{
-						pcx.warning(tk + " unsignedFactor: ( を補いました");
-					}
-					
-					if(tk.getType() == CToken.TK_RPAR){
-						tk = ct.getNextToken(pcx); // )を読み飛ばす, 正常終了
-					}else{
-						pcx.warning(tk + " unsignedFactor: ) を補いました");
-					}
-				}else{
-					pcx.recoverableError(tk + " unsignedFactor: callの後ろはidentです");
-				}
 			}else{
 				addressToValue = new AddressToValue(pcx);
 				addressToValue.parse(pcx);
@@ -103,14 +80,6 @@ public class UnsignedFactor extends CParseRule {
 			expression.semanticCheck(pcx);
 			this.setCType(expression.getCType());
 			this.setConstant(expression.isConstant());
-		}else if(ident != null){
-			ident.semanticCheck(pcx);
-			if(ident.getCType().getType() == 6){
-				this.setCType(CType.getCType(CType.T_err)); //式中に出てくるvoid型はerr型に変換する
-			}else{
-				this.setCType(ident.getCType());
-			}
-			this.setConstant(ident.isConstant());
 		}else{
 			addressToValue.semanticCheck(pcx);
 			this.setCType(addressToValue.getCType());
