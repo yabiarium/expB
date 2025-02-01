@@ -29,7 +29,6 @@ public class CSymbolTable {
 
 	public boolean registerLocal(String name, CSymbolTableEntry e) {
 		e.setIsGlobal(false);
-		e.setisFunction(true);
 		if (searchLocal(name) != null) {
 			return false;
 		}
