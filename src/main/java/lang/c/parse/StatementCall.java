@@ -4,8 +4,11 @@ import lang.*;
 import lang.c.*;
 
 public class StatementCall extends CParseRule {
+    //返り値を取得しないcall
 
     CParseRule ident;
+    String functionName;
+    CToken sem;
 
     public StatementCall(CParseContext pcx) {
         super("StatementCall");
@@ -22,6 +25,8 @@ public class StatementCall extends CParseRule {
 
         try {
             if(Ident.isFirst(tk)) {
+                functionName = tk.getText();
+                sem = tk;
                 ident = new Ident(pcx);
                 ident.parse(pcx);
                 tk = ct.getCurrentToken(pcx); // identの後の(を読む
@@ -55,8 +60,26 @@ public class StatementCall extends CParseRule {
     }
 
     public void semanticCheck(CParseContext pcx) throws FatalErrorException {
+        try {
+            if(ident != null){
+                CSymbolTableEntry function = pcx.getSymbolTable().searchGlobal(functionName);
+                if(function != null && !function.isFunction()){
+                    pcx.recoverableError(sem + " statementCall: この変数は関数ではありません");
+                }
+            }
+        } catch (RecoverableErrorException e) {
+        }
+        
     }
 
     public void codeGen(CParseContext pcx) throws FatalErrorException {
+        CodeGenCommon cgc = pcx.getCodeGenCommon();
+		cgc.printStartComment(getBNF(getId()));
+
+        if(ident != null){
+            ident.codeGen(pcx);
+        }
+
+		cgc.printCompleteComment(getBNF(getId()));
     }
 }

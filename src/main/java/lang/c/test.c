@@ -1,5 +1,10 @@
-func {}
-void a(){
-    return ;
+void a();
+int b();
+
+func void a(){
+    output 2+b()+c();
 }
-call a();
+
+func int b(){
+    return 3;
+}

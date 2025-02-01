@@ -57,10 +57,10 @@ public class Variable extends CParseRule{
 			//identが配列→[]がない
 			//identが↑以外→(),[]がある
 			
-			CSymbolTableEntry function = pcx.getSymbolTable().searchGlobal(identName);
+			CSymbolTableEntry functionEntry = pcx.getSymbolTable().searchGlobal(identName);
 			boolean isFunction = false;
-			if(function != null){
-				isFunction = function.isFunction();
+			if(functionEntry != null){
+				isFunction = functionEntry.isFunction();
 			}
 			
 			//identが↑以外→(),[]がある
