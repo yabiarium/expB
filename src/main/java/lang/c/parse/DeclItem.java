@@ -114,7 +114,9 @@ public class DeclItem extends CParseRule {
 
 		cgc.printStartComment(getBNF());
 
-		if(isGlobal){ //ローカル変数の時は代入時にスタックに積むのでこのコードは生成しない
+		//ローカル変数の時は代入時にスタックに積むのでこのコードは生成しない
+		//関数も生成しない
+		if(isGlobal && !isFunction){
 			if (isArray) {
 				cgc.printLabel(identName + ":	.blkw " + size, "declItem: 配列は要素数分確保");
 			}else{
