@@ -435,9 +435,8 @@ o function        ::= FUNC ( INT [ MULT ] | VOID ) IDENT LPAR RPAR declBlock
 x statement       ::= （長いので省略） | statementCall | statementReturn //変更
 o statementCall   ::= CALL ident LPAR RPAR SEMI
 o statementReturn ::= RETURN [ expression ] SEMI
-x variable        ::= ident [ array | call ]　 //変更
+o variable        ::= ident [ array | call ]　 //変更
 o call            ::= LPAR RPAR
-o unsignedFactor ::= factorAmp | number | LPAR expression RPAR | addressToValue | CALL ident LPAR RPA //変更
 ```
 
 ### function:

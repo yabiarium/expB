@@ -3,28 +3,29 @@ miniCV00 for expB on Faculty of Informatics, Shizuoka University.
 
 ## BNF
 ```
+# ~CV07
 program         ::= { statement } EOF  
 statement       ::= statementAssign | statementInput | statementOutput | statementIf | statementWhile | statementBlock  
-statementAssign ::= primary ASSIGN expression SEMI  
+statementAssign ::= primary ASSIGN expression SEMI //左辺:primary=識別子(格納番地), 右辺:expression=値  
 statementInput  ::= INPUT primary SEMI  
 statementOutput ::= OUTPUT expression SEMI  
-expression      ::= term { expressionAdd | expressionSub }  
+expression      ::= term { expressionAdd | expressionSub } //expression類の節点は値同士の演算を担う  
 expressionAdd   ::= PLUS term  
 expressionSub   ::= MINUS term  
 term            ::= factor { termMult | termDiv }  
 termMult        ::= MULT factor  
 termDiv         ::= DIV factor  
-factor          ::= plusFactor | minusFactor | unsignedFactor  
+factor          ::= plusFactor | minusFactor | unsignedFactor //factor類の節点は式の要素(符号+値)  
 plusFactor      ::= PLUS unsignedFactor  
 minusFactor     ::= MINUS unsignedFactor  
-unsignedFactor  ::= factorAmp | number | LPAR expression RPAR | addressToValue  
+unsignedFactor  ::= factorAmp | number | LPAR expression RPAR | addressToValue //CV04: 値を表す節点　　
 factorAmp       ::= AMP ( number | primary )  
-primary         ::= primaryMult | variable  
+primary         ::= primaryMult | variable  //識別子に関する節点  
 primaryMult     ::= MULT variable  
 variable        ::= ident [ array ]  
 array           ::= LBRA expression RBRA  
 ident           ::= IDENT  
-addressToValue  ::= primary  
+addressToValue  ::= primary //識別子→値の変換  
 number          ::= NUM  
 condition       ::= TRUE | FALSE | expression ( conditionLT | conditionLE | conditionGT | conditionGE | conditionEQ | conditionNE )  
 conditionLT     ::= LT expression  
@@ -53,7 +54,7 @@ program         ::= { declaration } { statement } EOF //変更
 declaration     ::= intDecl | constDecl
 intDecl         ::= INT declItem { COMMA declItem } SEMI
 constDecl       ::= CONST INT constItem { COMMA constItem } SEMI
-constItem       ::= [ MULT ] IDENT ASSIGN [ AMP ] NUM
+constItem       ::= [ MULT ] IDENT ASSIGN [ AMP ] NUM //初期値はNUMしか受け付けない
 declItem        ::= [ MULT ] IDENT [ LBRA NUM RBRA ]
 
 # CV11 {と}で囲まれた範囲の中でのみ有効な変数群を用意する
@@ -71,7 +72,6 @@ statementCall   ::= CALL ident LPAR RPAR SEMI
 statementReturn ::= RETURN [ expression ] SEMI
 variable        ::= ident [ array | call ]　 //変更
 call            ::= LPAR RPAR
-unsignedFactor  ::= factorAmp | number | LPAR expression RPAR | addressToValue | CALL ident LPAR RPAR //変更
 ```
 
 <details>
@@ -91,11 +91,12 @@ unsignedFactor  ::= number | LPAR expression RPAR
 ### CV09~のエラー仕様書
 [ERROR.md](./ERROR.md)
 
-</details>
+</details>  
 
+## メモ
+ > [!NOTE]
+ > プログラムの任意の行にブレークポイントを設置し、デバッグ実行することでプログラムの処理を一行ずつ追うことができる。
 
-
-## memo
 term ::= factor { (PLUS | MINUS) factor }  
 小文字の名前は「非終端記号」Non Terminal を，大文字の名前は「終端記号」Terminal を表す
 
@@ -108,6 +109,11 @@ term ::= factor { (PLUS | MINUS) factor }
 　4: semanticCheck意味解析  
 　5: CodeGenコード生成（parse/Program.javaにある）  
 
+
+<details>
+<summary>実験書のメモ</summary>
+
+## メモ
 テキスト p9  
 * 字句解析部は、「単なる文字の列」である入力ファイルを読み、意味のあるまとまりごとに区切って「字句（トークン）の列」へと作り変える。  
 * 構文解析部は、字句列を読み、それらが与えられた構文定義（文法規則）にしたがって並んでいるかどうかを確認し、構文木を作る。  
@@ -167,6 +173,6 @@ minicv00/test/java/lang/c/testhelper/CodeGenTestHelper.java で宣言されて�
 をコピーするのは OK とする．チェック時に，明らかに miniCompiler の出力結果をただ貼り付けただけ，なこと
 が判明した場合チェックをやり直す指示を出すので注意すること．
 
-
+</details>
 
 
