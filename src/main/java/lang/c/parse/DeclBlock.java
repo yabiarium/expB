@@ -34,7 +34,7 @@ public class DeclBlock extends CParseRule {
         super("DeclBlock");
         this.functionName = functionName;
         this.functionToken = functionToken;
-        this.returnLabel = "RET_" + functionName + pcx.getSeqId(functionName);
+        this.returnLabel = "RET_" + functionName;
         setBNF("declBlock ::= LCUR { declaration } { statement } RCUR"); //CV11~
     }
 
@@ -61,7 +61,7 @@ public class DeclBlock extends CParseRule {
                 isReturn = true;
                 isExistReturn = true;
             }
-            statement = new Statement(pcx, returnLabel);
+            statement = new Statement(pcx, functionName);
             statement.parse(pcx);
             statementList.add(new StatementInfo(statement, isReturn, tk));
 			tk = ct.getCurrentToken(pcx);
@@ -143,9 +143,7 @@ public class DeclBlock extends CParseRule {
                 statementInfo.statement.codeGen(pcx);
             }
 		}
-        cgc.printInstCodeGen("", "MOV R4, R6", "declBlock: スタックポインタを戻す(局所変数のスコープを外す)");
-        cgc.printPopCodeGen("", "R4", "declBlock: 前のフレームポインタを復元");
-
+        
         cgc.printCompleteComment(getBNF());
     }
 

@@ -44,7 +44,7 @@ public class Function extends CParseRule {
             if(tk.getType() == CToken.TK_IDENT) {
                 functionName = tk.getText();
                 registerFunction(pcx, tk);
-                returnLabel = "RET_" + functionName + pcx.getSeqId(functionName);
+                returnLabel = "RET_" + functionName;
                 tk = ct.getNextToken(pcx); // IDENTを読み飛ばす
             }else {
                 pcx.recoverableError(tk + " function: 識別子(IDENT)がありません");
@@ -126,19 +126,14 @@ public class Function extends CParseRule {
 		cgc.printStartComment(getBNF(getId()));
 
         cgc.printLabel(functionName+":", "Function: 関数ラベルを作成");
-        cgc.printPushCodeGen("", "R0", "Function: レジスタを退避させる");
-        cgc.printPushCodeGen("", "R1", "Function: レジスタを退避させる");
-        cgc.printPushCodeGen("", "R2", "Function: レジスタを退避させる");
-        cgc.printPushCodeGen("", "R3", "Function: レジスタを退避させる");
+        //局所変数領域の確保コードはdeclBlockで生成する（LocalSymbolTableの作成と削除をで行っているdeclBlockでしか領域をいくつ確保すればいいのか算出できないため。）
         if(declBlock != null){
             declBlock.codeGen(pcx);
         }
         cgc.printLabel(returnLabel+":", "Function: 関数の終了処理");
-        cgc.printPopCodeGen("", "R3", "Function: レジスタを復帰させる");
-        cgc.printPopCodeGen("", "R2", "Function: レジスタを復帰させる");
-        cgc.printPopCodeGen("", "R1", "Function: レジスタを復帰させる");
-        cgc.printInstCodeGen("", "SUB #1, R6", "Function: R0には返り値が入っているので書き換えない(退避させた分が1つ残っているのでSPを1戻す)");
-        cgc.printInstCodeGen("", "RET", "Function: 呼び出し元へ");
+        cgc.printInstCodeGen("", "MOV R4, R6", "Function: スタックポインタを戻す(局所変数のスコープを外す)");
+        cgc.printPopCodeGen("", "R4", "Function: 前のフレームポインタを復元");
+        cgc.printInstCodeGen("", "RET", "Function: 呼び出し元へ戻る");
 
 		cgc.printCompleteComment(getBNF(getId()));
     }

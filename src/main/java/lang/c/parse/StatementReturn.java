@@ -8,9 +8,9 @@ public class StatementReturn extends CParseRule {
     CParseRule expression;
     String returnLabel;
 
-    public StatementReturn(CParseContext pcx, String returnLabel) {
+    public StatementReturn(CParseContext pcx, String functionName) {
         super("StatementReturn");
-        this.returnLabel = returnLabel;
+        this.returnLabel = "RET_" + functionName;
 		setBNF("statementReturn ::= RETURN [ expression ] SEMI"); //CV12~
     }
 

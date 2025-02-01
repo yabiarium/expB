@@ -7,7 +7,7 @@ public class Statement extends CParseRule {
 	// 新しく非終端記号に対応するクラスを作成する際は，必ず拡張BNF をコメントでつけること
 	// また，更新する際は，拡張BNFの「履歴」を残すこと（例えば，実験３まで：．．．． と 実験４から：．．． のように）
 	CParseRule statementXX;
-	String returnLabel;
+	String functionName;
 
 	public Statement(CParseContext pcx) {
 		super("Statement");
@@ -15,9 +15,9 @@ public class Statement extends CParseRule {
 		//setBNF("statement ::= statementAssign | statementInput | statementOutput | statementIf | statementWhile | statementBlock"); //CV07~
 		setBNF("statement ::= statementAssign | statementInput | statementOutput | statementIf | statementWhile | statementBlock | statementCall | statementReturn"); //CV12~
 	}
-	public Statement(CParseContext pcx, String returnLabel) {
+	public Statement(CParseContext pcx, String functionName) { //CV12~
 		super("Statement");
-		this.returnLabel = returnLabel;
+		this.functionName = functionName;
 		setBNF("statement ::= statementAssign | statementInput | statementOutput | statementIf | statementWhile | statementBlock | statementCall | statementReturn"); //CV12~
 	}
 
@@ -56,7 +56,7 @@ public class Statement extends CParseRule {
 			statementXX = new StatementCall(pcx);
 		
 		}else if(StatementReturn.isFirst(tk)){ //return
-			statementXX = new StatementReturn(pcx, returnLabel);
+			statementXX = new StatementReturn(pcx, functionName);
 			
 		}else{
 			statementXX = new StatementAssign(pcx);
