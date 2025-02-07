@@ -7,7 +7,8 @@ public class VoidDecl extends CParseRule {
 
     public VoidDecl(CParseContext pcx) {
         super("VoidDecl");
-		setBNF("voidDecl ::= VOID IDENT LPAR RPAR { COMMA IDENT LPAR RPAR } SEMI"); //CV12~
+		//setBNF("voidDecl ::= VOID IDENT LPAR RPAR { COMMA IDENT LPAR RPAR } SEMI"); //CV12~
+        setBNF("voidDecl ::= VOID IDENT LPAR [ typelist ] RPAR { COMMA IDENT LPAR [ typeList ] RPAR } SEMI"); //CV13~
     }
 
     public static boolean isFirst(CToken tk) {

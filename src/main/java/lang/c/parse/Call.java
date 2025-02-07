@@ -7,7 +7,8 @@ public class Call extends CParseRule {
 
     public Call(CParseContext pcx) {
         super("Call");
-		setBNF("call ::= LPAR RPAR"); //CV12~
+		//setBNF("call ::= LPAR RPAR"); //CV12~
+        setBNF("call ::= LPAR [ expressoin { COMMA expression } ] RPAR"); //CV13~
     }
 
     public static boolean isFirst(CToken tk) {

@@ -15,7 +15,8 @@ public class Function extends CParseRule {
 
     public Function(CParseContext pcx) {
         super("Function");
-		setBNF("function ::= FUNC ( INT [ MULT ] | VOID ) IDENT LPAR RPAR declBlock"); //CV12~
+		//setBNF("function ::= FUNC ( INT [ MULT ] | VOID ) IDENT LPAR RPAR declBlock"); //CV12~
+        setBNF("function ::= FUNC ( INT [ MULT ] | VOID ) IDENT LPAR [ argList ] RPAR declblock"); //CV13~
     }
 
     public static boolean isFirst(CToken tk) {

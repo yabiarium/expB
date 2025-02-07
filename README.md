@@ -75,7 +75,7 @@ call            ::= LPAR RPAR
 
 # CV13
 function        ::= FUNC ( INT [ MULT ] | VOID ) IDENT LPAR [ argList ] RPAR declblock //変更
-arglist         ::= argItem { COMMA argItem }
+argList         ::= argItem { COMMA argItem }
 argItem         ::= INT [ MULT ] IDENT [ LBRA RBRA ]
 statementCall   ::= CALL ident LPAR [ expression { COMMA expression } ] RPAR SEMI //変更
 call            ::= LPAR [ expressoin { COMMA expression } ] RPAR //変更

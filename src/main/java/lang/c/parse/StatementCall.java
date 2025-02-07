@@ -12,7 +12,8 @@ public class StatementCall extends CParseRule {
 
     public StatementCall(CParseContext pcx) {
         super("StatementCall");
-		setBNF("statementCall ::= CALL ident LPAR RPAR SEMI"); //CV12~
+		//setBNF("statementCall ::= CALL ident LPAR RPAR SEMI"); //CV12~
+        setBNF("statementCall ::= CALL ident LPAR [ expression { COMMA expression } ] RPAR SEMI"); //CV13~
     }
 
     public static boolean isFirst(CToken tk) {
