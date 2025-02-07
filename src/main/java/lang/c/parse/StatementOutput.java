@@ -6,6 +6,7 @@ import lang.c.CParseContext;
 import lang.c.CParseRule;
 import lang.c.CToken;
 import lang.c.CTokenizer;
+import lang.c.CType;
 //import lang.c.CType;
 import lang.c.CodeGenCommon;
 
@@ -53,10 +54,11 @@ public class StatementOutput extends CParseRule{
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
-		// if (expression != null) {
-		// 	this.setCType(CType.getCType(expression.getCType().getType()));
-		// 	this.setConstant(expression.isConstant());
-		// }
+		if (expression != null) {
+			expression.semanticCheck(pcx);
+			this.setCType(CType.getCType(expression.getCType().getType()));
+			this.setConstant(expression.isConstant());
+		}
 	}
 
 	public void codeGen(CParseContext pcx) throws FatalErrorException {

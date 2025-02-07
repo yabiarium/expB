@@ -1,5 +1,6 @@
-# エラー仕様書（CV09）
+# エラー仕様書（CV09~）
 
+## CV09までの節点
 <details>
 <summary>エラー処理があるBNF一覧</summary>
 
@@ -90,145 +91,146 @@ o conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA //条件
  > </details>
 
 ### program:
- - [x] 💫 parse(): プログラムの最後にゴミがあります  
+ - [ ] 💫 parse(): プログラムの最後にゴミがあります  
         → 読み飛ばす  
         ` i_a = 0 ;; ` **←test.cに貼り付けてテストする**
 
 ### statementAssign:
- - [x] 🍀 parse(): =がありません  
+ - [ ] 🍀 parse(): =がありません  
         → 今のトークンがexpressionなら=を補って💫にする  
         ` i_a  0; `  
         ` i_a ; `  
- - [x] 🍀 parse(): =の後ろはexpressionです  
+ - [ ] 🍀 parse(): =の後ろはexpressionです  
         → 次の;まで飛ばす（expressionが不定）  
         ` i_a = ; `  
- - [x] 💫 parse(): ;がありません  
+ - [ ] 💫 parse(): ;がありません  
         → expressionの解析後なので;を補う（「i_a=1 2;」のようにexpressionの途中であろう位置で抜けてしまう場合は1で解析が止まる）  
         ` i_a = 0 `  
         ` i_a = 7  1; //7までで止まる `  
- - [x] 🍀 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が異なります  
+ - [ ] 🍀 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が異なります  
         → 書き換えてはいけないアドレスに書き込むようになっているといけないのでコード生成しない  
         ` i_a = i_a + ip_a; `
- - [x] 🍀 semanticCheck(): 定数には代入できません  
+ - [ ] 🍀 semanticCheck(): 定数には代入できません  
         ` c_a = i_a; `
 
 ### statementInput:
- - [x] 🍀 parse(): inputの後ろはprimaryです  
+ - [ ] 🍀 parse(): inputの後ろはprimaryです  
         → 次の;まで飛ばす（primaryが不定）  
         ` input ; `  
- - [x] 💫 parse(): ;がありません  
+ - [ ] 💫 parse(): ;がありません  
         → primaryの解析後なので、;を補う  
         ` input i_a `  
- - [x] 🍀 semanticCheck(): 定数には代入できません  
+ - [ ] 🍀 semanticCheck(): 定数には代入できません  
         ` input c_a; `
 
 ### statementOutput:
- - [x] 🍀 parse(): outputの後ろはexpressionです  
+ - [ ] 🍀 parse(): outputの後ろはexpressionです  
         → 次の;まで飛ばす  
         ` output ; `  
- - [x] 💫 parse(): ;がありません  
+ - [ ] 💫 parse(): ;がありません  
         → primaryの解析後なので、;を補う  
         ` output c_a `  
 
 ### expressionAdd:
- - [x] 🍀 parse(): +の後ろはtermです  
+ - [ ] 🍀 parse(): +の後ろはtermです  
         → 回復エラーだけ出して処理はstatementAssign/Input/Output/Blockに任せる  
         ` i_a = 7 + ; ` 
- - [x] 🍀 semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]は足せません  
+ - [ ] 🍀 semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]は足せません  
         → ~~演算は結果をスタックに積むだけでメモリの変更ないのでコード生成してもよさそう~~  
         → 実行できてしまって想定通りの動作をしなかった場合の<ins>**デバッグが面倒になりそう**</ins>なのでコンパイルしない（詳細は冒頭のNoteに記述）  
         ` ip_a = ip_a + ip_a; `
 
 ### expressionSub:
- - [x] 🍀 parse(): -の後ろはtermです  
+ - [ ] 🍀 parse(): -の後ろはtermです  
         → 回復エラーだけ出して処理はstatementAssign/Input/Output/Blockに任せる  
         ` i_a = 7 - ; `
- - [x] 🍀 semanticCheck(): 左辺の型[" + lts + "]から右辺の型[" + rts + "]は引けません   
+ - [ ] 🍀 semanticCheck(): 左辺の型[" + lts + "]から右辺の型[" + rts + "]は引けません   
         → 実行できてしまって想定通りの動作をしなかった場合のデバッグが面倒になりそうなのでコンパイルしない  
         ` ip_a = i_a - ip_a; `
 
 ### termMult:
- - [x] 🍀 parse(): *の後ろはfactorです  
+ - [ ] 🍀 parse(): *の後ろはfactorです  
         → 回復エラーだけ出して処理はstatementAssign/Input/Output/Blockに任せる  
         ` i_a = 7 * ; `
- - [x] 🍀 semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]は掛けられません  
+ - [ ] 🍀 semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]は掛けられません  
         → 実行できてしまって想定通りの動作をしなかった場合のデバッグが面倒になりそうなのでコンパイルしない  
         ` ip_a = i_a * ip_a; `
 
 ### termDiv:
- - [x] 🍀 parse(): /の後ろはfactorです  
+ - [ ] 🍀 parse(): /の後ろはfactorです  
         → 回復エラーだけ出して処理はstatementAssign/Input/Output/Blockに任せる  
-        ` i_a = 7 / ; ` ~~// 単体/の後ろが数式(+,-,(,数字)以外の場合は字句解析で/=ILLとなる~~  
+        ` i_a = 7 / ; `    
+        ~~// 単体/の後ろが数式(+,-,(,数字)以外の場合は字句解析で/=ILLとなる~~  
         ~~↑ なのでこのエラーが出ることはない~~  
         CTokenizerを"/"の後に変数(a~z,A~Z)を許可するよう変更。
- - [x] 🍀 semanticCheck(): 左辺の型[" + lts + "]は右辺の型[" + rts + "]で割れません  
+ - [ ] 🍀 semanticCheck(): 左辺の型[" + lts + "]は右辺の型[" + rts + "]で割れません  
         → 実行できてしまって想定通りの動作をしなかった場合のデバッグが面倒になりそうなのでコンパイルしない  
         ` i_a = ip_a / i_a; `
 
 ### plusFactor:
- - [x] 🍀 parse(): +の後ろはunsignedFactorです  
+ - [ ] 🍀 parse(): +の後ろはunsignedFactorです  
         → 回復エラーだけ出して処理はstatementAssign/Input/Output/Blockに任せる  
         ` i_a = 7 + +; `
- - [x] 🍀 semanticCheck(): +の後ろはT_intです[" + rts + "]  
+ - [ ] 🍀 semanticCheck(): +の後ろはT_intです[" + rts + "]  
         → 想定以外の型がくると生成コードがめちゃくちゃになりそう  
         ` ip_a = i_a + +ip_a; `
 
 ### minusFactor:
- - [x] 🍀 parse(): -の後ろはunsignedFactorです  
+ - [ ] 🍀 parse(): -の後ろはunsignedFactorです  
         → 回復エラーだけ出して処理はstatementAssign/Input/Output/Blockに任せる  
         ` i_a = 7 + -; `
- - [x] 🍀 semanticCheck(): -の後ろはT_intです[" + rts + "]  
+ - [ ] 🍀 semanticCheck(): -の後ろはT_intです[" + rts + "]  
         → 想定以外の型がくると生成コードがめちゃくちゃになりそう  
         ` ip_a = i_a + -ip_a; `
 
 ### unsignedFactor:
- - [x] 💫 parse(): )がありません  
+ - [ ] 💫 parse(): )がありません  
         → expressionの解析後なので)を補う。（「(3+2 4)だと、2の後に)を補うことになる。4)はprogramのisFirst()でエラーになる」）  
         ↑ isFirst()でエラーになる場合ってコンパイルの経過どうなるの？  
         `i_a = (7 + 0 ; `
- - [x] 🍀 parse(): (の後ろはexpressionです  
+ - [ ] 🍀 parse(): (の後ろはexpressionです  
         → 回復エラーだけ出して処理はstatementAssign/Input/Output/Blockに任せる  
         ` i_a = ( ; `
 
 ### factorAmp:
- - [x] 🍀 parse(): &の後ろに*は置けません  
+ - [ ] 🍀 parse(): &の後ろに*は置けません  
          → 回復エラーだけ出して処理はstatementAssign/Input/Output/Blockに任せる  
          ` i_a = &* ; `
- - [x] 🍀 parse(): &の後ろはnumberまたはprimaryです  
+ - [ ] 🍀 parse(): &の後ろはnumberまたはprimaryです  
          → 回復エラーだけ出して処理はstatementAssign/Input/Output/Blockに任せる  
          ` i_a = &[] ; `
- - [x] 🍀 semanticCheck(): &の後ろはT_intです["+ts+"]  
+ - [ ] 🍀 semanticCheck(): &の後ろはT_intです["+ts+"]  
         → 想定以外の型がくると生成コードがめちゃくちゃになりそう  
         ` ip_a = i_a + &ip_a; `
 
 ### primaryMult:
- - [x] 🍀 parse(): *の後ろはvariableです  
+ - [ ] 🍀 parse(): *の後ろはvariableです  
         → ~~]まで飛ばす。なければ次の;まで飛ばす~~  
         ~~（*が使われるのはAddressToValueか代入先の変数の前のどちらか。前者なら後ろに;があるはず、後者でも;まで行って一行まるっと飛ばすか、配列に使われていたなら]で止められる）~~  
         → 回復エラーだけ出して処理はstatementAssign/Input/Output/Blockに任せる  
         ` i_a = * ; `
- - [x] 🍀 semanticCheck(): \*の後ろは[int*]です  
+ - [ ] 🍀 semanticCheck(): \*の後ろは[int*]です  
         → 想定以外の型がくると生成コードがめちゃくちゃになりそう  
         ` input *i_a; `
 
 ### variable:
- - [x] 🍀 semanticCheck(): 配列変数は T_int_array か T_pint_array です  
+ - [ ] 🍀 semanticCheck(): 配列変数は T_int_array か T_pint_array です  
         → 想定以外の型がくると生成コードがめちゃくちゃになりそう  
         ` i_a[0] = 0; `
- - [x] 🍀 semanticCheck(): 配列型の後ろに[]がありません  
+ - [ ] 🍀 semanticCheck(): 配列型の後ろに[]がありません  
         ` ia_a = 0; `
 
 ### array: 
- - [x] 💫 parse(): ]がありません  
+ - [ ] 💫 parse(): ]がありません  
         → expression解析後のエラーなので、expressinはそこで終了とみなして]を補う  
         ` ia_a[0 = 0; `
- - [x] 🍀 parse(): [の後ろはexpressionです  
+ - [ ] 🍀 parse(): [の後ろはexpressionです  
         → expression内でのエラー。expressionが不明となる。]か;まで飛ばす  
           （]はarray自身の範囲内の終了を示す。;は外側の（例えばStatementAssign）の終わりを表す。そこも飛んだら次の行の;を読む。「if(){ i_a[0 = 1 } i_a=0; 」の文だと、次の;まで飛ぶのでifの}を飛ばしてしまうが、if側でどうにかする。間違いまみれならどうしようもないのでまともなコンパイルエラーは諦める）  
         ` ia_a[] = 0; `
 
 ### ident:
- - [x] 🍀 semanticCheck(): 変数名規則に合っていません  
+ - [ ] 🍀 semanticCheck(): 変数名規則に合っていません  
        → ~~意味解析でのエラー。変数の型が不明だと以降の意味解析に支障が出る。~~  
          ~~一時的にint型として、以降で出る意味解析でのエラーは構文木の上の階層の意味解析に任せる~~  
         → 実行できてしまって想定通りの動作をしなかった場合のデバッグが面倒になりそうなのでコンパイルしない  
@@ -236,118 +238,118 @@ o conditionUnsignedFactor ::= condition | LBRA conditionExpression RBRA //条件
         ` ib_ = 0; `
 
 ### condition:
- - [x] 🍀 parse(): expressionの後ろにはconditionXXが必要です  
+ - [ ] 🍀 parse(): expressionの後ろにはconditionXXが必要です  
         → ~~)まで飛ばす→{からstatementBlock~~  
         → ) ; まで飛ばす処理はcondithionBlockに継ぐ  
         ` if(i_a )i_a=0; `
 
 ### conditionLT:
- - [x] 🍀 parse(): <の後ろはexpressionです  
+ - [ ] 🍀 parse(): <の後ろはexpressionです  
         → ~~)まで飛ばす→{からstatementBlock（他のconditionXXも同様）~~   
         → conditionに引き継ぐために、conditionXX内では回復エラーを出すだけで何もしない  
         ` if(i_a < )i_a=0; `
- - [x] 🍀 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません  
+ - [ ] 🍀 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません  
         ` if(i_a < ip_a){} `
 
 ### conditionLE:
- - [x] 🍀 parse(): <=の後ろはexpressionです  
+ - [ ] 🍀 parse(): <=の後ろはexpressionです  
         ` if(i_a <= )i_a=0; `
- - [x] 🍀 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません  
+ - [ ] 🍀 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません  
         ` if(i_a <= ip_a){} `
 
 ### conditionGT:
- - [x] 🍀 parse(): >の後ろはexpressionです  
+ - [ ] 🍀 parse(): >の後ろはexpressionです  
         ` if(i_a > )i_a=0; `
- - [x] 🍀 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません  
+ - [ ] 🍀 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません  
         ` if(i_a > ip_a){} `
  
 ### conditionGE:
- - [x] 🍀 parse(): >=の後ろはexpressionです  
+ - [ ] 🍀 parse(): >=の後ろはexpressionです  
         ` if(i_a >= )i_a=0; `
- - [x] 🍀 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません  
+ - [ ] 🍀 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません  
         ` if(i_a >= ip_a){} `
 
 ### conditionEQ:
- - [x] 🍀 parse(): ==の後ろはexpressionです  
+ - [ ] 🍀 parse(): ==の後ろはexpressionです  
         ` if(i_a == )i_a=0; `
- - [x] 🍀 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません  
+ - [ ] 🍀 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません  
         ` if(i_a == ip_a){} `
 
 ### conditionNE:
- - [x] 🍀 parse(): !=の後ろはexpressionです  
+ - [ ] 🍀 parse(): !=の後ろはexpressionです  
         ` if(i_a != )i_a=0; `
- - [x] 🍀 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません  
+ - [ ] 🍀 semanticCheck(): 左辺の型["+lts+"]と右辺の型["+rts+"]が一致しないので比較できません  
         ` if(i_a != ip_a){} `
 
 ### statementIf:
- - [x] 🍀 parse(): ifの後ろはconditionBlockです  
+ - [ ] 🍀 parse(): ifの後ろはconditionBlockです  
         → )まで飛ばす →{からstatement →なければ次の;まで飛ばす  
         ` if i_a>0){ i_a=0; } `  
         ` if i_a>0{ i_a=0; } `  
         ` if i_a>0 i_a=0; } `   
         ↑ 3つ目程トークン抜けがあると、「(」ない→;まで飛ばす、「{」(statementの開始)がない→;まで飛ばす。で2重で;まで飛ばす処理が入るので、次の行の構文解析が飛ばされることになるが、許容。  
- - [x] 🍀 parse(): conditionBlockの後ろはstatementです  
+ - [ ] 🍀 parse(): conditionBlockの後ろはstatementです  
         → 次の;まで飛ばす  
         ` if(i_a>0); `  
         ` if(i_a>0) i_a=0; } //}だけが余計なもの `  
- - [x] 🍀 parse(): elseの後ろはstatementです  
+ - [ ] 🍀 parse(): elseの後ろはstatementです  
         → 次の;まで飛ばす  
         ` if(i_a>0){}else; `
  
 ### statementWhile:
- - [x] 🍀 parse(): whileの後ろはconditionBlockです  
+ - [ ] 🍀 parse(): whileの後ろはconditionBlockです  
         → )まで飛ばす →{からstatement →なければ次の;まで飛ばす  
         ` while i_a>0){ i_a=0; } `  
         StatementIfと同じなので省略  
- - [x] 🍀 parse(): conditionBlockの後ろはstatementです  
+ - [ ] 🍀 parse(): conditionBlockの後ろはstatementです  
         → 次の;まで飛ばす  
         ` while(i_a>0); `
 
 ### statementBlock:
- - [x] 🍀 statement内部でエラー  
+ - [ ] 🍀 statement内部でエラー  
         → ;か}まで読み飛ばす  
         ` if(i_a > 0){ if(i_a < ) i_a=0; }else if(){ i_a=0; } // statementBlock内部で回復エラーが発生した場合、}以降から再開されるかの確認`
- - [x] 💫 parse(): }がありません  
+ - [ ] 💫 parse(): }がありません  
         → }を補う  
         ` if(i_a > 0){ i_a=0; `
 
 ### conditionBlock:
- - [x] 🍀 parse(): (の後ろはconditionExpressionです  
+ - [ ] 🍀 parse(): (の後ろはconditionExpressionです  
         → )まで飛ばす →{からstatement →なければ次の;まで飛ばす  
         ` if() i_a=0; `  
- - [x] 💫 parse(): )がありません  
+ - [ ] 💫 parse(): )がありません  
         → )を補う  
         ` if(i_a < 0 i_a=0; // )が補われ、コード生成 `
 
 ### expressionOr:
- - [x] 🍀　parse(): ||の後ろはconditionTermです  
+ - [ ] 🍀　parse(): ||の後ろはconditionTermです  
         → ConditionBlockで対処するのでここでは回復エラーだけ出して何もしない  
         ` if(i_a < 0 || ) i_a=0; `
- - [x] 🍀 semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]はT_boolである必要があります  
+ - [ ] 🍀 semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]はT_boolである必要があります  
         → 実行できてしまって想定通りの動作をしなかった場合のデバッグが面倒になりそうなのでコンパイルしない  
         ` if(true || i_a > 0){} `  || の左右にbool型以外を入れられない作りになっている
 
 ### termAnd:
- - [x] 🍀 parse(): &&の後ろはconditionFactorです  
+ - [ ] 🍀 parse(): &&の後ろはconditionFactorです  
         → ConditionBlockで対処するのでここでは回復エラーだけ出して何もしない  
         ` if(i_a < 0 && ) i_a=0; `
- - [x] 🍀 semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]はT_boolである必要があります  
+ - [ ] 🍀 semanticCheck(): 左辺の型[" + lts + "]と右辺の型[" + rts + "]はT_boolである必要があります  
         → 実行できてしまって想定通りの動作をしなかった場合のデバッグが面倒になりそうなのでコンパイルしない  
         ` if(true && i_a > 0){} `  || の左右にbool型以外を入れられない作りになっている
 
 ### notFactor:
- - [x] 🍀 parse(): !の後ろはConditionUnsignedFactorです  
+ - [ ] 🍀 parse(): !の後ろはConditionUnsignedFactorです  
         → ConditionBlockで対処するのでここでは回復エラーだけ出して何もしない  
         ` if(! ) i_a=0; `
- - [x] 🍀 semanticCheck(): !の後ろはT_boolです[" + rts + "]  
+ - [ ] 🍀 semanticCheck(): !の後ろはT_boolです[" + rts + "]  
         → 実行できてしまって想定通りの動作をしなかった場合のデバッグが面倒になりそうなのでコンパイルしない  
         ` if(!i_a > 0){} `  ! の後ろにbool型以外を入れられない作りになっている
 
 ### conditionUnsignedFactor:
- - [x] 🍀 parse(): [の後ろはconditionExpressionです  
+ - [ ] 🍀 parse(): [の後ろはconditionExpressionです  
         → ]まで飛ばす →なければ)まで飛ばしてconditionBlockで終わり、保険で;  
         ` if([ < 0]) i_a=0; `
- - [x] 💫 parse(): ]がありません
+ - [ ] 💫 parse(): ]がありません
         → ]を補う  
         ` if([i_a < 0 ) i_a=0; `
 
@@ -371,49 +373,49 @@ o declBlock       ::= LCUR { declaration } { statement } RCUR
 int/constDecl以下での🍀は、エラーだけ出して処理はこの2つの節点に託す  
  
 ### intDecl:
- - [x] 🍀 parse(): IDENTがありません  
+ - [ ] 🍀 parse(): IDENTがありません  
        → ; まで読み飛ばす  
        ` int a, *b, c[10] *d[10]; // ,が抜けてる `  
        ↑ `int ..., c[10]; *d[10]=xx;` と見分けがつかないため、「,がありません」の💫を実装できない。  
        ` int 10; // 識別子無し `
- - [x] 💫 parse(): intDecl: ; を補いました  
+ - [ ] 💫 parse(): intDecl: ; を補いました  
        ` int *d[10] // ;がない `   
        ` int e=3; // constがない（＝のところに,か;がないエラー…と出るはず） `  
        ↑ 初期値の代入ができるのは定数constのみ。逆にconstは初期値がないとエラー。
 
 ### constDecl:
- - [x] 💫 parse(): INT を補いました  
+ - [ ] 💫 parse(): INT を補いました  
        ` const a=0; `
- - [x] 🍀 parse(): INTがありません (型指定がない)  
+ - [ ] 🍀 parse(): INTがありません (型指定がない)  
        → ; まで読み飛ばす  
        `const =0;`
- - [x] 🍀 parse(): IDENTがありません  
+ - [ ] 🍀 parse(): IDENTがありません  
        → ; まで読み飛ばす  
        `const int =0;`
- - [x] 💫 parse(): ; を補いました  
+ - [ ] 💫 parse(): ; を補いました  
        ` const int e=3 //;がない `
 
 ### constItem:
- - [x] 🍀 parse(): *の後ろは IDENT です  
+ - [ ] 🍀 parse(): *の後ろは IDENT です  
        `const int *=0;`
- - [x] 🍀 parse(): =がありません  
+ - [ ] 🍀 parse(): =がありません  
        ` const int e; // 初期値がない `
- - [x] 💫 parse(): =を補いました  
+ - [ ] 💫 parse(): =を補いました  
        ` const int e 3; // ＝がない `
- - [x] 🍀 parse(): 定数の初期化がありません  
+ - [ ] 🍀 parse(): 定数の初期化がありません  
        `const int a=;`
 
 ### declItem:
- - [x] 🍀 parse(): *の後ろは IDENT です  
+ - [ ] 🍀 parse(): *の後ろは IDENT です  
        `int *=0;`
- - [x] 🍀 parse(): 配列の要素数がありません  
+ - [ ] 🍀 parse(): 配列の要素数がありません  
        `int a[]=0;`
- - [x] 💫 parse(): ] を補いました  
+ - [ ] 💫 parse(): ] を補いました  
        ` int c[10; // ]が閉じてない `
 
 
 ### declBlock:(CV11)
- - [x] 💫 parse(): } を補いました  
+ - [ ] 💫 parse(): } を補いました  
  - global 変数と同じ名前の local 変数が使えること（かつ，参照時に正しく local の方を参照できることの確認  
        ` int a;{int *a; a=1;} `
  - local 変数の2重登録チェック  
@@ -439,110 +441,141 @@ o variable        ::= ident [ array | call ]　 //変更
 o call            ::= LPAR RPAR
 ```
 
-### function:
- - [x] 💫 parse(): 返り値の型を指定してください  
-       `func { a;}`
- - [x] 🍀 parse(): 識別子(ident)がありません  
-       → (, ), { まで読み飛ばしてdeclBlockの判定へ  
-       `func { a;}`  
- - [x] 🍀 parse(): 同じ識別子の関数があります  
-       → (, ), { まで読み飛ばしてdeclBlockの判定へ  
-       ` `
- - [x] 💫 parse(): ( を補いました  
-       `func { a;}`
- - [x] 💫 parse(): ) を補いました  
-       `func { a;}`
- - [x] 🍀 parse():  declBlock( { )がありません
-       → func まで読み飛ばす  
-       `func a() a;} func int () {}`
- - [x] 🍀 semanticCheck(): この識別子は関数として宣言されていません  
-       `const int funcA = 0; func int funcA(){}`
-
-### declItem:
- - [x] 💫 parse(): ) を補いました  
-       `int a(;`
-
 ### voidDecl:
- - [x] 🍀 parse(): 識別子(ident)がありません  
+ - [ ] 🍀 parse(): 識別子(ident)がありません  
        → ;まで飛ばす  
        `void (), b();`
- - [x] 💫 parse(): ( を補いました  
+ - [ ] 💫 parse(): ( を補いました  
        `void a), b();`
- - [x] 💫 parse(): ) を補いました  
+ - [ ] 💫 parse(): ) を補いました  
        `void a(, b();`
- - [x] 💫 parse(): ; を補いました  
+ - [ ] 💫 parse(): ; を補いました  
        `void a(), b()`  
- - [x] 🍀 semanticCheck(): 既に宣言されています  
+ - [ ] 💫 parse(): 既に宣言されています(voidDeclではdeclItemを経由しないので独自にエラー判定が必要)  
        `void funcA(), funcA();`
 
+### declItem:
+ - [ ] 🍀 parse(): *の後ろは IDENT です  
+       `int *;`
+ - [ ] 🍀 parse(): 配列の要素数がありません  
+       `int b[;`
+ - [ ] 💫 parse(): ] を補いました  
+       `int b[1;`
+ - [ ] 💫 parse(): ) を補いました  
+       `int b(`
+ - [ ] 💫 parse(): 既に宣言されています(global変数)   
+       `void a(); func void a(){ int a(); }`  
+       ↑初めに宣言されたvoid型が優先され、int型としてのa()は登録されない  
+ - [ ] 💫 parse(): 既に宣言されています(local変数)  
+       `void a(); func void a(){ int a, a; }`  
+       ↑グローバル変数とローカル変数での識別子被りはok。上の場合はa, aの2つ目のaでエラーになる。
+
+### function:
+ - [ ] 💫 parse(): 返り値の型を指定してください  
+       `func { a;}`
+ - [ ] 🍀 parse(): 識別子(ident)がありません  
+       → (, ), { まで読み飛ばしてdeclBlockの判定へ  
+       `func { a;}`  
+ - [ ] 🍀 parse(): 同じ識別子の関数があります  
+       → (, ), { まで読み飛ばしてdeclBlockの判定へ  
+       ` `
+ - [ ] 💫 parse(): ( を補いました  
+       `func { a;}`
+ - [ ] 💫 parse(): ) を補いました  
+       `func { a;}`
+ - [ ] 🍀 parse():  declBlock( { )がありません
+       → func まで読み飛ばす  
+       `func a() a;} func int () {}`
+ - [ ] 🍀 semanticCheck(): この識別子は関数として宣言されていません  
+       `const int funcA = 0; func int funcA(){}`
+
 ### statementCall:
- - [x] 🍀 parse(): 識別子(ident)がありません  
+ - [ ] 🍀 parse(): 識別子(ident)がありません  
        → ;まで飛ばす  
        `func int a(){ call (); b; }`
- - [x] 💫 parse(): ( を補いました  
+ - [ ] 💫 parse(): ( を補いました  
        `func int a(){ call a); }`
- - [x] 💫 parse(): ) を補いました  
+ - [ ] 💫 parse(): ) を補いました  
        `func int a(){ call a(; }`
- - [x] 💫 parse(): ; を補いました  
+ - [ ] 💫 parse(): ; を補いました  
        `func int a(){ call a() }`
+ - [ ] 🍀 semanticCheck(): この変数は関数ではありません  
+       ```
+       void funcA();
+       func void funcA(){
+       int a;
+       call a;
+       }
+       ```
 
 ### statementReturn:
- - [x] 💫 parse(): ; を補いました   
+ - [ ] 💫 parse(): ; を補いました   
        `func int a(){ return 0 }`
+ - [ ] 現状ここから配列型を返すプログラムが書ける（解析上エラーにならない）が、ちゃんと実装してないので実行したらエラーになると思われる。
+
+### variable:
+ - [ ] 🍀 semanticCheck(): 配列型でない識別子に[]はつけられません  
+       `void funcA(); func void funcA(){ int a,b; a[1] = b; }`
+ - [ ] 🍀 semanticCheck(): 関数でない識別子に()はつけられません  
+       `void funcA(); func void funcA(){ int a; a = a(); }`
+ - [ ] 🍀 semanticCheck(): 関数識別子の後ろは()です  
+       `int funcA(); func int funcA(){ int a; a = funcA; return a; }`
+ - [ ] 🍀 semanticCheck(): 配列型の後ろに[]がありません  
+       `int funcA(); func int funcA(){ int a[0]; a = a; return a; }`
 
 ### call:
- - [x] 💫 parse(): ) を補いました    
+ - [ ] 💫 parse(): ) を補いました    
        `func int a(){ input a(; }`
 
 ### unsignedFactor:
- - [x] 💫 parse(): ( を補いました  
+ - [ ] 💫 parse(): ( を補いました  
        ```
        //test1
        void funcA();
        int funcB(),a;
        func void funcA(){
-       a = call funcB) + 1;
+       a = funcB) + 1;
        }
        func int funcB(){
        return 1;
        }
        ```
- - [x] 💫 parse(): ) を補いました  
+ - [ ] 💫 parse(): ) を補いました  
        `↑(test1)を使用`
- - [x] 🍀 parse(): callの後ろはidentです  
+ - [ ] 🍀 parse(): callの後ろはidentです  
        `↑(test1)を使用`
 
 ### declBlock:
- - [x] 🍀 semanticCheck(): 関数の型が必要です  
+ - [ ] 🍀 semanticCheck(): 関数の型が必要です  
        → return文が存在するのにfunctionの型がない(err)場合  
        `↑(test1)のfuncBの型を消す`  
- - [x] 🍀 semanticCheck(): 関数がvoid型にもかかわらず、返り値が存在します  
+ - [ ] 🍀 semanticCheck(): 関数がvoid型にもかかわらず、返り値が存在します  
        → return文と式が存在するのにfunctionがvoidの場合  
        `↑(test1)のfuncAに return 1; を追記`
- - [x] 🍀 semanticCheck(): xx型の返り値が必要です  
+ - [ ] 🍀 semanticCheck(): xx型の返り値が必要です  
        → return文が存在しないのにfunctionの型がある(void/err以外)場合  
        `↑(test1)のfuncBの return 1; を消す`
- - [x] 🍀 semanticCheck(): 関数の型["+functinoTypeS+"]と返り値の型["+sts+"]が異なります  
+ - [ ] 🍀 semanticCheck(): 関数の型["+functinoTypeS+"]と返り値の型["+sts+"]が異なります  
        → functionの型がvoid/err以外で、return文の型と不一致  
        `↑(test1)のfuncBを int a[0]; return a[9]; に書き換え`
 
 
-### semanticCheck():
- - [x] プロトタイプ宣言はちゃんと機能していますか？  
+### semanticCheck()で重要な部分 :
+ - [ ] プロトタイプ宣言はちゃんと機能していますか？  
        ```
        int a;
        void funcA();
        int funcB();
        func int funcA(){
-       a = call funcB() + 1;
+       a = funcB() + 1;
        return a;
        }
        ```
- - [x] *プロトタイプ宣言がない関数を使おうとしたときにちゃんとエラーを出せますか？  
+ - [ ] *プロトタイプ宣言がない関数を使おうとしたときにちゃんとエラーを出せますか？  
        `↑の int funcB(); をコメントアウト`
- - [x] *プロトタイプ宣言がある関数について，宣言時の型と定義時の型が違うときにエラーが出せますか？  
+ - [ ] *プロトタイプ宣言がある関数について，宣言時の型と定義時の型が違うときにエラーが出せますか？  
        `int funcA(); func int* funcA(){}`
- - [x] return の処理で，定義時に設定された戻り値の型と同じ型の値を return できているか確認  
+ - [ ] return の処理で，定義時に設定された戻り値の型と同じ型の値を return できているか確認  
        → DeclBlockよりもfunctionで判定する方がBNF的に綺麗そうだが、functionで判定できるのはDeclBlockの解析を全て行ったあとなので、複数箇所にreturnがある場合、どこのreturnでのエラーなのか特定できない。なので、functionの型をfunctionからDeclBlockに与え、DeclBlock内で判定する。 
        （DeclBlockで<returnのトークン,その型>のリストをreturn文の分だけ保存しfunctionに返せばできなくなさそうだが、DeclBlockでの処理とfunctionでの処理両方が複雑になるためこの案は棄却）  
        ```
@@ -550,13 +583,30 @@ o call            ::= LPAR RPAR
        void funcA();
        int funcB();
        func void funcA(){
-       a = call funcB() + 1;
+       a = funcB() + 1;
        }
        func int funcB(){
        int b;
        return b;
        }
        ```
- - [x] void型以外の関数で，return がない場合のチェック  
+ - [ ] void型以外の関数で，return がない場合のチェック  
        `int funcA(); func int funcA(){}`  
-
+ - [ ] 関数内関数はエラーとなり、以下の場合だとfunc void b()以降はコードとみなされない。  
+       ```
+       void a();
+       func void a(){
+       void b();
+       func void b(){}
+       }
+       ```  
+       次の、関数内でプロトタイプ宣言、実装はグローバルで行う場合は正常にコンパイルされる。  
+       ```
+       void a();
+       func void a(){
+       int b();
+       }
+       func int b(){
+       return 0;
+       }
+       ```

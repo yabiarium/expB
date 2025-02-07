@@ -62,8 +62,9 @@ public class StatementCall extends CParseRule {
     public void semanticCheck(CParseContext pcx) throws FatalErrorException {
         try {
             if(ident != null){
+                ident.semanticCheck(pcx);
                 CSymbolTableEntry function = pcx.getSymbolTable().searchGlobal(functionName);
-                if(function != null && !function.isFunction()){
+                if(function == null || !function.isFunction()){ //グローバル変数として登録されていないか、登録されているが関数でない場合
                     pcx.recoverableError(sem + " statementCall: この変数は関数ではありません");
                 }
             }

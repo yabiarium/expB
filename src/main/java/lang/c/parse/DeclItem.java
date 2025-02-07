@@ -68,7 +68,8 @@ public class DeclItem extends CParseRule {
 			}
 
 		} catch (RecoverableErrorException e) {
-			// 処理はint/constDeclに託す
+			// 処理はint/constDeclで;まで飛ばすのでその手前まで処理する
+			ct.skipTo(pcx, CToken.TK_COMMA ,CToken.TK_SEMI);
 		}
 		
 
@@ -93,8 +94,8 @@ public class DeclItem extends CParseRule {
 		entry = new CSymbolTableEntry(CType.getCType(declItemType), size, isConst, isFunction);
 
 		
-		isGlobal = pcx.getSymbolTable().isGlobalMode();
-		if (isGlobal) {
+		isGlobal = pcx.getSymbolTable().isGlobalMode(); //この節点が関数内から呼ばれたか否か
+		if (isGlobal || isFunction) { //グローバル領域から呼ばれた || プロトタイプ宣言である(BNF的に関数内関数は書けないので、関数の宣言はすべてグローバル変数のテーブルで管理する)
 			if ( !pcx.getSymbolTable().registerGlobal(identName, entry) ) {
 				pcx.warning(col + " declItem: 既に宣言されています");
 			}
@@ -118,9 +119,9 @@ public class DeclItem extends CParseRule {
 		//関数も生成しない
 		if(isGlobal && !isFunction){
 			if (isArray) {
-				cgc.printLabel(identName + ":	.blkw " + size, "declItem: 配列は要素数分確保");
+				cgc.printLabel(identName + ":	.blkw " + size, "DeclItem: 配列は要素数分確保");
 			}else{
-				cgc.printLabel(identName + ":	.word 0", "declItem: 変数は0で初期化");
+				cgc.printLabel(identName + ":	.word 0", "DeclItem: 変数は0で初期化");
 			}
 		}
 

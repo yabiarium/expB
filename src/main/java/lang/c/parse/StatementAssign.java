@@ -55,7 +55,7 @@ public class StatementAssign extends CParseRule{
 					tk = ct.getNextToken(pcx); //正常終了
 				}else{
 					//pcx.fatalError(tk + "statementAssign: parse(): ;がありません");
-					pcx.warning(tk + "statementAssign: ; を補いました");
+					pcx.warning(tk + " statementAssign: ; を補いました");
 				}
 			}else{
 				//pcx.fatalError(tk + "statementAssign: parse(): =の後ろはexpressionです");

@@ -67,10 +67,10 @@ public class Ident extends CParseRule{
 				this.setCType(CType.getCType(CType.T_err));
 				this.setConstant(true);
 			}else if(entry.isFunction()){
-				this.setCType(CType.getCType(entry.getCType().getType()));
+				this.setCType(entry.getCType());
 				this.setConstant(true); //関数の返り値を入れたアドレスは定数とし、代入できないようにする
 			}else{
-				this.setCType(CType.getCType(entry.getCType().getType()));
+				this.setCType(entry.getCType());
 				this.setConstant(entry.isConstant());
 			}
 		}

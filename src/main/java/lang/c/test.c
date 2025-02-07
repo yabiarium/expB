@@ -1,10 +1,7 @@
-void a();
-int b();
-
-func void a(){
-    output 2+b()+c();
+int funcA();
+func int funcA(){
+    int a[0];
+    a = a;
+    return a;
 }
 
-func int b(){
-    return 3;
-}
