@@ -11,7 +11,7 @@ public class TypeList extends CParseRule {
     }
 
     public static boolean isFirst(CToken tk) {
-        return tk.getType() == CToken.TK_FUNC;
+        return TypeItem.isFirst(tk);
 	}
 
     public void parse(CParseContext pcx) throws FatalErrorException {

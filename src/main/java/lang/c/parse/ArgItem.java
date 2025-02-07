@@ -11,7 +11,7 @@ public class ArgItem extends CParseRule {
     }
 
     public static boolean isFirst(CToken tk) {
-        return tk.getType() == CToken.TK_FUNC;
+        return tk.getType() == CToken.TK_INT;
 	}
 
     public void parse(CParseContext pcx) throws FatalErrorException {
