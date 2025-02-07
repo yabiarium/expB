@@ -72,6 +72,17 @@ statementCall   ::= CALL ident LPAR RPAR SEMI
 statementReturn ::= RETURN [ expression ] SEMI
 variable        ::= ident [ array | call ]　 //変更
 call            ::= LPAR RPAR
+
+# CV13
+function        ::= FUNC ( INT [ MULT ] | VOID ) IDENT LPAR [ argList ] RPAR declblock //変更
+arglist         ::= argItem { COMMA argItem }
+argItem         ::= INT [ MULT ] IDENT [ LBRA RBRA ]
+statementCall   ::= CALL ident LPAR [ expression { COMMA expression } ] RPAR SEMI //変更
+call            ::= LPAR [ expressoin { COMMA expression } ] RPAR //変更
+voidDecl        ::= VOID IDENT LPAR [ typelist ] RPAR { COMMA IDENT LPAR [ typeList ] RPAR } SEMI //変更
+declItem        ::= [ MULT ] IDENT [ LBRA NUM RBRA | LPAR [ typeList ] RPAR ] //変更
+typeList        ::= typeItem { COMMA typeItem }
+typeItem        ::= INT [ MULT ] [ LBRA RBRA ]
 ```
 
 <details>
