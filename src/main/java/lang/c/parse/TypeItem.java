@@ -16,7 +16,20 @@ public class TypeItem extends CParseRule {
 
     public void parse(CParseContext pcx) throws FatalErrorException {
         CTokenizer ct = pcx.getTokenizer();
-        CToken tk = ct.getNextToken(pcx); // func を読み飛ばす
+        CToken tk = ct.getNextToken(pcx); // int を読み飛ばす
+
+        if(tk.getType() == CToken.TK_MULT){
+            tk = ct.getNextToken(pcx); // *を読み飛ばす
+        }
+
+        if(tk.getType() == CToken.TK_LBRA){
+            tk = ct.getNextToken(pcx); // [を読み飛ばす
+            if(tk.getType() == CToken.TK_RBRA){
+                tk = ct.getNextToken(pcx); // ]を読み飛ばす
+            }else{
+                pcx.warning(tk + " typeItem: ] を補いました");
+            }
+        }
     }
 
     public void semanticCheck(CParseContext pcx) throws FatalErrorException {

@@ -11,6 +11,7 @@ public class DeclItem extends CParseRule {
 	boolean isArray = false; // 配列か
 	boolean isFunction = false;
 	boolean isGlobal;
+	CParseRule typeList;
 
 	public DeclItem(CParseContext pcx) {
 		super("DeclItem");
@@ -60,6 +61,13 @@ public class DeclItem extends CParseRule {
 			}else if(tk.getType() == CToken.TK_LPAR){
 				isFunction = true;
 				tk = ct.getNextToken(pcx); // (を読み飛ばす
+
+				if(TypeList.isFirst(tk)){
+					typeList = new TypeList(pcx);
+					typeList.parse(pcx);
+				}else{
+					pcx.recoverableError(tk + " declItem: 型がありません");
+				}
 
 				if(tk.getType() == CToken.TK_RPAR){
 					tk = ct.getNextToken(pcx); // )を読む, 正常終了

@@ -5,10 +5,12 @@ import lang.c.*;
 
 public class VoidDecl extends CParseRule {
 
+    CParseRule typeList;
+
     public VoidDecl(CParseContext pcx) {
         super("VoidDecl");
 		//setBNF("voidDecl ::= VOID IDENT LPAR RPAR { COMMA IDENT LPAR RPAR } SEMI"); //CV12~
-        setBNF("voidDecl ::= VOID IDENT LPAR [ typelist ] RPAR { COMMA IDENT LPAR [ typeList ] RPAR } SEMI"); //CV13~
+        setBNF("voidDecl ::= VOID IDENT LPAR [ typeList ] RPAR { COMMA IDENT LPAR [ typeList ] RPAR } SEMI"); //CV13~
     }
 
     public static boolean isFirst(CToken tk) {
@@ -37,6 +39,13 @@ public class VoidDecl extends CParseRule {
                 }else {
                     pcx.warning(tk + " voidDecl: ( を補いました");
                 }
+
+                if(TypeList.isFirst(tk)){
+                    typeList = new TypeList(pcx);
+                    typeList.parse(pcx);
+                }else{
+                    pcx.recoverableError(tk + " voidDecl: 型がありません");  //,はあるのに引数の型指定が続いていない
+                }
     
                 if(tk.getType() == CToken.TK_RPAR) {
                     tk = ct.getNextToken(pcx); // ) を読み飛ばす
@@ -53,7 +62,7 @@ public class VoidDecl extends CParseRule {
             
         } catch (RecoverableErrorException e) {
             // ; まで読み飛ばす ( ,やIDENTまで読み飛ばして次のプロトタイプ宣言から解析再開するのが理想だが、
-            //                   引数の中にも,やIDENTがあり中途半端な読み飛ばしになる場合があるため、諦めて一気に;まで読み飛ばす )
+            //                   引数の中にも,やIDENTがあり中途半端な読み飛ばしになる可能性があるため、諦めて一気に;まで読み飛ばす )
             ct.skipTo(pcx, CToken.TK_SEMI);
             tk = ct.getNextToken(pcx);
         }

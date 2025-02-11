@@ -1,12 +1,16 @@
 package lang.c.parse;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import lang.*;
 import lang.c.*;
 
 public class StatementCall extends CParseRule {
     //返り値を取得しないcall
 
-    CParseRule ident;
+    CParseRule ident, expression;
+    List<CParseRule> expressionList = new ArrayList<>();
     String functionName;
     CToken sem;
 
@@ -34,29 +38,49 @@ public class StatementCall extends CParseRule {
             }else {
                 pcx.recoverableError(tk + " statementCall: 識別子(ident)がありません");
             }
-
-            if(tk.getType() == CToken.TK_LPAR) {
-                tk = ct.getNextToken(pcx); // (を読み飛ばす
-            }else {
-                pcx.warning(tk + " statementCall: ( を補いました");
-            }
-
-            if(tk.getType() == CToken.TK_RPAR) {
-                tk = ct.getNextToken(pcx); // )を読み飛ばす
-            }else {
-                pcx.warning(tk + " statementCall: ) を補いました");
-            }
-
-            if(tk.getType() == CToken.TK_SEMI) {
-                tk = ct.getNextToken(pcx); // ;を読み飛ばす, 正常終了
-            }else {
-                pcx.warning(tk + " statementCall: ; を補いました");
-            }
-            
         } catch (RecoverableErrorException e) {
-            // ; まで読み飛ばす
-            ct.skipTo(pcx, CToken.TK_SEMI);
-            tk = ct.getNextToken(pcx);
+            // (か ; まで読み飛ばす　(expression内部の(まで飛んでしまうかもしれないが気にしないことにする)
+            ct.skipTo(pcx, CToken.TK_LPAR, CToken.TK_SEMI); // ;まで飛んでしまってもこの後の処理でNextTokenされてから次の節点へ行くのでこのままで問題ない
+        }
+
+        if(tk.getType() == CToken.TK_LPAR) {
+            tk = ct.getNextToken(pcx); // (を読み飛ばす
+        }else {
+            pcx.warning(tk + " statementCall: ( を補いました");
+        }
+
+        try {
+            if(Expression.isFirst(tk)){
+                do{
+                    if(tk.getType() == CToken.TK_COMMA){
+                        tk = ct.getNextToken(pcx); // ,を読み飛ばす
+                    }
+                    
+                    if(Expression.isFirst(tk)){
+                        expression = new Expression(pcx);
+                        expression.parse(pcx);
+                        expressionList.add(expression);
+                        tk = ct.getCurrentToken(pcx); // ,か)(引数の終わり)を読む
+                    }else{
+                        pcx.recoverableError(tk + " statementCall: 引数がありません"); //,はあるのに引数が続いていない
+                    }
+                }while(tk.getType() == CToken.TK_COMMA);
+            }
+        } catch (RecoverableErrorException e) {
+            //  ; まで読み飛ばす ( )までだとexpression内部で止まってしまう可能性がある )
+            ct.skipTo(pcx, CToken.TK_RPAR, CToken.TK_SEMI); // ;に飛んでもこの後の処理でNextTokenされてから次の節点へ行くのでこのままで問題ない
+        }
+
+        if(tk.getType() == CToken.TK_RPAR) {
+            tk = ct.getNextToken(pcx); // )を読み飛ばす
+        }else {
+            pcx.warning(tk + " statementCall: ) を補いました");
+        }
+
+        if(tk.getType() == CToken.TK_SEMI) {
+            tk = ct.getNextToken(pcx); // ;を読み飛ばす, 正常終了
+        }else {
+            pcx.warning(tk + " statementCall: ; を補いました");
         }
     }
 

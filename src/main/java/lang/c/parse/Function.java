@@ -5,7 +5,7 @@ import lang.c.*;
 
 public class Function extends CParseRule {
 
-    CParseRule declBlock;
+    CParseRule declBlock, argList;
     String functionName;
 	boolean isExistMult = false;
 	boolean isVoid = false;
@@ -51,7 +51,7 @@ public class Function extends CParseRule {
                 pcx.recoverableError(tk + " function: 識別子(IDENT)がありません");
             }
         } catch (RecoverableErrorException e) {
-            // (, ), { まで読み飛ばす
+            // (, { まで読み飛ばす
             ct.skipTo(pcx, CToken.TK_LPAR, CToken.TK_RPAR, CToken.TK_LCUR);
             tk = ct.getCurrentToken(pcx);
         }
@@ -61,6 +61,18 @@ public class Function extends CParseRule {
         }else {
             pcx.warning(tk + " function: ( を補いました");
         }
+
+        try {
+            if(ArgList.isFirst(tk)){
+                argList = new ArgList(pcx);
+                argList.parse(pcx);
+            } //実引数はある場合もない場合もある
+        } catch (RecoverableErrorException e) {
+            // argListのparseで回復エラーが出た場合の処理
+            // {(DeclBlockの開始記号)か、Funcまで飛ばす
+            ct.skipTo(pcx, CToken.TK_LCUR, CToken.TK_FUNC);
+        }
+        
 
         if(tk.getType() == CToken.TK_RPAR) {
             tk = ct.getNextToken(pcx); // ) を読み飛ばす

@@ -443,7 +443,7 @@ o call            ::= LPAR RPAR
 
 ### voidDecl:
  - [ ] 🍀 parse(): 識別子(ident)がありません  
-       → ;まで飛ばす  
+       → ;まで飛ばす ( ,やIDENTまで読み飛ばして次のプロトタイプ宣言から解析再開するのが理想だが、引数の中にも,やIDENTがあり中途半端な読み飛ばしになる可能性があるため、諦めて一気に;まで読み飛ばす  
        `void (), b();`
  - [ ] 💫 parse(): ( を補いました  
        `void a), b();`
@@ -618,19 +618,47 @@ o call            ::= LPAR RPAR
 変更した節点に関しては今回エラーを追加したか否かを表す。
 ```
 # CV13
-function        ::= FUNC ( INT [ MULT ] | VOID ) IDENT LPAR [ argList ] RPAR declblock //変更
-arglist         ::= argItem { COMMA argItem }
-argItem         ::= INT [ MULT ] IDENT [ LBRA RBRA ]
-statementCall   ::= CALL ident LPAR [ expression { COMMA expression } ] RPAR SEMI //変更
-call            ::= LPAR [ expressoin { COMMA expression } ] RPAR //変更
-voidDecl        ::= VOID IDENT LPAR [ typelist ] RPAR { COMMA IDENT LPAR [ typeList ] RPAR } SEMI //変更
-declItem        ::= [ MULT ] IDENT [ LBRA NUM RBRA | LPAR [ typeList ] RPAR ] //変更
-typeList        ::= typeItem { COMMA typeItem }
-typeItem        ::= INT [ MULT ] [ LBRA RBRA ]
+x function        ::= FUNC ( INT [ MULT ] | VOID ) IDENT LPAR [ argList ] RPAR declblock //変更
+o argList         ::= argItem { COMMA argItem }
+o argItem         ::= INT [ MULT ] IDENT [ LBRA RBRA ]
+o statementCall   ::= CALL ident LPAR [ expression { COMMA expression } ] RPAR SEMI //変更
+o call            ::= LPAR [ expressoin { COMMA expression } ] RPAR //変更
+o voidDecl        ::= VOID IDENT LPAR [ typeList ] RPAR { COMMA IDENT LPAR [ typeList ] RPAR } SEMI //変更
+o declItem        ::= [ MULT ] IDENT [ LBRA NUM RBRA | LPAR [ typeList ] RPAR ] //変更
+o typeList        ::= typeItem { COMMA typeItem }
+o typeItem        ::= INT [ MULT ] [ LBRA RBRA ]
 ```
 
-### function:
+### argList:
+ - [ ] 🍀 parse(): 引数がありません  
+       ``
+
+### argItem:
+ - [ ] 🍀 parse(): IDENTがありません  
+       ``
  - [ ] 💫 parse(): ) を補いました  
-       `↑(test1)を使用`
- - [ ] 🍀 parse(): callの後ろはidentです  
-       `↑(test1)を使用`
+       ``
+
+### statementCall:
+ - [ ] 🍀 parse(): 引数がありません  
+       ``
+
+### call:
+ - [ ] 🍀 parse(): 引数がありません  
+       ``
+
+### voidDecl:
+ - [ ] 🍀 parse(): 型がありません  
+       ``
+
+### declItem:
+ - [ ] 🍀 parse(): 型がありません  
+       ``
+
+### typeList:
+ - [ ] 🍀 parse(): 型がありません  
+       ``
+
+### typeItem:
+ - [ ] 💫 parse(): ] を補いました  
+       ``
