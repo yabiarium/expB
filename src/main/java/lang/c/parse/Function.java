@@ -66,7 +66,8 @@ public class Function extends CParseRule {
             if(ArgList.isFirst(tk)){
                 argList = new ArgList(pcx);
                 argList.parse(pcx);
-            } //実引数はある場合もない場合もある
+                tk = ct.getCurrentToken(pcx);
+            }
         } catch (RecoverableErrorException e) {
             // argListのparseで回復エラーが出た場合の処理
             // {(DeclBlockの開始記号)か、Funcまで飛ばす

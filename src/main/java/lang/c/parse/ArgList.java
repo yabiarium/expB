@@ -29,13 +29,14 @@ public class ArgList extends CParseRule {
                 if(tk.getType() == CToken.TK_COMMA){
                     tk = ct.getNextToken(pcx); // ,を読み飛ばす
                 }
+                
                 if(ArgItem.isFirst(tk)){
                     argItem = new ArgItem(pcx);
                     argItem.parse(pcx);
                     argItemList.add(argItem);
                     tk = ct.getCurrentToken(pcx); // ,か)(引数の終わり)を読む
                 }else{
-                    pcx.recoverableError(tk + " argList: 引数がありません"); //,はあるのに引数が続いていない
+                    pcx.recoverableError(tk + " argList: ,の後ろに引数がありません"); //,はあるのに引数が続いていない
                 }
             }while(tk.getType() == CToken.TK_COMMA);
 

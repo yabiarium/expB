@@ -31,7 +31,7 @@ public class TypeList extends CParseRule {
                     typeItem.parse(pcx);
                     tk = ct.getCurrentToken(pcx); // ,か,以外を読む
                 }else{
-                    pcx.recoverableError(tk + " typeList: 型がありません"); //,はあるのに引数が続いていない
+                    pcx.recoverableError(tk + " typeList: ,の後ろに型がありません"); //,はあるのに引数が続いていない
                 }
             }while(tk.getType() == CToken.TK_COMMA);
 

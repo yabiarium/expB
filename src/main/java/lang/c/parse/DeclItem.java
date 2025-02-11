@@ -65,9 +65,9 @@ public class DeclItem extends CParseRule {
 				if(TypeList.isFirst(tk)){
 					typeList = new TypeList(pcx);
 					typeList.parse(pcx);
-				}else{
-					pcx.recoverableError(tk + " declItem: 型がありません");
-				}
+				}else if(tk.getType() != CToken.TK_RPAR){
+                    pcx.recoverableError(tk + " declItem: 引数が正しくありません");
+                }
 
 				if(tk.getType() == CToken.TK_RPAR){
 					tk = ct.getNextToken(pcx); // )を読む, 正常終了

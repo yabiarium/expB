@@ -38,7 +38,7 @@ public class Call extends CParseRule {
                         expressionList.add(expression);
                         tk = ct.getCurrentToken(pcx); // ,か)(引数の終わり)を読む
                     }else{
-                        pcx.recoverableError(tk + " call: 引数がありません"); //,はあるのに引数が続いていない
+                        pcx.recoverableError(tk + " call: ,の後ろに引数がありません"); //,はあるのに引数が続いていない
                     }
                 }while(tk.getType() == CToken.TK_COMMA);
             }

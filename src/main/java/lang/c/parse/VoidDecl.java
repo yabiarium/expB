@@ -30,7 +30,7 @@ public class VoidDecl extends CParseRule {
                 if(tk.getType() == CToken.TK_IDENT) {
                     registerName(pcx, tk);
                     tk = ct.getNextToken(pcx); // IDENTを読み飛ばす
-                }else {
+                }else{
                     pcx.recoverableError(tk + " voidDecl: 識別子(IDENT)がありません");
                 }
     
@@ -43,8 +43,9 @@ public class VoidDecl extends CParseRule {
                 if(TypeList.isFirst(tk)){
                     typeList = new TypeList(pcx);
                     typeList.parse(pcx);
-                }else{
-                    pcx.recoverableError(tk + " voidDecl: 型がありません");  //,はあるのに引数の型指定が続いていない
+                    tk = ct.getCurrentToken(pcx);
+                }else if(tk.getType() != CToken.TK_RPAR){
+                    pcx.recoverableError(tk + " voidDecl: 引数が正しくありません");
                 }
     
                 if(tk.getType() == CToken.TK_RPAR) {

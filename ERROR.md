@@ -630,35 +630,38 @@ o typeItem        ::= INT [ MULT ] [ LBRA RBRA ]
 ```
 
 ### argList:
- - [ ] 🍀 parse(): 引数がありません  
-       ``
+ - [ ] 🍀 parse(): ,の後ろに引数がありません  
+       → ,があるのに後ろに引数が続いていない場合に出るエラー  
+       `int funcA(); func void funcA(int a,){}`
 
 ### argItem:
  - [ ] 🍀 parse(): IDENTがありません  
-       ``
- - [ ] 💫 parse(): ) を補いました  
-       ``
+       `void funcA(); func void funcA(int){} //意味解析が未作成ならこのコードでこのエラーになる`
+ - [ ] 💫 parse(): ] を補いました  
+       `void funcA(); func void funcA(int a[){}`
 
 ### statementCall:
- - [ ] 🍀 parse(): 引数がありません  
-       ``
+ - [ ] 🍀 parse(): ,の後ろに引数がありません  
+       `int funcA(); func void funcA(){ const int a=10; call funcA(a,); }`
 
 ### call:
- - [ ] 🍀 parse(): 引数がありません  
-       ``
+ - [ ] 🍀 parse(): ,の後ろに引数がありません  
+       `int funcA(); func void funcA(){ int a,b; a = funcA(b,); }`
 
 ### voidDecl:
- - [ ] 🍀 parse(): 型がありません  
-       ``
+ - [ ] 🍀 parse(): 引数が正しくありません  
+       → intXX型以外を指定していたらparseの時点でエラーにする  
+       `void funcA(void);`
 
 ### declItem:
- - [ ] 🍀 parse(): 型がありません  
-       ``
+ - [ ] 🍀 parse(): 引数が正しくありません  
+       → intXX型以外を指定していたらparseの時点でエラーにする  
+       `int funcA(void);`
 
 ### typeList:
- - [ ] 🍀 parse(): 型がありません  
-       ``
+ - [ ] 🍀 parse(): ,の後ろに型がありません  
+       `void funcA(int,);`
 
 ### typeItem:
  - [ ] 💫 parse(): ] を補いました  
-       ``
+       `void funcA(int[);`
