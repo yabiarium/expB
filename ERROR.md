@@ -639,6 +639,12 @@ o typeItem        ::= INT [ MULT ] [ LBRA RBRA ]
        `void funcA(); func void funcA(int){} //意味解析が未作成ならこのコードでこのエラーになる`
  - [ ] 💫 parse(): ] を補いました  
        `void funcA(); func void funcA(int a[){}`
+ - [ ] 🍀 semanticCheck(): 宣言時の引数の数と一致しません  
+       `void funcA(); func void funcA(int a){}`  
+       `void funcA(int); func void funcA(){}`
+ - [ ] 🍀 semanticCheck(): 宣言時の引数の型と一致しません  
+       `void funcA(int); func void funcA(int a[]){}`
+       
 
 ### statementCall:
  - [ ] 🍀 parse(): ,の後ろに引数がありません  

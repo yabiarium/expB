@@ -63,8 +63,8 @@ public class Function extends CParseRule {
         }
 
         try {
+            argList = new ArgList(pcx, functionName); //引数がない関数の場合でもArgListの意味解析(プロトタイプ宣言との一致)はしたいのでインスタンスだけ作成しておく
             if(ArgList.isFirst(tk)){
-                argList = new ArgList(pcx);
                 argList.parse(pcx);
                 tk = ct.getCurrentToken(pcx);
             }
@@ -132,6 +132,7 @@ public class Function extends CParseRule {
             //コード生成なしのwarningとして処理
         }
         
+        argList.semanticCheck(pcx);
         declBlock.semanticCheck(pcx);
     }
 

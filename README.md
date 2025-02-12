@@ -75,13 +75,13 @@ call            ::= LPAR RPAR
 
 # CV13
 function        ::= FUNC ( INT [ MULT ] | VOID ) IDENT LPAR [ argList ] RPAR declblock //変更
-argList         ::= argItem { COMMA argItem }
+argList         ::= argItem { COMMA argItem } //関数名に紐づいている引数の情報と一致するか確認する
 argItem         ::= INT [ MULT ] IDENT [ LBRA RBRA ]
 statementCall   ::= CALL ident LPAR [ expression { COMMA expression } ] RPAR SEMI //変更
 call            ::= LPAR [ expressoin { COMMA expression } ] RPAR //変更
 voidDecl        ::= VOID IDENT LPAR [ typeList ] RPAR { COMMA IDENT LPAR [ typeList ] RPAR } SEMI //変更
 declItem        ::= [ MULT ] IDENT [ LBRA NUM RBRA | LPAR [ typeList ] RPAR ] //変更
-typeList        ::= typeItem { COMMA typeItem }
+typeList        ::= typeItem { COMMA typeItem } //関数名に引数の情報を紐づける
 typeItem        ::= INT [ MULT ] [ LBRA RBRA ]
 ```
 
@@ -101,6 +101,11 @@ unsignedFactor  ::= number | LPAR expression RPAR
 
 ### CV09~のエラー仕様書
 [ERROR.md](./ERROR.md)
+
+### CV13
+ - 局所変数用のSymbolTableの作成と削除はこれまでと変わらずdeclBlockで行う。  
+ - 関数名(グローバル変数)の登録の際(プロトタイプ宣言時)に、関数名に引数情報(argTypeList)を紐づけておく。  
+ - ↑関数名への引数情報の紐づけはTypeListで行う(関数名はVoidDeclとintDecl→DeclItemから持ってくる)
 
 </details>  
 

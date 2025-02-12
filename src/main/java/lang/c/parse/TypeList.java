@@ -1,14 +1,20 @@
 package lang.c.parse;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import lang.*;
 import lang.c.*;
 
 public class TypeList extends CParseRule {
 
     CParseRule typeItem;
+    String functionName; //このTypeListが属する関数の名前
+    List<CType> argTypeList = new ArrayList<CType>(); // 引数の型のリスト
 
-    public TypeList(CParseContext pcx) {
+    public TypeList(CParseContext pcx, String functionName) {
         super("TypeList");
+        this.functionName = functionName;
         setBNF("TypeList ::= typeItem { COMMA typeItem }"); //CV13~
     }
 
@@ -29,6 +35,7 @@ public class TypeList extends CParseRule {
                 if(TypeItem.isFirst(tk)){
                     typeItem = new TypeItem(pcx);
                     typeItem.parse(pcx);
+                    argTypeList.add(typeItem.getCType()); // 引数の型を取得
                     tk = ct.getCurrentToken(pcx); // ,か,以外を読む
                 }else{
                     pcx.recoverableError(tk + " typeList: ,の後ろに型がありません"); //,はあるのに引数が続いていない
@@ -39,6 +46,10 @@ public class TypeList extends CParseRule {
             //処理は上の節点に託す
         }
 
+        //関数名に引数の型リストを紐づける
+        if(argTypeList != null){
+            pcx.getSymbolTable().searchGlobal(functionName).setArgTypeList(argTypeList);
+        }
     }
 
     public void semanticCheck(CParseContext pcx) throws FatalErrorException {

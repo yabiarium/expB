@@ -5,6 +5,9 @@ import lang.c.*;
 
 public class TypeItem extends CParseRule {
 
+    boolean isExistMult = false;
+    boolean isArray = false;
+
     public TypeItem(CParseContext pcx) {
         super("TypeItem");
         setBNF("TypeItem ::= INT [ MULT ] [ LBRA RBRA ]"); //CV13~
@@ -19,16 +22,28 @@ public class TypeItem extends CParseRule {
         CToken tk = ct.getNextToken(pcx); // int を読み飛ばす
 
         if(tk.getType() == CToken.TK_MULT){
+            isExistMult = true;
             tk = ct.getNextToken(pcx); // *を読み飛ばす
         }
 
         if(tk.getType() == CToken.TK_LBRA){
+            isArray = true;
             tk = ct.getNextToken(pcx); // [を読み飛ばす
             if(tk.getType() == CToken.TK_RBRA){
                 tk = ct.getNextToken(pcx); // ]を読み飛ばす
             }else{
                 pcx.warning(tk + " typeItem: ] を補いました");
             }
+        }
+
+        if(isExistMult && isArray){
+            this.setCType(CType.getCType(CType.T_pint_array));
+        }else if(isExistMult){
+            this.setCType(CType.getCType(CType.T_pint));
+        }else if(isArray){
+            this.setCType(CType.getCType(CType.T_int_array));
+        }else{
+            this.setCType(CType.getCType(CType.T_int));
         }
     }
 

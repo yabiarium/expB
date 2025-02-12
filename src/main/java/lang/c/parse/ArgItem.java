@@ -6,6 +6,7 @@ import lang.c.*;
 public class ArgItem extends CParseRule {
 
     boolean isExistMult = false;
+    boolean isArray = false;
     String IdentName;
 
     public ArgItem(CParseContext pcx) {
@@ -39,6 +40,7 @@ public class ArgItem extends CParseRule {
 
         //要素数なしの配列
         if(tk.getType() == CToken.TK_LBRA){
+            isArray = true;
             tk = ct.getNextToken(pcx); // [を読み飛ばす
             if(tk.getType() == CToken.TK_RBRA){
                 tk = ct.getNextToken(pcx); // ]を読み飛ばす, 配列だった場合はここが正常終了
@@ -50,6 +52,15 @@ public class ArgItem extends CParseRule {
     }
 
     public void semanticCheck(CParseContext pcx) throws FatalErrorException {
+        if(isExistMult && isArray){
+            this.setCType(CType.getCType(CType.T_pint_array));
+        }else if(isExistMult){
+            this.setCType(CType.getCType(CType.T_pint));
+        }else if(isArray){
+            this.setCType(CType.getCType(CType.T_int_array));
+        }else{
+            this.setCType(CType.getCType(CType.T_int));
+        }
     }
 
     public void codeGen(CParseContext pcx) throws FatalErrorException {

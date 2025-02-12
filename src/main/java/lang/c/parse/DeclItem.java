@@ -27,7 +27,7 @@ public class DeclItem extends CParseRule {
 	public void parse(CParseContext pcx) throws FatalErrorException {
 		CTokenizer ct = pcx.getTokenizer();
 		CToken tk = ct.getCurrentToken(pcx);
-		CToken col = tk; //宣言済みの変数のエラー表示で使用する
+		CToken ident;
 
 		try {
 			if(tk.getType() == CToken.TK_MULT){
@@ -39,6 +39,7 @@ public class DeclItem extends CParseRule {
 				pcx.recoverableError(tk + " declItem: *の後ろは IDENT です"); //先頭がIDENTならisFirstでチェックしているのでここには来ないため、このエラーメッセージでよい
 			}
 			identName = tk.getText();
+			ident = tk;
 			tk = ct.getNextToken(pcx); // IDENTを読み飛ばす
 
 			if(tk.getType() == CToken.TK_LBRA){
@@ -60,11 +61,13 @@ public class DeclItem extends CParseRule {
 
 			}else if(tk.getType() == CToken.TK_LPAR){
 				isFunction = true;
+				registerFunction(pcx, ident); //isFunctionの判定が終わってから登録する
 				tk = ct.getNextToken(pcx); // (を読み飛ばす
 
 				if(TypeList.isFirst(tk)){
-					typeList = new TypeList(pcx);
+					typeList = new TypeList(pcx, identName);
 					typeList.parse(pcx);
+					tk = ct.getCurrentToken(pcx);
 				}else if(tk.getType() != CToken.TK_RPAR){
                     pcx.recoverableError(tk + " declItem: 引数が正しくありません");
                 }
@@ -76,12 +79,17 @@ public class DeclItem extends CParseRule {
 				}
 			}
 
+			if(!isFunction){
+				registerFunction(pcx, ident); //関数以外の変数はここで登録処理する
+			}
+
 		} catch (RecoverableErrorException e) {
 			// 処理はint/constDeclで;まで飛ばすのでその手前まで処理する
 			ct.skipTo(pcx, CToken.TK_COMMA ,CToken.TK_SEMI);
 		}
-		
+	}
 
+	private void registerFunction(CParseContext pcx, CToken tk) throws FatalErrorException {
 		// 変数登録
 		CSymbolTableEntry entry;
 		final boolean isConst = false;
@@ -106,14 +114,13 @@ public class DeclItem extends CParseRule {
 		isGlobal = pcx.getSymbolTable().isGlobalMode(); //この節点が関数内から呼ばれたか否か
 		if (isGlobal || isFunction) { //グローバル領域から呼ばれた || プロトタイプ宣言である(BNF的に関数内関数は書けないので、関数の宣言はすべてグローバル変数のテーブルで管理する)
 			if ( !pcx.getSymbolTable().registerGlobal(identName, entry) ) {
-				pcx.warning(col + " declItem: 既に宣言されています");
+				pcx.warning(tk + " declItem: 既に宣言されています");
 			}
 		}else{
 			if ( !pcx.getSymbolTable().registerLocal(identName, entry) ) {
-				pcx.warning(col + " declItem: 既に宣言されています");
+				pcx.warning(tk + " declItem: 既に宣言されています");
 			}
 		}
-		
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {

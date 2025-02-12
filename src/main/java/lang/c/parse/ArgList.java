@@ -10,9 +10,13 @@ public class ArgList extends CParseRule {
 
     CParseRule argItem;
     List<CParseRule> argItemList = new ArrayList<>();
+    String functionName;
+    CToken sem; //意味解析でのエラー表示に使用
 
-    public ArgList(CParseContext pcx) {
+    public ArgList(CParseContext pcx, String functionName) {
         super("ArgList");
+        this.functionName = functionName;
+        sem = pcx.getTokenizer().getCurrentToken(pcx);
         setBNF("argList ::= argItem { COMMA argItem }"); //CV13~
     }
 
@@ -47,6 +51,28 @@ public class ArgList extends CParseRule {
     }
 
     public void semanticCheck(CParseContext pcx) throws FatalErrorException {
+        //関数名に紐づいている引数の情報と一致するか確認する
+        CSymbolTableEntry protFunction = pcx.getSymbolTable().searchGlobal(functionName);
+        List<CType> protArgTypeList = protFunction.getArgTypeList(); //プロトタイプ宣言時の引数の型のリストを取得
+
+        for(CParseRule argItem : argItemList){
+            argItem.semanticCheck(pcx);
+        }
+
+        try {
+            if((protArgTypeList == null && argItemList.size() != 0
+                || (protArgTypeList != null && argItemList.size() == 0))
+                || protArgTypeList.size() != argItemList.size()){
+                pcx.recoverableError(sem + " argList: 宣言時の引数の数と一致しません");
+            }
+
+            for(int i=0; i<protArgTypeList.size(); i++){
+                if(protArgTypeList.get(i) != argItemList.get(i).getCType()){
+                    pcx.recoverableError(sem + " argList: 宣言時の引数の型と一致しません");
+                }
+            }
+        } catch (RecoverableErrorException e) {
+        }
     }
 
     public void codeGen(CParseContext pcx) throws FatalErrorException {
