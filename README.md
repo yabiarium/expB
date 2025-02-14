@@ -76,7 +76,7 @@ call            ::= LPAR RPAR
 # CV13
 function        ::= FUNC ( INT [ MULT ] | VOID ) IDENT LPAR [ argList ] RPAR declblock //変更
 argList         ::= argItem { COMMA argItem } //関数名に紐づいている引数の情報と一致するか確認する
-argItem         ::= INT [ MULT ] IDENT [ LBRA RBRA ]
+argItem         ::= INT [ MULT ] IDENT [ LBRA RBRA ] //局所変数用のSymbolTableの作成処理はこの節点に移す。削除はdeclBlockのまま
 statementCall   ::= CALL ident LPAR [ expression { COMMA expression } ] RPAR SEMI //変更
 call            ::= LPAR [ expressoin { COMMA expression } ] RPAR //変更
 voidDecl        ::= VOID IDENT LPAR [ typeList ] RPAR { COMMA IDENT LPAR [ typeList ] RPAR } SEMI //変更
@@ -106,6 +106,7 @@ unsignedFactor  ::= number | LPAR expression RPAR
  - 局所変数用のSymbolTableの作成と削除はこれまでと変わらずdeclBlockで行う。  
  - 関数名(グローバル変数)の登録の際(プロトタイプ宣言時)に、関数名に引数情報(argTypeList)を紐づけておく。  
  - ↑関数名への引数情報の紐づけはTypeListで行う(関数名はVoidDeclとintDecl→DeclItemから持ってくる)
+ - 実引数をローカル変数として登録するのはargItemだが、functionから呼ばれる順敵にdeclBlockよりも先にargItemの解析が行われるため、局所変数用のSymbolTableの作成処理はargItemに移す必要がある
 
 </details>  
 

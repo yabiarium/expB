@@ -7,7 +7,8 @@ public class ArgItem extends CParseRule {
 
     boolean isExistMult = false;
     boolean isArray = false;
-    String IdentName;
+    String identName;
+    int size = 0;
 
     public ArgItem(CParseContext pcx) {
         super("ArgItem");
@@ -19,6 +20,7 @@ public class ArgItem extends CParseRule {
 	}
 
     public void parse(CParseContext pcx) throws FatalErrorException {
+        pcx.getSymbolTable().setupLocalSymbolTable(); // 局所変数用の記号表を作成
         CTokenizer ct = pcx.getTokenizer();
         CToken tk = ct.getNextToken(pcx); // int を読み飛ばす
 
@@ -29,7 +31,8 @@ public class ArgItem extends CParseRule {
 
         try {
             if(tk.getType() == CToken.TK_IDENT){
-                IdentName = tk.getText();
+                identName = tk.getText();
+                registerName(pcx, tk); //実引数をローカル変数として登録する
                 tk = ct.getNextToken(pcx); //IDENTを読み飛ばす, 正常終了
             }else{
                 pcx.recoverableError(tk + " argItem: IDENTがありません");
@@ -50,6 +53,29 @@ public class ArgItem extends CParseRule {
         }
         
     }
+
+    private void registerName(CParseContext pcx, CToken tk) throws FatalErrorException {
+		// 変数登録
+		CSymbolTableEntry entry;
+		int argItemType;
+		if (isArray) {
+            //配列型の実引数=配列の先頭アドレス
+			if (isExistMult) {
+				argItemType = CType.T_pint_array;
+			} else {
+				argItemType = CType.T_int_array;
+			}
+		} else {
+			size = 1;
+			if (isExistMult) {
+				argItemType = CType.T_pint;
+			} else {
+				argItemType = CType.T_int;
+			}
+		}
+		entry = new CSymbolTableEntry(CType.getCType(argItemType), size, true, false);
+        pcx.getSymbolTable().registerLocal(identName, entry);
+	}
 
     public void semanticCheck(CParseContext pcx) throws FatalErrorException {
         if(isExistMult && isArray){

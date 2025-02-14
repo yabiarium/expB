@@ -1,7 +1,5 @@
-int funcA();
-func int funcA(){
-    int a[0];
-    a = a;
-    return a;
+void funcA(int []);
+func void funcA(int a[]){
+    int a;
 }
 

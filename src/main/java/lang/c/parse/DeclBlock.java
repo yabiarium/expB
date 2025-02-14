@@ -45,7 +45,7 @@ public class DeclBlock extends CParseRule {
     public void parse(CParseContext pcx) throws FatalErrorException {
 		CTokenizer ct = pcx.getTokenizer();
 		CToken tk = ct.getCurrentToken(pcx);
-        pcx.getSymbolTable().setupLocalSymbolTable(); // 局所変数用の記号表を作成
+        //pcx.getSymbolTable().setupLocalSymbolTable(); // 局所変数用の記号表を作成 CV13:ArgItemに移動
 		tk = ct.getNextToken(pcx); // {を読み飛ばす
 
 		while (Declaration.isFirst(tk)) {
