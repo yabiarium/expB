@@ -24,6 +24,7 @@ public class Function extends CParseRule {
 	}
 
     public void parse(CParseContext pcx) throws FatalErrorException {
+        pcx.getSymbolTable().setupLocalSymbolTable(); // 局所変数用の記号表を作成
         CTokenizer ct = pcx.getTokenizer();
         CToken tk = ct.getNextToken(pcx); // func を読み飛ばす
         func = tk; //declBlocでのエラー表示に使用

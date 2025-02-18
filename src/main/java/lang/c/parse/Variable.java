@@ -13,11 +13,18 @@ public class Variable extends CParseRule{
     CParseRule ident, array, call;
 	CToken sem; //意味解析でエラー場所を表示する用
 	String identName;
+	boolean fromFactorAmp = false;
 
 	public Variable(CParseContext pcx) {
 		super("Variable");
 		//変数名 配列要素 の格納番地を積めば良い
 		//setBNF("variable ::= ident [ array ]"); //CV04~ []は0か1回
+		setBNF("variable ::= ident [ array | call ]"); //CV12~
+	}
+
+	public Variable(CParseContext pcx, boolean fromFactorAmp) {
+		super("Variable");
+		this.fromFactorAmp = fromFactorAmp;
 		setBNF("variable ::= ident [ array | call ]"); //CV12~
 	}
 
@@ -57,10 +64,10 @@ public class Variable extends CParseRule{
 			//identが配列→[]がない
 			//identが↑以外→(),[]がある
 			
-			CSymbolTableEntry functionEntry = pcx.getSymbolTable().searchGlobal(identName);
+			CSymbolTableEntry entry = pcx.getSymbolTable().searchGlobal(identName);
 			boolean isFunction = false;
-			if(functionEntry != null){
-				isFunction = functionEntry.isFunction();
+			if(entry != null){
+				isFunction = entry.isFunction();
 			}
 			
 			//identが↑以外→(),[]がある
@@ -82,10 +89,23 @@ public class Variable extends CParseRule{
 			}
 
 			//CV13: 「call funcA(&b);(bは配列型)」の記述を許容するため変更。
-			//[]がついていて中にNUMが無い場合はエラーとすればいいので、配列型の後ろの[]の有無は判定しない
+			// int b[2];として、&bはO→int[]/pint[]、&b[0]はO→int/pint、b[0]はO→int/pint、bはX
+			// factorAmpから呼ばれた場合、配列型→[]がないはOKにする。するとcall類からexpressionで他の四則演算と組み合わされず&b単品で呼ばれた場合のみ正常になるはず。&b[0]ではなく、&bを四則演算と組み合わせると演算の節点で配列型を扱うことになり型エラーになるはず。
+			// それ以外の場合、配列型→[]がないはNG
+			
+			//factorAmp以外から呼ばれているかつ、identが配列→[]がない
+			if(!fromFactorAmp){
+				if((rt == CType.T_int_array || rt == CType.T_pint_array) && array == null){
+					pcx.recoverableError(sem + " variable: 配列型識別子の後ろは[]です");
+				}
 
-			// &付きの配列型は配列のポインタ型にするため、FactorAmpで処理する
-			// primaryからの呼び出しでの型変換はprimaryで行う
+				// ここより上の階層では配列型は存在しない
+				if (rt == CType.T_int_array) {
+					rt = CType.T_int;
+				}else if(rt == CType.T_pint_array){
+					rt = CType.T_pint;
+				}
+			}
 
 			this.setCType(CType.getCType(rt));
 			this.setConstant(ident.isConstant());

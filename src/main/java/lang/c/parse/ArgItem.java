@@ -20,7 +20,6 @@ public class ArgItem extends CParseRule {
 	}
 
     public void parse(CParseContext pcx) throws FatalErrorException {
-        pcx.getSymbolTable().setupLocalSymbolTable(); // 局所変数用の記号表を作成
         CTokenizer ct = pcx.getTokenizer();
         CToken tk = ct.getNextToken(pcx); // int を読み飛ばす
 
@@ -32,7 +31,6 @@ public class ArgItem extends CParseRule {
         try {
             if(tk.getType() == CToken.TK_IDENT){
                 identName = tk.getText();
-                registerName(pcx, tk); //実引数をローカル変数として登録する
                 tk = ct.getNextToken(pcx); //IDENTを読み飛ばす, 正常終了
             }else{
                 pcx.recoverableError(tk + " argItem: IDENTがありません");
@@ -51,7 +49,8 @@ public class ArgItem extends CParseRule {
                 pcx.warning(tk + " argItem: ] を補いました");
             }
         }
-        
+
+        registerName(pcx, tk); //実引数をローカル変数として登録する
     }
 
     private void registerName(CParseContext pcx, CToken tk) throws FatalErrorException {
@@ -74,7 +73,7 @@ public class ArgItem extends CParseRule {
 				argItemType = CType.T_int;
 			}
 		}
-		entry = new CSymbolTableEntry(CType.getCType(argItemType), size, true, false);
+		entry = new CSymbolTableEntry(CType.getCType(argItemType), size, false, false);
         pcx.getSymbolTable().registerLocal(identName, entry);
 	}
 

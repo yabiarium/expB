@@ -10,11 +10,18 @@ import lang.c.CodeGenCommon;
 
 public class Primary extends CParseRule{
     CParseRule primaryMult, variable;
+	boolean fromFactorAmp = false;
 
 	public Primary(CParseContext pcx) {
 		super("Primary");
 		//このノードは実は何もしない：下の2つのいずれかである．コード生成はそれぞれのノードにお任せ
 		//primaryは「番地」を表すもの，入れ物を特定する「名札」の機能をちゃんと持っている
+		setBNF("primary ::= primaryMult | variable"); //CV04~
+	}
+
+	public Primary(CParseContext pcx, boolean fromFactorAmp) {
+		super("Primary");
+		this.fromFactorAmp = fromFactorAmp;
 		setBNF("primary ::= primaryMult | variable"); //CV04~
 	}
 
@@ -32,10 +39,13 @@ public class Primary extends CParseRule{
 		CToken tk = ct.getCurrentToken(pcx);
 
 		if(tk.getType() == CToken.TK_MULT){
+			if(fromFactorAmp){
+				pcx.recoverableError(tk + " primary: *の後ろに&は置けません");
+			}
 			primaryMult = new PrimaryMult(pcx);
 			primaryMult.parse(pcx);
 		}else{
-			variable = new Variable(pcx);
+			variable = new Variable(pcx, fromFactorAmp);
 			variable.parse(pcx);
 		}
 	}
@@ -52,13 +62,6 @@ public class Primary extends CParseRule{
 			variable.semanticCheck(pcx);
 			isConst = variable.isConstant();
 			rt = variable.getCType().getType();
-		}
-		
-		// ここより上の階層では配列型は存在しない
-		if (rt == CType.T_int_array) {
-			rt = CType.T_int;
-		}else if(rt == CType.T_pint_array){
-			rt = CType.T_pint;
 		}
 
 		this.setCType(CType.getCType(rt));

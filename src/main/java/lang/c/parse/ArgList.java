@@ -60,17 +60,21 @@ public class ArgList extends CParseRule {
         }
 
         try {
-            if((protArgTypeList == null && argItemList.size() != 0
-                || (protArgTypeList != null && argItemList.size() == 0))
-                || protArgTypeList.size() != argItemList.size()){
-                pcx.recoverableError(sem + " argList: 宣言時の引数の数と一致しません");
-            }
-
-            for(int i=0; i<protArgTypeList.size(); i++){
-                if(protArgTypeList.get(i) != argItemList.get(i).getCType()){
-                    pcx.recoverableError(sem + " argList: 宣言時の引数の型と一致しません");
+            if(protArgTypeList == null){
+                if(argItemList.size() != 0){
+                    pcx.recoverableError(sem + " argList: 宣言時の引数の数と一致しません");
+                }
+            }else{
+                if(protArgTypeList.size() != argItemList.size()){
+                    pcx.recoverableError(sem + " argList: 宣言時の引数の数と一致しません");
+                }
+                for(int i=0; i<protArgTypeList.size(); i++){
+                    if(protArgTypeList.get(i) != argItemList.get(i).getCType()){
+                        pcx.recoverableError(sem + " argList: 宣言時の引数の型と順番が一致しません");
+                    }
                 }
             }
+
         } catch (RecoverableErrorException e) {
         }
     }

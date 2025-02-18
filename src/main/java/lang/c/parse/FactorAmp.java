@@ -41,7 +41,7 @@ public class FactorAmp extends CParseRule {
 				if(PrimaryMult.isFirst(tk)){
 					pcx.recoverableError(tk + " factorAmp: &の後ろに*は置けません");
 				}
-				primary = new Primary(pcx);
+				primary = new Primary(pcx, true);
 				primary.parse(pcx);
 			} else {
 				pcx.recoverableError(tk + " factorAmp: &の後ろはnumberまたはprimary(variableのみ)です");
@@ -57,25 +57,23 @@ public class FactorAmp extends CParseRule {
 			number.semanticCheck(pcx);
 			this.setCType(CType.getCType(CType.T_pint));
 			this.setConstant(isConstant());
+
 		} else if (primary != null){
 			primary.semanticCheck(pcx);
 			int t = primary.getCType().getType();
 			String ts = primary.getCType().toString();
 
-			if (t == CType.T_int_array) {
-				t = CType.T_int;
-			}else if(t == CType.T_pint_array){
-				t = CType.T_pint;
-			}
-
 			try {
-				if(primary.getCType().getType() != CType.T_int){
+				if(primary.getCType().getType() != CType.T_int && primary.getCType().getType() != CType.T_int_array){
 					pcx.recoverableError(sem + " factorAmp: &の後ろはT_intです["+ts+"]");
+				}
+				if(primary.getCType().getType() == CType.T_int_array){
+					t = CType.T_pint_array;
 				}
 			} catch (RecoverableErrorException e) {
 			}
-			this.setCType(CType.getCType(CType.T_pint));
-			this.setConstant(isConstant());
+			this.setCType(CType.getCType(t));
+			this.setConstant(primary.isConstant());
 		}
 	}
 
