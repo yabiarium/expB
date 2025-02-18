@@ -60,6 +60,7 @@ public class ArgItem extends CParseRule {
 		int argItemType;
 		if (isArray) {
             //配列型の実引数=配列の先頭アドレス
+            size = 1; //あとで変えるかも これを割り当てた所に、配列の先頭アドレスを入れる
 			if (isExistMult) {
 				argItemType = CType.T_pint_array;
 			} else {

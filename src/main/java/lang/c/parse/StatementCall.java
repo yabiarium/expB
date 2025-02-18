@@ -96,6 +96,11 @@ public class StatementCall extends CParseRule {
         } catch (RecoverableErrorException e) {
         }
         
+        if(expressionList != null){
+            for(CParseRule expression : expressionList){
+                expression.semanticCheck(pcx);
+            }
+        }
     }
 
     public void codeGen(CParseContext pcx) throws FatalErrorException {

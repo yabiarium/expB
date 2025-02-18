@@ -81,17 +81,11 @@ public class Variable extends CParseRule{
 				pcx.recoverableError(sem + " variable: 関数識別子の後ろは()です");
 			}
 
-			// identが配列→[]がない
-			if((rt == CType.T_int_array || rt == CType.T_pint_array) && array == null){
-				pcx.recoverableError(sem + " variable: 配列型の後ろに[]がありません");
-				
-				// variableより上の階層では配列型は存在しない
-				if (rt == CType.T_int_array) {
-					rt = CType.T_int;
-				}else if(rt == CType.T_pint_array){
-					rt = CType.T_pint;
-				}
-			}
+			//CV13: 「call funcA(&b);(bは配列型)」の記述を許容するため変更。
+			//[]がついていて中にNUMが無い場合はエラーとすればいいので、配列型の後ろの[]の有無は判定しない
+
+			// &付きの配列型は配列のポインタ型にするため、FactorAmpで処理する
+			// primaryからの呼び出しでの型変換はprimaryで行う
 
 			this.setCType(CType.getCType(rt));
 			this.setConstant(ident.isConstant());

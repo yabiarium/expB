@@ -39,13 +39,11 @@ public class FactorAmp extends CParseRule {
 				number.parse(pcx);
 			} else if(Primary.isFirst(tk)) {
 				if(PrimaryMult.isFirst(tk)){
-					//pcx.fatalError(tk + "factorAmp: parse(): &の後ろに*は置けません");
 					pcx.recoverableError(tk + " factorAmp: &の後ろに*は置けません");
 				}
 				primary = new Primary(pcx);
 				primary.parse(pcx);
 			} else {
-				//pcx.fatalError(tk + "factorAmp: parse(): &の後ろはnumberまたはprimaryです");
 				pcx.recoverableError(tk + " factorAmp: &の後ろはnumberまたはprimary(variableのみ)です");
 			}
 
@@ -61,10 +59,17 @@ public class FactorAmp extends CParseRule {
 			this.setConstant(isConstant());
 		} else if (primary != null){
 			primary.semanticCheck(pcx);
+			int t = primary.getCType().getType();
 			String ts = primary.getCType().toString();
+
+			if (t == CType.T_int_array) {
+				t = CType.T_int;
+			}else if(t == CType.T_pint_array){
+				t = CType.T_pint;
+			}
+
 			try {
 				if(primary.getCType().getType() != CType.T_int){
-					//pcx.fatalError("factorAmp: semanticCheck(): &の後ろはT_intです["+ts+"]");
 					pcx.recoverableError(sem + " factorAmp: &の後ろはT_intです["+ts+"]");
 				}
 			} catch (RecoverableErrorException e) {

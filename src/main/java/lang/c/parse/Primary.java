@@ -5,7 +5,7 @@ import lang.c.CParseContext;
 import lang.c.CParseRule;
 import lang.c.CToken;
 import lang.c.CTokenizer;
-//import lang.c.CType;
+import lang.c.CType;
 import lang.c.CodeGenCommon;
 
 public class Primary extends CParseRule{
@@ -41,15 +41,28 @@ public class Primary extends CParseRule{
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
+		int rt;
+		boolean isConst = false;
+
 		if (primaryMult != null) {
 			primaryMult.semanticCheck(pcx);
-			this.setCType(primaryMult.getCType()); // primaryMult の型をそのままコピー
-			this.setConstant(primaryMult.isConstant());
-		}else if (variable != null) {
+			isConst = primaryMult.isConstant();
+			rt = primaryMult.getCType().getType();
+		}else{ //variable != null
 			variable.semanticCheck(pcx);
-			this.setCType(variable.getCType());
-			this.setConstant(variable.isConstant());
+			isConst = variable.isConstant();
+			rt = variable.getCType().getType();
 		}
+		
+		// ここより上の階層では配列型は存在しない
+		if (rt == CType.T_int_array) {
+			rt = CType.T_int;
+		}else if(rt == CType.T_pint_array){
+			rt = CType.T_pint;
+		}
+
+		this.setCType(CType.getCType(rt));
+		this.setConstant(isConst);
 	}
 
 	public void codeGen(CParseContext pcx) throws FatalErrorException {
