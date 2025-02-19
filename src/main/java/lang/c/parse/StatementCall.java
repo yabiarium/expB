@@ -99,6 +99,8 @@ public class StatementCall extends CParseRule {
         if(expressionList != null){
             for(CParseRule expression : expressionList){
                 expression.semanticCheck(pcx);
+                this.setCType(expression.getCType());
+                this.setConstant(expression.isConstant());
             }
         }
     }
@@ -106,6 +108,13 @@ public class StatementCall extends CParseRule {
     public void codeGen(CParseContext pcx) throws FatalErrorException {
         CodeGenCommon cgc = pcx.getCodeGenCommon();
 		cgc.printStartComment(getBNF(getId()));
+
+        //引数を後ろから順にスタックに積む
+        for(int i = expressionList.size() - 1; i >= 0; i--) {
+            expressionList.get(i).codeGen(pcx);
+            cgc.printInstCodeGen("", "","StatementCall: 引数が積まれた");
+            //cgc.printPushCodeGen("","R1", "StatementCall: 引数を積む");//引数の計算結果をスタックに積む
+        }
 
         if(ident != null){
             ident.codeGen(pcx);

@@ -1,26 +1,56 @@
-void funcA();
-void funcB(int []);
-func void funcA(){
-    int a[3];
-    a[0] = 1; 
-    a[1] = 2;
-    a[2] = 3;
-    call funcB(&a);
-    output a[0]+a[1]+a[2]; //funcBの処理で書き換わっているのが正常のはず…
+void main();
+void swap(int *, int *);
+void qsort(int [], int, int);
+
+func void main() {
+    int hoge;
+    int i;
+    int a[10];
+    // aに初期値を設定する
+    a[0] = 3;
+    a[1] = 1;
+    a[2] = 4;
+    a[3] = 2;
+    a[4] = 5;
+    a[5] = 9;
+    a[6] = 6;
+    a[7] = 8;
+    a[8] = 7;
+    a[9] = 0;
+    call qsort(&a, 0, 9);
+    while(i < 10) {
+        // aを出力する
+        output a[i];
+        input hoge;
+        i = i + 1;
+    }
 }
-func void funcB(int a[]){ //配列型の引数は関数内で配列の先頭アドレスを指すポインタのみ局所変数用の場所にコピーする(扱いは配列型のまま)
-    output a[0]+a[1]+a[2]; //実引数をローカル変数として受け取って初期化できているか（ローカルの配列変数の割当番地を、受け取ったアドレスで初期化すれば良い）
-    a[2] = a[2]*3; //書き換え
-    output a[2];
+
+
+func void swap(int *a, int *b) {
+    int t;
+    t = *a;
+    *a = *b;
+    *b = t;
 }
 
-
-//残りの作業
-//・配列型の実引数をどうするか
-//・フレームポインタの位置をどうするか→配列の要素数は考えなくてよい(先頭アドレスを指すポインタ型なので)。よって実引数の数分だけずらす
-//・どうずらす？→（現予想）argListで最後の実引数からスタックに積んでいく、数をカウントしておいて、FPをその数だけずらす、関数内からのアクセスはFPから負の相対位置を用いる
-
-/*
-例えば、int a[3]という配列の場合、aは&a[0]（つまり、a[0]のアドレス）と同じ意味になります。
-関数funcBの引数int b[]は、実際にはint *b（整数型へのポインタ）として解釈されます。
-*/
+func void qsort(int a[], int start, int end) {
+    // 配列aのa[start]からa[end]までクイックソートで整列する
+    int left, right, pivot;
+    while(start < end) {
+        left = start;
+        right = end;
+        pivot = a[(start + end) / 2];
+        while(left <= right) {
+            while(a[left] < pivot) left=left+1;
+            while(a[right] > pivot) right=right-1;
+            if(left <= right) {
+                call swap(&a[left], &a[right]);
+                left=left+1;
+                right=right-1;
+            }
+        }
+        call qsort(&a, start, right);
+        start = left;
+    }
+}

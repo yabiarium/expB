@@ -12,6 +12,7 @@ public class Function extends CParseRule {
 	String returnLabel = ""; // 返り値のラベル
     int functionType;
     CToken func;
+    int argSize = 0; //引数の個数
 
     public Function(CParseContext pcx) {
         super("Function");

@@ -59,6 +59,11 @@ public class Array extends CParseRule{
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
 		//左辺の型は、T_int_array か T_pint_arrayのみ
 		//↑この判定はvariableで行っているのでここでは何もする必要がない
+		if(expression != null){
+			expression.semanticCheck(pcx);
+			this.setCType(expression.getCType());
+			this.setConstant(expression.isConstant());
+		}
 	}
 
 	public void codeGen(CParseContext pcx) throws FatalErrorException {
@@ -69,7 +74,7 @@ public class Array extends CParseRule{
 			cgc.printPopCodeGen("", "R0", "array: expressionの結果をR0に取り出す");
 			cgc.printPopCodeGen("", "R1", "array: 配列の先頭アドレスをR1に取り出す");
 			cgc.printInstCodeGen("", "ADD R1, R0", "array: 相対アドレスを求める");
-			cgc.printPushCodeGen("", "R0", "");
+			cgc.printPushCodeGen("", "R0", "array:");
 		}
 		cgc.printCompleteComment(getBNF(getId()));
 	}

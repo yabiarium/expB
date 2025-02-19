@@ -102,7 +102,7 @@ public class StatementAssign extends CParseRule{
 			primary.codeGen(pcx); //左辺：番地をスタックに積む
 			expression.codeGen(pcx); //右辺：代入するものをスタックに積む
 
-			cgc.printPopCodeGen("", "R1", "StatementAssign: 右辺値取り出しす");
+			cgc.printPopCodeGen("", "R1", "StatementAssign: 右辺値取り出し");
 			cgc.printPopCodeGen("", "R0", "StatementAssign: 左辺番地取り出し");
 			cgc.printInstCodeGen("", "MOV R1, (R0)", "StatementAssign: 代入実行");
 		}

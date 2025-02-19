@@ -16,6 +16,8 @@ public class CSymbolTableEntry extends SymbolTableEntry {
 
 	//CV13~
 	private List<CType> argTypeList; // 関数の引数の型のリスト
+	private int address_arg;
+	private boolean isArg = false;
 
 	public CSymbolTableEntry(CType type, int size, boolean constp, boolean isFunction) {
 		this.type = type;
@@ -55,4 +57,8 @@ public class CSymbolTableEntry extends SymbolTableEntry {
 
 	public List<CType> getArgTypeList() { return argTypeList; }
 	public void setArgTypeList(List<CType> argTypeList) { this.argTypeList = argTypeList; }
+	public void setAddress_arg(int address_arg) { this.address_arg = address_arg; }
+	public int getAddress_arg() { return address_arg; }
+	public void setIsArg(boolean isArg) { this.isArg = isArg; }
+	public boolean isArg() { return isArg; }
 }

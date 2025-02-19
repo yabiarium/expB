@@ -74,7 +74,7 @@ public class ArgItem extends CParseRule {
 			}
 		}
 		entry = new CSymbolTableEntry(CType.getCType(argItemType), size, false, false);
-        pcx.getSymbolTable().registerLocal(identName, entry);
+        pcx.getSymbolTable().registerLocal_arg(identName, entry);
 	}
 
     public void semanticCheck(CParseContext pcx) throws FatalErrorException {
@@ -92,6 +92,9 @@ public class ArgItem extends CParseRule {
     public void codeGen(CParseContext pcx) throws FatalErrorException {
         CodeGenCommon cgc = pcx.getCodeGenCommon();
 		cgc.printStartComment(getBNF(getId()));
+
+        //call類で引数が積まれてからJSRで関数に飛ぶ
+        
 		cgc.printCompleteComment(getBNF(getId()));
     }
 }

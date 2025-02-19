@@ -12,7 +12,9 @@ public class CSymbolTable {
 	private SymbolTable<CSymbolTableEntry> global; // 大域変数用
 	private SymbolTable<CSymbolTableEntry> local; // 局所変数用
 	private int addressOffset = 0; // 局所変数変数とフレームポインタの差
+	private int addressOffset_arg = 0; // 引数のアドレスオフセット
 	private boolean isGlobalMode = true;
+	private boolean isArg = false;
 
 	public CSymbolTable() {
 		global = new OneSymbolTable();
@@ -35,6 +37,19 @@ public class CSymbolTable {
 		if (e != null) {
 			e.setAddress(addressOffset);
 			addressOffset += e.getSize();
+		}
+		return local.register(name, e) == null; // putは以前に関連付けられていた値を返す
+	}
+
+	public boolean registerLocal_arg(String name, CSymbolTableEntry e) {
+		e.setIsGlobal(false);
+		e.setIsArg(true);
+		if (searchLocal(name) != null) {
+			return false;
+		}
+		if (e != null) {
+			e.setAddress_arg(addressOffset_arg);
+			addressOffset_arg += e.getSize();
 		}
 		return local.register(name, e) == null; // putは以前に関連付けられていた値を返す
 	}
@@ -72,5 +87,11 @@ public class CSymbolTable {
 	}
 	public int getAddressOffset() {
 		return addressOffset;
+	}
+	public int getAddressOffset_arg() {
+		return addressOffset_arg;
+	}
+	public boolean isArg() {
+		return isArg;
 	}
 }

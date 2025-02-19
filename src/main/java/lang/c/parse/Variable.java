@@ -55,69 +55,79 @@ public class Variable extends CParseRule{
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
-		if(ident != null){
-			ident.semanticCheck(pcx);
-			int rt = ident.getCType().getType(); // identの型
 
-			//エラーになる場合
-			//identが関数→()がない
-			//identが配列→[]がない
-			//identが↑以外→(),[]がある
-			
-			CSymbolTableEntry entry = pcx.getSymbolTable().searchGlobal(identName);
-			boolean isFunction = false;
-			if(entry != null){
-				isFunction = entry.isFunction();
-			}
-			
-			//identが↑以外→(),[]がある
-			if(array != null){ // 後ろに[]があるのにidentがint,pintでないのはエラー
-				if(rt != CType.T_int_array && rt != CType.T_pint_array){
-					pcx.recoverableError(sem + " variable: 配列型でない識別子に[]はつけられません");
-				}
-				array.semanticCheck(pcx); //arrayの型によってvariableの型が変わることはない
-			}
-			if(call != null){ // 後ろに()があるのにidentが関数でないのはおかしい
-				if(!isFunction){
-					pcx.recoverableError(sem + " variable: 関数でない識別子に()はつけられません");
-				}
-			}
+		ident.semanticCheck(pcx);
+		int rt = ident.getCType().getType(); // identの型
 
-			//identが関数→()がない
-			if(isFunction && call == null){
-				pcx.recoverableError(sem + " variable: 関数識別子の後ろは()です");
-			}
-
-			//CV13: 「call funcA(&b);(bは配列型)」の記述を許容するため変更。
-			// int b[2];として、&bはO→int[]/pint[]、&b[0]はO→int/pint、b[0]はO→int/pint、bはX
-			// factorAmpから呼ばれた場合、配列型→[]がないはOKにする。するとcall類からexpressionで他の四則演算と組み合わされず&b単品で呼ばれた場合のみ正常になるはず。&b[0]ではなく、&bを四則演算と組み合わせると演算の節点で配列型を扱うことになり型エラーになるはず。
-			// それ以外の場合、配列型→[]がないはNG
-			
-			//factorAmp以外から呼ばれているかつ、identが配列→[]がない
-			if(!fromFactorAmp){
-				if((rt == CType.T_int_array || rt == CType.T_pint_array) && array == null){
-					pcx.recoverableError(sem + " variable: 配列型識別子の後ろは[]です");
-				}
-
-				// ここより上の階層では配列型は存在しない
-				if (rt == CType.T_int_array) {
-					rt = CType.T_int;
-				}else if(rt == CType.T_pint_array){
-					rt = CType.T_pint;
-				}
-			}
-
-			this.setCType(CType.getCType(rt));
-			this.setConstant(ident.isConstant());
+		if(array != null){
+			array.semanticCheck(pcx);
+		}else if (call != null){
+			call.semanticCheck(pcx);
 		}
+
+		//エラーになる場合
+		//identが関数→()がない
+		//identが配列→[]がない
+		//identが↑以外→(),[]がある
+		
+		CSymbolTableEntry entry = pcx.getSymbolTable().searchGlobal(identName);
+		boolean isFunction = false;
+		if(entry != null){
+			isFunction = entry.isFunction();
+		}
+		
+		//identが↑以外→(),[]がある
+		if(array != null){ // 後ろに[]があるのにidentがint,pintでないのはエラー
+			if(rt != CType.T_int_array && rt != CType.T_pint_array){
+				pcx.recoverableError(sem + " variable: 配列型でない識別子に[]はつけられません");
+			}
+			array.semanticCheck(pcx); //arrayの型によってvariableの型が変わることはない
+		}
+		if(call != null){ // 後ろに()があるのにidentが関数でないのはおかしい
+			if(!isFunction){
+				pcx.recoverableError(sem + " variable: 関数でない識別子に()はつけられません");
+			}
+		}
+
+		//identが関数→()がない
+		if(isFunction && call == null){
+			pcx.recoverableError(sem + " variable: 関数識別子の後ろは()です");
+		}
+
+		//CV13: 「call funcA(&b);(bは配列型)」の記述を許容するため変更。
+		// int b[2];として、&bはO→int[]/pint[]、&b[0]はO→int/pint、b[0]はO→int/pint、bはX
+		// factorAmpから呼ばれた場合、配列型→[]がないはOKにする。するとcall類からexpressionで他の四則演算と組み合わされず&b単品で呼ばれた場合のみ正常になるはず。&b[0]ではなく、&bを四則演算と組み合わせると演算の節点で配列型を扱うことになり型エラーになるはず。
+		// それ以外の場合、配列型→[]がないはNG
+		
+		//factorAmp以外から呼ばれているかつ、identが配列→[]がない
+		if(!fromFactorAmp){
+			if((rt == CType.T_int_array || rt == CType.T_pint_array) && array == null){
+				pcx.recoverableError(sem + " variable: 配列型識別子の後ろは[]です");
+			}
+
+			// ここより上の階層では配列型は存在しない
+			if (rt == CType.T_int_array) {
+				rt = CType.T_int;
+			}else if(rt == CType.T_pint_array){
+				rt = CType.T_pint;
+			}
+		}
+
+		this.setCType(CType.getCType(rt));
+		this.setConstant(ident.isConstant());
 	}
 
 	public void codeGen(CParseContext pcx) throws FatalErrorException {
 		CodeGenCommon cgc = pcx.getCodeGenCommon();
 		cgc.printStartComment(getBNF(getId()));
-		if(ident != null){
-			ident.codeGen(pcx);
+		CSymbolTableEntry entry = pcx.getSymbolTable().searchGlobal(identName);
+
+		if(entry != null && entry.isFunction()){ //関数呼び出しなら
+			call.codeGen(pcx);
 		}
+		
+		ident.codeGen(pcx);
+		
 		if(array != null){
 			array.codeGen(pcx);
 		}

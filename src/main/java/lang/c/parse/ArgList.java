@@ -82,6 +82,11 @@ public class ArgList extends CParseRule {
     public void codeGen(CParseContext pcx) throws FatalErrorException {
         CodeGenCommon cgc = pcx.getCodeGenCommon();
 		cgc.printStartComment(getBNF(getId()));
+        
+        for(CParseRule argItem : argItemList){
+            argItem.codeGen(pcx);
+        }
+        
 		cgc.printCompleteComment(getBNF(getId()));
     }
 }

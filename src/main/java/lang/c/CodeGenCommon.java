@@ -21,10 +21,10 @@ public class CodeGenCommon {
     }
 
     public void printStartComment(String cl) {
-        comment(cl + " starts.");
+        //comment(cl + " starts.");
     }
     public void printCompleteComment(String cl) {
-        comment(cl + " complete.");
+        //comment(cl + " complete.");
     }
     public void comment(String cl) {
         CodeGenEntry co = new CodeGenEntry(CodeGenEntry.COMMENT, cl);
