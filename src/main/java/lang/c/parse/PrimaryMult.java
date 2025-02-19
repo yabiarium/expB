@@ -33,7 +33,7 @@ public class PrimaryMult extends CParseRule{
 		try {
 			tk = ct.getNextToken(pcx);
 			if (Variable.isFirst(tk)) {
-				variable = new Variable(pcx);
+				variable = new Variable(pcx); //&の後ろに*は置けないことにする。*の後ろはpintでintに変換する。&の後ろはintでpintにする。よって&*pintは意味がない。（primaryにエラーを追加）
 				variable.parse(pcx);
 			} else {
 				//pcx.fatalError(tk + "primaryMult: parse(): *の後ろはvariableです");

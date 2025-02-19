@@ -34,6 +34,7 @@ public class StatementBlock extends CParseRule {
 
 			} catch (RecoverableErrorException e) {
 				//そのときにはここで例外を捕まえて，’;’か’}’が出るまで読み飛ばして回復する（立ち直る）
+				//実験書丸写ししたけど、}まで飛ばしてネクストしたら}を補いましたになってしまうのでは？なんでこれで上手くいってるんだ？
 				ct.skipTo(pcx, CToken.TK_SEMI, CToken.TK_RCUR);
 				tk = ct.getNextToken(pcx);
 			}

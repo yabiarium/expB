@@ -41,8 +41,8 @@ public class AddressToValue extends CParseRule{
 		cgc.printStartComment(getBNF(getId()));
 		if (primary != null) {
 			primary.codeGen(pcx);
-			cgc.printPopCodeGen("","R0","");
-			cgc.printPushCodeGen("","(R0)","");
+			cgc.printPopCodeGen("","R0","AddressToValue: アドレスを取り出す");
+			cgc.printPushCodeGen("","(R0)","AddressToValue: 参照した値を積む");
 		}
 		cgc.printCompleteComment(getBNF(getId()));
 	}

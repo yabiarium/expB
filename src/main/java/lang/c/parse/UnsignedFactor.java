@@ -6,12 +6,13 @@ import lang.c.*;
 public class UnsignedFactor extends CParseRule {
 	// 新しく非終端記号に対応するクラスを作成する際は，必ず拡張BNF をコメントでつけること
 	// また，更新する際は，拡張BNFの「履歴」を残すこと（例えば，実験３まで：．．．． と 実験４から：．．． のように）
-	CParseRule number, factorAmp, expression, addressToValue;
+	CParseRule number, factorAmp, expression, addressToValue, ident;
 
 	public UnsignedFactor(CParseContext pcx) {
 		super("UnsignedFactor");
 		//setBNF("unsignedFactor ::= factorAmp | number | LPAR expression RPAR"); //CV03
-		setBNF("unsignedFactor ::= factorAmp | number | LPAR expression RPAR | addressToValue"); //CV04~
+		//setBNF("unsignedFactor ::= factorAmp | number | LPAR expression RPAR | addressToValue"); //CV04~
+		setBNF("unsignedFactor ::= factorAmp | number | LPAR expression RPAR | addressToValue"); //CV12~
 	}
 
 	public static boolean isFirst(CToken tk) {

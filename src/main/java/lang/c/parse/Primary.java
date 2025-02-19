@@ -5,16 +5,23 @@ import lang.c.CParseContext;
 import lang.c.CParseRule;
 import lang.c.CToken;
 import lang.c.CTokenizer;
-//import lang.c.CType;
+import lang.c.CType;
 import lang.c.CodeGenCommon;
 
 public class Primary extends CParseRule{
     CParseRule primaryMult, variable;
+	boolean fromFactorAmp = false;
 
 	public Primary(CParseContext pcx) {
 		super("Primary");
 		//このノードは実は何もしない：下の2つのいずれかである．コード生成はそれぞれのノードにお任せ
 		//primaryは「番地」を表すもの，入れ物を特定する「名札」の機能をちゃんと持っている
+		setBNF("primary ::= primaryMult | variable"); //CV04~
+	}
+
+	public Primary(CParseContext pcx, boolean fromFactorAmp) {
+		super("Primary");
+		this.fromFactorAmp = fromFactorAmp;
 		setBNF("primary ::= primaryMult | variable"); //CV04~
 	}
 
@@ -32,24 +39,33 @@ public class Primary extends CParseRule{
 		CToken tk = ct.getCurrentToken(pcx);
 
 		if(tk.getType() == CToken.TK_MULT){
+			if(fromFactorAmp){
+				pcx.recoverableError(tk + " primary: *の後ろに&は置けません");
+			}
 			primaryMult = new PrimaryMult(pcx);
 			primaryMult.parse(pcx);
 		}else{
-			variable = new Variable(pcx);
+			variable = new Variable(pcx, fromFactorAmp);
 			variable.parse(pcx);
 		}
 	}
 
 	public void semanticCheck(CParseContext pcx) throws FatalErrorException {
+		int rt;
+		boolean isConst = false;
+
 		if (primaryMult != null) {
 			primaryMult.semanticCheck(pcx);
-			this.setCType(primaryMult.getCType()); // primaryMult の型をそのままコピー
-			this.setConstant(primaryMult.isConstant());
-		}else if (variable != null) {
+			isConst = primaryMult.isConstant();
+			rt = primaryMult.getCType().getType();
+		}else{ //variable != null
 			variable.semanticCheck(pcx);
-			this.setCType(variable.getCType());
-			this.setConstant(variable.isConstant());
+			isConst = variable.isConstant();
+			rt = variable.getCType().getType();
 		}
+
+		this.setCType(CType.getCType(rt));
+		this.setConstant(isConst);
 	}
 
 	public void codeGen(CParseContext pcx) throws FatalErrorException {

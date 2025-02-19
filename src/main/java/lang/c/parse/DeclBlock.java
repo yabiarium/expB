@@ -10,11 +10,31 @@ public class DeclBlock extends CParseRule {
 
     CParseRule declaration, statement;
     List<CParseRule> declarationList = new ArrayList<>();
-    List<CParseRule> statementList = new ArrayList<>();
+    //List<CParseRule> statementList = new ArrayList<>();
+    List<StatementInfo> statementList = new ArrayList<>(); //CV12~
     int variableSize = 0;
+    boolean isExistReturn = false;
+    String functionName, returnLabel;
+    CToken functionToken;
+
+    private class StatementInfo {
+        public CParseRule statement;
+        public boolean isReturn;
+        public CToken token;
+
+        public StatementInfo(CParseRule statement, boolean isReturn, CToken token) {
+            this.statement = statement;
+            this.isReturn = isReturn;
+            this.token = token;
+        }
+    }
     
-    public DeclBlock(CParseContext pcx) {
+    //CV12: 引数にfunctionNameを追加(この節点DeclBlockが呼び出されるのはfunctionからのみなので問題ないはず…)
+    public DeclBlock(CParseContext pcx, String functionName, CToken functionToken) {
         super("DeclBlock");
+        this.functionName = functionName;
+        this.functionToken = functionToken;
+        this.returnLabel = "RET_" + functionName;
         setBNF("declBlock ::= LCUR { declaration } { statement } RCUR"); //CV11~
     }
 
@@ -25,7 +45,7 @@ public class DeclBlock extends CParseRule {
     public void parse(CParseContext pcx) throws FatalErrorException {
 		CTokenizer ct = pcx.getTokenizer();
 		CToken tk = ct.getCurrentToken(pcx);
-        pcx.getSymbolTable().setupLocalSymbolTable(); // 局所変数用の記号表を作成
+        //pcx.getSymbolTable().setupLocalSymbolTable(); // 局所変数用の記号表を作成 CV13:ArgItemに移動
 		tk = ct.getNextToken(pcx); // {を読み飛ばす
 
 		while (Declaration.isFirst(tk)) {
@@ -36,9 +56,14 @@ public class DeclBlock extends CParseRule {
 		}
 
 		while (Statement.isFirst(tk)) {
-            statement = new Statement(pcx);
+            boolean isReturn = false;
+            if(tk.getType() == CToken.TK_RETURN){ //今から読む行がreturnの場合
+                isReturn = true;
+                isExistReturn = true;
+            }
+            statement = new Statement(pcx, functionName);
             statement.parse(pcx);
-            statementList.add(statement);
+            statementList.add(new StatementInfo(statement, isReturn, tk));
 			tk = ct.getCurrentToken(pcx);
 		}
 
@@ -56,9 +81,46 @@ public class DeclBlock extends CParseRule {
 
     public void semanticCheck(CParseContext pcx) throws FatalErrorException {
         if (statementList != null) {
-			for (CParseRule item : statementList) {
-				item.semanticCheck(pcx);
-			}
+
+            //returnと関数の型が対応しているかの処理
+            //このDeclBlockが属するfunctionの型を取得(プロトタイプ宣言の型が優先される)
+            CSymbolTableEntry function = pcx.getSymbolTable().searchGlobal(functionName); //CV12: 左辺(functionのみ)
+            int functionType = function.getCType().getType();
+            String functinoTypeS = function.getCType().toString();
+            
+            try {
+                if(isExistReturn){
+                    if(functionType == CType.T_err){ //return文が存在するのにfunctionの型がない(err)場合
+                        pcx.recoverableError(functionToken + " declBlock: 関数の型が必要です");
+                    }
+                }else{
+                    if(functionType != CType.T_void && functionType != CType.T_err){ //return文が存在しないのにfunctionの型がある(void/err以外)場合
+                        pcx.recoverableError(functionToken + " declBlock: "+functinoTypeS+"型の返り値が必要です");
+                    }
+                }
+                
+                for (StatementInfo statementInfo : statementList) {
+                    boolean isReturn = statementInfo.isReturn;
+                    CParseRule item = statementInfo.statement;
+                    CToken tk = statementInfo.token;
+                    item.semanticCheck(pcx);
+                    
+                    if(isReturn){ //今読んでいるのがreturn文の場合
+                        int st = item.getCType().getType();
+                        String sts = item.getCType().toString();
+                        //functionの型がvoid/err以外で、return文の型と不一致
+                        if(functionType != st && (functionType != CType.T_void && functionType != CType.T_err)){
+                            pcx.recoverableError(tk + " declBlock: 関数の型["+functinoTypeS+"]と返り値の型["+sts+"]が異なります");
+                        }
+                        if(st != CType.T_void && functionType == CType.T_void){ //return文+式が存在するのにfunctionがvoidの場合
+                            pcx.recoverableError(functionToken + " declBlock: 関数がvoid型にもかかわらず、返り値が存在します");
+                        }
+                    }
+                }
+
+            } catch (RecoverableErrorException e) {
+                //コード生成なしのwarningとして処理
+            }
 		}
     }
 
@@ -77,13 +139,11 @@ public class DeclBlock extends CParseRule {
 		}
         
 		if (statementList != null) {
-			for (CParseRule item : statementList) {
-				item.codeGen(pcx);
-			}
+            for (StatementInfo statementInfo : statementList) {
+                statementInfo.statement.codeGen(pcx);
+            }
 		}
-        cgc.printInstCodeGen("", "MOV R4, R6", "declBlock: スタックポインタを戻す(局所変数のスコープを外す)");
-        cgc.printPopCodeGen("", "R4", "declBlock: 前のフレームポインタを復元");
-
+        
         cgc.printCompleteComment(getBNF());
     }
 
